@@ -68,7 +68,7 @@ class dt_organizaciones_participantes extends extension_datos_tabla {
 
         return toba::db('extension')->consultar($sql);
     }
-
+    
     function get_organizacion($id_organizacion = null) {
         $sql = "SELECT
                     o_p.*

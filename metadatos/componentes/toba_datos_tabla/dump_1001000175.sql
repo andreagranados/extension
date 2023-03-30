@@ -75,7 +75,7 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	'1001000420', --col_id
 	'id_designacion', --columna
 	'E', --tipo
-	'0', --pk
+	'1', --pk
 	'', --secuencia
 	NULL, --largo
 	NULL, --no_nulo
@@ -201,7 +201,7 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	'1001000564', --col_id
 	'desde', --columna
 	'F', --tipo
-	'0', --pk
+	'1', --pk
 	'', --secuencia
 	NULL, --largo
 	NULL, --no_nulo
@@ -214,7 +214,7 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	'1001000175', --objeto
 	'1001000656', --col_id
 	'cv', --columna
-	'B', --tipo
+	'C', --tipo
 	'0', --pk
 	'', --secuencia
 	NULL, --largo

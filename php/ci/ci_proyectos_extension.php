@@ -932,42 +932,44 @@ class ci_proyectos_extension extends extension_ci {
             return 'No existe monto maximo';
         }
     }
-
     function convocatorias() {
-        $where = "WHERE 1=1 ";
-
-        if ($this->dep('datos')->tabla('pextension')->esta_cargada()) {
-            $pext = $this->dep('datos')->tabla('pextension')->get();
-            $id_estado = $pext['id_estado'];
-            /*
-              $reponsable[responsable_carga] = toba::manejador_sesiones()->get_id_usuario_instancia();
-              $proyectos = $this->dep('datos')->tabla('pextension')->get_proyectos_vigentes();
-
-              if (!is_null($proyectos)) {
-              foreach ($proyectos as $proyecto) {
-              if ($pext[id_bases] != $proyecto[id_bases]) {
-              $where .= " AND id_bases !=" . $proyecto[id_bases];
-              }
-              }
-              }
-             * 
-             */
-        } else {
-            /*
-              $reponsable[responsable_carga] = toba::manejador_sesiones()->get_id_usuario_instancia();
-              $pext = $this->dep('datos')->tabla('pextension')->get_proyectos_vigentes();
-
-              if (!is_null($pext)) {
-              foreach ($pext as $proyecto) {
-              $where .= " AND id_bases !=" . $proyecto[id_bases];
-              }
-              }
-             */
-
-            $id_estado = 'FORM';
-        }
-        return $this->dep('datos')->tabla('bases_convocatoria')->get_convocatorias_vigentes($id_estado, $where);
+        return $this->dep('datos')->tabla('bases_convocatoria')->get_convocatorias_vigentes();
     }
+//    function convocatorias() {
+//        $where = "WHERE 1=1 ";
+//
+//        if ($this->dep('datos')->tabla('pextension')->esta_cargada()) {
+//            $pext = $this->dep('datos')->tabla('pextension')->get();
+//            $id_estado = $pext['id_estado'];
+//            /*
+//              $reponsable[responsable_carga] = toba::manejador_sesiones()->get_id_usuario_instancia();
+//              $proyectos = $this->dep('datos')->tabla('pextension')->get_proyectos_vigentes();
+//
+//              if (!is_null($proyectos)) {
+//              foreach ($proyectos as $proyecto) {
+//              if ($pext[id_bases] != $proyecto[id_bases]) {
+//              $where .= " AND id_bases !=" . $proyecto[id_bases];
+//              }
+//              }
+//              }
+//             * 
+//             */
+//        } else {
+//            /*
+//              $reponsable[responsable_carga] = toba::manejador_sesiones()->get_id_usuario_instancia();
+//              $pext = $this->dep('datos')->tabla('pextension')->get_proyectos_vigentes();
+//
+//              if (!is_null($pext)) {
+//              foreach ($pext as $proyecto) {
+//              $where .= " AND id_bases !=" . $proyecto[id_bases];
+//              }
+//              }
+//             */
+//
+//            $id_estado = 'FORM';
+//        }
+//        return $this->dep('datos')->tabla('bases_convocatoria')->get_convocatorias_vigentes($id_estado, $where);
+//    }
 
     // Genera las alertas de cambios que necesitan ser atendidas 
 
@@ -1107,7 +1109,7 @@ class ci_proyectos_extension extends extension_ci {
                 break;
             default :
                 $this->set_pantalla('pant_edicion');
-                //$this->dep('datos')->tabla('pextension')->resetear();
+                $this->dep('datos')->tabla('pextension')->resetear();
                 break;
         }
         unset($this->s__where);
@@ -3779,22 +3781,10 @@ class ci_proyectos_extension extends extension_ci {
             }
 
             $datos = $this->dep('datos')->tabla('integrante_interno_pe')->get();
-            $fp_imagen = $this->dep('datos')->tabla('integrante_interno_pe')->get_blob('cv');
-
-            if (isset($fp_imagen)) {
-                $temp_nombre = md5(uniqid(time())) . '.pdf';
-                $temp_archivo = toba::proyecto()->get_www_temp($temp_nombre);
-                //-- Se pasa el contenido al archivo temporal
-                $temp_fp = fopen($temp_archivo['path'], 'w');
-                stream_copy_to_stream($fp_imagen, $temp_fp);
-                fclose($temp_fp);
-                //-- Se muestra la imagen temporal
-                $tamano = round(filesize($temp_archivo['path']) / 1024);
-                $datos['cv'] = 'tamano: ' . $tamano . ' KB';
-            } else {
-                $datos['cv'] = null;
-            }
-
+            if(isset($datos['cv'])){
+                    $nomb_ft="/extension/1.0/cv_interno/".$datos['cv'];
+                    $datos['imagen_vista_previa'] = "<a target='_blank' href='{$nomb_ft}' >cv</a>";
+                }  
             $form->ef('id_docente')->set_solo_lectura();
 
             $datos['funcion_p'] = str_pad($datos['funcion_p'], 5);
@@ -3873,22 +3863,24 @@ class ci_proyectos_extension extends extension_ci {
                                     $datos['id_pext'] = $pe['id_pext'];
                                     $datos['tipo'] = 'Docente';
                                     $this->dep('datos')->tabla('integrante_interno_pe')->set($datos);
-
-
-                                    //-----------cv interno-----------------------
-                                    //si adjunto un pdf entonces "pdf" viene con los datos del archivo adjuntado
-                                    if (is_array($datos['cv'])) {
-                                        if ($datos['cv']['size'] > $this->tamano_byte) {
-                                            toba::notificacion()->agregar(utf8_d_seguro('El tamaño del archivo debe ser menor a ') . $this->tamano_mega . 'MB', 'error');
-                                            $fp = null;
-                                        } else {
-                                            $fp = fopen($datos['cv']['tmp_name'], 'rb');
-                                            $this->dep('datos')->tabla('integrante_interno_pe')->set_blob('cv', $fp);
+                                    $this->dep('datos')->tabla('integrante_interno_pe')->sincronizar();
+                                    $integ=$this->dep('datos')->tabla('integrante_interno_pe')->get();
+                                    //cargo el integrante interno
+                                    $ar['id_designacion']=$integ['id_designacion'];
+                                    $ar['id_pext']=$integ['id_pext'];
+                                    $ar['desde']=$integ['desde'];
+                                    $this->dep('datos')->tabla('integrante_interno_pe')->cargar($ar);
+                                    
+                                    if(isset($datos['cv'])){//ingreso un adjunto
+                                        $nombre=$integ['id_designacion'].'_'.$integ['id_pext'].'_'.date("Y",strtotime($integ['desde'])).date("m",strtotime($integ['desde'])).date("d",strtotime($integ['desde'])).'_cv.pdf';
+                                        $destino_ca=toba::proyecto()->get_path()."/www/cv_interno/".$nombre;
+                                        if(move_uploaded_file($datos['cv']['tmp_name'], $destino_ca)){//mueve un archivo a una nueva direccion, retorna true cuando lo hace y falso en caso de que no
+                                            $datos['cv']=strval($nombre);  
                                         }
-                                    } else {
-                                        $this->dep('datos')->tabla('integrante_interno_pe')->set_blob('cv', null);
+                                    }else{
+                                         $datos['cv']=null;
                                     }
-
+                                    $this->dep('datos')->tabla('integrante_interno_pe')->set($datos);
                                     $this->dep('datos')->tabla('integrante_interno_pe')->sincronizar();
                                     $this->dep('datos')->tabla('integrante_interno_pe')->resetear();
 
@@ -3935,6 +3927,11 @@ class ci_proyectos_extension extends extension_ci {
     // DE MOMENTO NO SE USAR EN NINGUN LUGAR COMO FORANEAR 
     function evt__form_integrantes__baja($datos) {
         $this->valido = false;
+        $integ=$this->dep('datos')->tabla('integrante_interno_pe')->get();
+        $nombre_ca=toba::proyecto()->get_path()."/www/cv_interno/".$integ['cv'];
+        if (file_exists($nombre_ca)) {
+            unlink($nombre_ca);//borra el archivo
+        }
         $this->dep('datos')->tabla('integrante_interno_pe')->eliminar_todo();
         $this->dep('datos')->tabla('integrante_interno_pe')->resetear();
         toba::notificacion()->agregar('El integrante se ha eliminado  correctamente.', 'info');
@@ -4007,20 +4004,17 @@ class ci_proyectos_extension extends extension_ci {
                                 }
                             }
                             if ($iguales || is_null($int_interno)) {
-                                if (is_array($datos['cv'])) {//si adjunto un pdf entonces "pdf" viene con los datos del archivo adjuntado
-                                    if ($datos['cv']['size'] > 0) {
-                                        if ($datos['cv']['size'] > $this->tamano_byte) {
-                                            toba::notificacion()->agregar(utf8_d_seguro('El tamaño del archivo debe ser menor a ') . $this->tamano_mega . 'MB', 'error');
-                                            $fp = null;
-                                        } else {
-                                            $fp = fopen($datos['cv']['tmp_name'], 'rb');
-                                        }
-                                    } else {
-                                        $fp = null;
+                                if (isset($datos['cv'])) {//esta adjuntando un pdf
+                                    $nombre=$integrante_datos_almacenados['id_designacion'].'_'.$integrante_datos_almacenados['id_pext'].'_'.date("Y",strtotime($integrante_datos_almacenados['desde'])).date("m",strtotime($integrante_datos_almacenados['desde'])).date("d",strtotime($integrante_datos_almacenados['desde'])).'_cv.pdf';
+                                    $destino_ca=toba::proyecto()->get_path()."/www/cv_interno/".$nombre;
+                                    if(move_uploaded_file($datos['cv']['tmp_name'], $destino_ca)){
+                                       $datos['cv']= $nombre;    
                                     }
-                                    $this->dep('datos')->tabla('integrante_interno_pe')->set_blob('cv', $fp);
+                                }else{//no modifico archivo mantengo el valor q tenia
+                                    if(isset($integrante_datos_almacenados['cv'])){//tiene valor el campo
+                                       $datos['cv']=strval($integrante_datos_almacenados['cv']);//esto xq sino deja en nulo el campo archivo 
+                                    }
                                 }
-
                                 $this->dep('datos')->tabla('integrante_interno_pe')->set($datos);
                                 $this->dep('datos')->tabla('integrante_interno_pe')->sincronizar();
                                 unset($this->s__datos_docente_aux);
@@ -4197,21 +4191,24 @@ class ci_proyectos_extension extends extension_ci {
             if (count($persona) > 0) {
                 $datos['integrante'] = $persona[0]['nombre'];
             }
-            $fp_imagen = $this->dep('datos')->tabla('integrante_externo_pe')->get_blob('cv');
-            if (isset($fp_imagen)) {
-                $temp_nombre = md5(uniqid(time())) . '.pdf';
-                $temp_archivo = toba::proyecto()->get_www_temp($temp_nombre);
-                //-- Se pasa el contenido al archivo temporal
-                $temp_fp = fopen($temp_archivo['path'], 'w');
-                stream_copy_to_stream($fp_imagen, $temp_fp);
-                fclose($temp_fp);
-                //-- Se muestra la imagen temporal
-                $tamano = round(filesize($temp_archivo['path']) / 1024);
-                $datos['cv'] = 'tamano: ' . $tamano . ' KB';
-            } else {
-                $datos['cv'] = null;
-            }
-
+//            $fp_imagen = $this->dep('datos')->tabla('integrante_externo_pe')->get_blob('cv');
+//            if (isset($fp_imagen)) {
+//                $temp_nombre = md5(uniqid(time())) . '.pdf';
+//                $temp_archivo = toba::proyecto()->get_www_temp($temp_nombre);
+//                //-- Se pasa el contenido al archivo temporal
+//                $temp_fp = fopen($temp_archivo['path'], 'w');
+//                stream_copy_to_stream($fp_imagen, $temp_fp);
+//                fclose($temp_fp);
+//                //-- Se muestra la imagen temporal
+//                $tamano = round(filesize($temp_archivo['path']) / 1024);
+//                $datos['cv'] = 'tamano: ' . $tamano . ' KB';
+//            } else {
+//                $datos['cv'] = null;
+//            }
+            if(isset($datos['cv'])){
+                    $nomb_ft="/extension/1.0/cv_externo/".$datos['cv'];
+                    $datos['imagen_vista_previa'] = "<a target='_blank' href='{$nomb_ft}' >cv</a>";
+            }  
             $form->set_datos($datos);
         } else {
             if (!is_null($this->s__datos_otro_aux)) {
@@ -4259,21 +4256,37 @@ class ci_proyectos_extension extends extension_ci {
                             $datos['tipo_docum'] = $datos['integrante'][0];
                             $datos['nro_docum'] = $datos['integrante'][1];
                             $this->dep('datos')->tabla('integrante_externo_pe')->set($datos);
-
+                            $this->dep('datos')->tabla('integrante_externo_pe')->sincronizar();
+                            $integ=$this->dep('datos')->tabla('integrante_externo_pe')->get();
+                          //cargo la norma para obtener el id_norma
+                            $ar['tipo_docum']=$integ['tipo_docum'];
+                            $ar['nro_docum']=$integ['nro_docum'];
+                            $ar['id_pext']=$integ['id_pext'];
+                            $ar['desde']=$integ['desde'];
+                            $this->dep('datos')->tabla('integrante_externo_pe')->cargar($ar);
                             //-----------cv interno-----------------------
                             //si adjunto un pdf entonces "pdf" viene con los datos del archivo adjuntado
-                            if (is_array($datos['cv'])) {
-                                if ($datos['cv']['size'] > $this->tamano_byte) {
-                                    toba::notificacion()->agregar(utf8_d_seguro('El tamaño del archivo debe ser menor a ') . $this->tamano_mega . 'MB', 'error');
-                                    $fp = null;
-                                } else {
-                                    $fp = fopen($datos['cv']['tmp_name'], 'rb');
-                                    $this->dep('datos')->tabla('integrante_externo_pe')->set_blob('cv', $fp);
+//                            if (is_array($datos['cv'])) {
+//                                if ($datos['cv']['size'] > $this->tamano_byte) {
+//                                    toba::notificacion()->agregar(utf8_d_seguro('El tamaño del archivo debe ser menor a ') . $this->tamano_mega . 'MB', 'error');
+//                                    $fp = null;
+//                                } else {
+//                                    $fp = fopen($datos['cv']['tmp_name'], 'rb');
+//                                    $this->dep('datos')->tabla('integrante_externo_pe')->set_blob('cv', $fp);
+//                                }
+//                            } else {
+//                                $this->dep('datos')->tabla('integrante_externo_pe')->set_blob('cv', null);
+//                            }
+                             if(isset($datos['cv'])){//ingreso un adjunto
+                                $nombre=$integ['tipo_docum'].'_'.$integ['nro_docum'].'_'.$integ['id_pext'].'_'.date("Y",strtotime($integ['desde'])).date("m",strtotime($integ['desde'])).date("d",strtotime($integ['desde'])).'_cv.pdf';
+                                $destino_ca=toba::proyecto()->get_path()."/www/cv_externo/".$nombre;
+                                if(move_uploaded_file($datos['cv']['tmp_name'], $destino_ca)){//mueve un archivo a una nueva direccion, retorna true cuando lo hace y falso en caso de que no
+                                    $datos['cv']=strval($nombre);  
                                 }
-                            } else {
-                                $this->dep('datos')->tabla('integrante_externo_pe')->set_blob('cv', null);
+                            }else{
+                                 $datos['cv']=null;
                             }
-                            $this->dep('datos')->tabla('integrante_externo_pe')->sincronizar();
+                            
                             $this->dep('datos')->tabla('integrante_externo_pe')->resetear();
                             unset($this->s__datos_otro_aux);
                             $this->s__mostrar_e = 0;
@@ -4301,6 +4314,11 @@ class ci_proyectos_extension extends extension_ci {
 
     function evt__form_integrante_e__baja($datos) {
         $this->valido = false;
+        $integ=$this->dep('datos')->tabla('integrante_externo_pe')->get();
+        $nombre_ca=toba::proyecto()->get_path()."/www/cv_externo/".$integ['cv'];
+        if (file_exists($nombre_ca)) {
+            unlink($nombre_ca);//borra el archivo
+        }
         $this->dep('datos')->tabla('integrante_externo_pe')->eliminar_todo();
         $this->dep('datos')->tabla('integrante_externo_pe')->resetear();
         toba::notificacion()->agregar('El integrante se ha eliminado  correctamente.', 'info');
@@ -4360,28 +4378,39 @@ class ci_proyectos_extension extends extension_ci {
                                 $datos['tipo_docum'] = $datos['integrante'][0];
                                 $datos['nro_docum'] = $datos['integrante'][1];
                             }
+                            if (isset($datos['cv'])) {//esta adjuntando un pdf
+                                    $nombre=$integrante_datos_almacenados['tipo_docum'].'_'.$integrante_datos_almacenados['nro_docum'].'_'.$integrante_datos_almacenados['id_pext'].'_'.date("Y",strtotime($integrante_datos_almacenados['desde'])).date("m",strtotime($integrante_datos_almacenados['desde'])).date("d",strtotime($integrante_datos_almacenados['desde'])).'_cv.pdf';
+                                    $destino_ca=toba::proyecto()->get_path()."/www/cv_externo/".$nombre;
+                                    if(move_uploaded_file($datos['cv']['tmp_name'], $destino_ca)){
+                                       $datos['cv']= $nombre;    
+                                    }
+                                }else{//no modifico archivo mantengo el valor q tenia
+                                    if(isset($integrante_datos_almacenados['cv'])){//tiene valor el campo
+                                       $datos['cv']=strval($integrante_datos_almacenados['cv']);//esto xq sino deja en nulo el campo archivo 
+                                    }
+                                }
                             $this->dep('datos')->tabla('integrante_externo_pe')->set($datos);
+                            $this->dep('datos')->tabla('integrante_externo_pe')->sincronizar();    
 
                             //-----------cv interno-----------------------
                             //si adjunto un pdf entonces "pdf" viene con los datos del archivo adjuntado
 
-                            if (is_array($datos['cv'])) {
-                                if ($datos['cv']['size'] > 0) { // control de null
-                                    if ($datos['cv']['size'] > $this->tamano_byte) {
-                                        toba::notificacion()->agregar(utf8_d_seguro('El tamaño del archivo debe ser menor a ') . $this->tamano_mega . 'MB', 'error');
-                                        $fp = null;
-                                    } else {
-                                        $fp = fopen($datos['cv']['tmp_name'], 'rb');
-                                    }
-                                } else {
-                                    $fp = null;
-                                }
-
-                                $this->dep('datos')->tabla('integrante_externo_pe')->set_blob('cv', $fp);
-                                // fclose($fp); esto borra el archivo!!!!
-                            }
-                            $this->dep('datos')->tabla('integrante_externo_pe')->set($datos);
-                            $this->dep('datos')->tabla('integrante_externo_pe')->sincronizar();
+//                            if (is_array($datos['cv'])) {
+//                                if ($datos['cv']['size'] > 0) { // control de null
+//                                    if ($datos['cv']['size'] > $this->tamano_byte) {
+//                                        toba::notificacion()->agregar(utf8_d_seguro('El tamaño del archivo debe ser menor a ') . $this->tamano_mega . 'MB', 'error');
+//                                        $fp = null;
+//                                    } else {
+//                                        $fp = fopen($datos['cv']['tmp_name'], 'rb');
+//                                    }
+//                                } else {
+//                                    $fp = null;
+//                                }
+//
+//                                $this->dep('datos')->tabla('integrante_externo_pe')->set_blob('cv', $fp);
+//                                // fclose($fp); esto borra el archivo!!!!
+//                            }
+                            
 
                             unset($this->s__datos_otro_aux);
                             $this->s__mostrar_e = 0;
@@ -4445,7 +4474,7 @@ class ci_proyectos_extension extends extension_ci {
     //-------------------------- CUADRO ORGANIZACIONES ------------------------------
 
     function conf__cuadro_organizaciones(toba_ei_cuadro $cuadro) {
-        //$cuadro->desactivar_modo_clave_segura();
+       // $cuadro->desactivar_modo_clave_segura();
         $pe = $this->dep('datos')->tabla('pextension')->get();
         $estado = $this->dep('datos')->tabla('pextension')->get()[id_estado];
         if ($estado == 'PRG ' || $estado == 'APRB') {
@@ -4494,20 +4523,10 @@ class ci_proyectos_extension extends extension_ci {
                 $form->ef('id_tipo_organizacion')->set_solo_lectura();
             }
             $datos = $this->dep('datos')->tabla('organizaciones_participantes')->get();
-            $fp_imagen = $this->dep('datos')->tabla('organizaciones_participantes')->get_blob('aval');
-            if (isset($fp_imagen)) {
-                $temp_nombre = md5(uniqid(time())) . '.pdf';
-                $temp_archivo = toba::proyecto()->get_www_temp($temp_nombre);
-                //-- Se pasa el contenido al archivo temporal
-                $temp_fp = fopen($temp_archivo['path'], 'w');
-                stream_copy_to_stream($fp_imagen, $temp_fp);
-                fclose($temp_fp);
-                //-- Se muestra la imagen temporal
-                $tamano = round(filesize($temp_archivo['path']) / 1024);
-                $datos['aval'] = 'tamano: ' . $tamano . ' KB';
-            } else {
-                $datos['aval'] = null;
-            }
+            if(isset($datos['aval'])){
+                    $nomb_ft="/extension/1.0/avales/".$datos['aval'];
+                    $datos['imagen_vista_previa'] = "<a target='_blank' href='{$nomb_ft}' >aval</a>";
+            }   
         }
         $form->set_datos($datos);
     }
@@ -4518,27 +4537,33 @@ class ci_proyectos_extension extends extension_ci {
         $datos[id_pext] = $pe['id_pext'];
 
         $this->dep('datos')->tabla('organizaciones_participantes')->set($datos);
-
-        //-----------aval-----------------------
-        //si adjunto un pdf entonces "pdf" viene con los datos del archivo adjuntado
-        if (is_array($datos['aval'])) {
-            if ($datos['aval']['size'] > $this->tamano_byte) {
-                toba::notificacion()->agregar(utf8_d_seguro('El tamaño del archivo debe ser menor a ') . $this->tamano_mega . 'MB', 'error');
-                $fp = null;
-            } else {
-                $fp = fopen($datos['aval']['tmp_name'], 'rb');
-                $this->dep('datos')->tabla('organizaciones_participantes')->set_blob(aval, $fp);
+        $this->dep('datos')->tabla('organizaciones_participantes')->sincronizar();
+        $organ=$this->dep('datos')->tabla('organizaciones_participantes')->get();
+         //cargo la organizacion
+        $org['id_organizacion']=$organ['id_organizacion'];
+        $this->dep('datos')->tabla('organizaciones_participantes')->cargar($org);
+        if(isset($datos['aval'])){//ingreso un adjunto
+                $nombre=$organ['id_organizacion'].'_aval.pdf';
+                $destino_ca=toba::proyecto()->get_path()."/www/avales/".$nombre;
+                if(move_uploaded_file($datos['aval']['tmp_name'], $destino_ca)){//mueve un archivo a una nueva direccion, retorna true cuando lo hace y falso en caso de que no
+                    $datos['aval']=strval($nombre);  
+                }
+        }else{
+                $datos['aval']=null;
             }
-        } else {
-            $this->dep('datos')->tabla('organizaciones_participantes')->set_blob(aval, null);
-        }
+        $this->dep('datos')->tabla('organizaciones_participantes')->set($datos);
         $this->dep('datos')->tabla('organizaciones_participantes')->sincronizar();
         $this->dep('datos')->tabla('organizaciones_participantes')->resetear();
-        $this->s__mostrar_org = 0;
+        $this->s__mostrar_org = 0;  
     }
 
     function evt__form_organizacion__baja($datos) {
         $this->valido = false;
+        $org=$this->dep('datos')->tabla('organizaciones_participantes')->get();
+        $nombre_ca=toba::proyecto()->get_path()."/www/avales/".$org['aval'];
+        if (file_exists($nombre_ca)) {
+            unlink($nombre_ca);//borra el archivo
+        }
         $this->dep('datos')->tabla('organizaciones_participantes')->eliminar_todo();
         $this->dep('datos')->tabla('organizaciones_participantes')->resetear();
         toba::notificacion()->agregar('La organizacion se ha eliminado  correctamente.', 'info');
@@ -4547,22 +4572,19 @@ class ci_proyectos_extension extends extension_ci {
 
     function evt__form_organizacion__modificacion($datos) {
         $this->valido = false;
-        $this->dep('datos')->tabla('organizaciones_participantes')->set($datos);
-
-        if (is_array($datos['aval'])) {//si adjunto un pdf entonces "pdf" viene con los datos del archivo adjuntado
-            if ($datos['aval']['size'] > 0) {
-                if ($datos['aval']['size'] > $this->tamano_byte) {
-                    toba::notificacion()->agregar(utf8_d_seguro('El tamaño del archivo debe ser menor a ') . $this->tamano_mega . 'MB', 'error');
-                    $fp = null;
-                } else {
-                    $fp = fopen($datos['aval']['tmp_name'], 'rb');
-                }
-            } else {
-                $fp = null;
+        $org=$this->dep('datos')->tabla('organizaciones_participantes')->get();
+        if (isset($datos['aval'])) {//esta adjuntando un pdf
+            $nombre=$org['id_organizacion'].'_aval.pdf';
+            $destino_ca=toba::proyecto()->get_path()."/www/avales/".$nombre;
+            if(move_uploaded_file($datos['aval']['tmp_name'], $destino_ca)){
+               $datos['aval']= $nombre;    
             }
-            $this->dep('datos')->tabla('organizaciones_participantes')->set_blob('aval', $fp);
-            // fclose($fp); esto borra el archivo!!!!
+        }else{//no modifico archivo mantengo el valor q tenia
+            if(isset($org['aval'])){//tiene valor el campo
+               $datos['aval']=strval($org['aval']);//esto xq sino deja en nulo el campo archivo 
+            }
         }
+        $this->dep('datos')->tabla('organizaciones_participantes')->set($datos);
         $this->dep('datos')->tabla('organizaciones_participantes')->sincronizar();
         $this->dep('datos')->tabla('organizaciones_participantes')->resetear();
         $this->s__mostrar_org = 0;
@@ -4945,15 +4967,15 @@ class ci_proyectos_extension extends extension_ci {
         $cuadro->set_datos($this->dep('datos')->tabla('presupuesto_extension')->get_listado($pe['id_pext']));
 
         // MONTO DECLARADO 
-        $datos = $cuadro->get_datos();
-        $monto = 0;
-        foreach ($datos as $dato) {
-            $monto = $monto + $dato[monto];
-        }
-        $pe[monto] = $monto;
-
-        $this->dep('datos')->tabla('pextension')->set($pe);
-        $this->dep('datos')->tabla('pextension')->sincronizar();
+//        $datos = $cuadro->get_datos();
+//        $monto = 0;
+//        foreach ($datos as $dato) {
+//            $monto = $monto + $dato[monto];
+//        }
+//        $pe[monto] = $monto;
+//
+//        $this->dep('datos')->tabla('pextension')->set($pe);
+//        $this->dep('datos')->tabla('pextension')->sincronizar();
     }
 
     function conf__cuadro_uni_acad(toba_ei_cuadro $cuadro) {

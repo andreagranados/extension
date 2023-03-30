@@ -7,7 +7,7 @@ class dt_montos_convocatoria extends extension_datos_tabla {
         if (!is_null($id_rubro_extension)) {
             $where = " WHERE id_rubro_extension=$id_rubro_extension AND id_bases = $id_bases ";
         }
-        $sql = "SELECT id_rubro_extension,id_bases, monto_max"
+        $sql = "SELECT * "
                 . " FROM montos_convocatoria "
                 . " $where";
         return toba::db('extension')->consultar($sql);
@@ -22,6 +22,19 @@ class dt_montos_convocatoria extends extension_datos_tabla {
                 . " FROM montos_convocatoria "
                 . " $where";
         return toba::db('extension')->consultar($sql);
+    }
+    function eliminar_porcentajes_rubro($id_bases = null){
+        $where = "";
+        $band=false;
+        if (!is_null($id_bases)) {
+            $where = " WHERE id_bases=$id_bases";
+            $sql = "DELETE "
+                . " FROM montos_convocatoria "
+                . " $where";
+            toba::db('extension')->consultar($sql);
+            $band=true;
+        }
+        return $band;
     }
 
 }

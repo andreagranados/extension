@@ -44,15 +44,22 @@ class dt_bases_convocatoria extends extension_datos_tabla {
         return toba::db('extension')->consultar($sql);
     }
     
-    function get_convocatorias_vigentes($id_estado =null,$where = null) {
-
-        if(is_null($id_estado) || $id_estado=='FORM'){
-            $where =$where ." AND fecha_desde <= current_date AND fecha_hasta >= current_date ";
-        }
-
+//    function get_convocatorias_vigentes($id_estado =null,$where = null) {
+//
+//        if(is_null($id_estado) || $id_estado=='FORM'){
+//            $where =$where ." AND fecha_desde <= current_date AND fecha_hasta >= current_date ";
+//        }
+//
+//        $sql = "SELECT id_bases, bases_titulo "
+//                . "FROM bases_convocatoria as b_c "
+//                .  $where
+//                . "ORDER BY convocatoria";
+//        return toba::db('extension')->consultar($sql);
+//    }
+     function get_convocatorias_vigentes() {
         $sql = "SELECT id_bases, bases_titulo "
-                . "FROM bases_convocatoria as b_c "
-                .  $where
+                . " FROM bases_convocatoria as b_c "
+                . " WHERE fecha_desde <= current_date AND fecha_hasta >= current_date "
                 . "ORDER BY convocatoria";
         return toba::db('extension')->consultar($sql);
     }

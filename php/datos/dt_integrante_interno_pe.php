@@ -56,7 +56,7 @@ class dt_integrante_interno_pe extends extension_datos_tabla {
         ;
         return toba::db('extension')->consultar($sql);
     }
-
+    
     function get_fecha($where = array()) {
 
         if (!is_null($where)) {

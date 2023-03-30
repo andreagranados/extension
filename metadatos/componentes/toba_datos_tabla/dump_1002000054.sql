@@ -102,7 +102,7 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	'1002000054', --objeto
 	'1001000636', --col_id
 	'aval', --columna
-	'B', --tipo
+	'C', --tipo
 	'0', --pk
 	'', --secuencia
 	NULL, --largo

@@ -74,7 +74,7 @@ class ci_bases extends extension_ci {
             $monto = $this->dep('datos')->tabla('montos_convocatoria')->get_descripciones($rubro[id_rubro_extension], $bases[id_bases])[0];
             $datos[$i][id_rubro_extension] = $rubro[id_rubro_extension];
             $datos[$i][tipo] = $rubro[tipo];
-            $datos[$i][monto] = $monto[monto_max];
+            $datos[$i][porc] = $monto[porc];
             $i = $i + 1;
         }
         $cuadro->set_datos($datos);
@@ -296,82 +296,30 @@ class ci_bases extends extension_ci {
     // Formulario montos
 
     function conf__formulario_montos(toba_ei_formulario $form) {
-        $bases = $this->dep('datos')->tabla('bases_convocatoria')->get();
         if ($this->s__mostrar == 1) {
             $this->dep('formulario_montos')->descolapsar();
         } else {
             $this->dep('formulario_montos')->colapsar();
         }
-
         if ($this->dep('datos')->tabla('montos_convocatoria')->esta_cargada()) {
-            $form->set_datos($this->dep('datos')->tabla('montos_convocatoria')->get_descripciones(($this->s__rubro)[0],$bases[id_bases]));
+            $datos=$this->dep('datos')->tabla('montos_convocatoria')->get();
+            $form->set_datos($datos);
         }
-    }
-
-    function evt__formulario_montos__alta($datos) {
-        $bases = $this->dep('datos')->tabla('bases_convocatoria')->get();
-        $datos['id_bases'] = $bases['id_bases'];
-        $datos[id_rubro_extension] = $this->s__rubro;
-        if ($bases[monto_max] != null) {
-            $rubros = $this->dep('datos')->tabla('montos_convocatoria')->get_listado($bases[id_bases]);
-            $count = 0;
-            foreach ($rubros as $value) {
-                $count = $count + $value[monto_max];
-            }
-            $count = $count + $datos[monto_max];
-            if ($count <= $bases[monto_max]) {
-                $this->dep('datos')->tabla('montos_convocatoria')->set($datos);
-                $this->dep('datos')->tabla('montos_convocatoria')->sincronizar();
-                $this->dep('datos')->tabla('montos_convocatoria')->cargar($datos);
-
-                toba::notificacion()->agregar(utf8_d_seguro('La limitación de monto ha sido guardado exitosamente'), 'info');
-            } else {
-                toba::notificacion()->agregar(utf8_d_seguro('No se pudo guardar la ultima limitación, se supera el maximo establecido'), 'info');
-            }
-        } else {
-            toba::notificacion()->agregar(utf8_d_seguro('Aun no se define un monto maximo para los proyectos'), 'info');
-        }
-        $this->dep('datos')->tabla('montos_convocatoria')->resetear();
-        $this->s__mostrar = 0;
     }
 
     function evt__formulario_montos__modificacion($datos) {
-        $bases = $this->dep('datos')->tabla('bases_convocatoria')->get();
-        $monto = $this->dep('datos')->tabla('montos_convocatoria')->get_descripciones(($this->s__rubro)[0],$bases[id_bases]);
-        $bases = $this->dep('datos')->tabla('bases_convocatoria')->get();
-
-        $datos['id_bases'] = $monto['id_bases'];
-        $datos[id_rubro_extension] = $monto[id_rubro_extension];
-
-        if ($bases[monto_max] != null) {
-            $rubros = $this->dep('datos')->tabla('montos_convocatoria')->get_listado($bases[id_bases]);
-            $count = 0;
-            foreach ($rubros as $value) {
-                if ($datos[id_rubro_extension] != $value[id_rubro_extension])
-                    $count = $count + $value[monto_max];
+            //hace el alta y la modificacion
+        if($datos['porc']>100){
+            toba::notificacion()->agregar('El porcentaje del rubro de la convocatoria no puede superar el 100%', 'info');
+        }else{
+            $bases = $this->dep('datos')->tabla('bases_convocatoria')->get();
+            $datos['id_bases'] = $bases['id_bases'];
+            $datos[id_rubro_extension] = $this->s__rubro;
+            $this->dep('datos')->tabla('montos_convocatoria')->set($datos);
+            $this->dep('datos')->tabla('montos_convocatoria')->sincronizar();
+            $this->dep('datos')->tabla('montos_convocatoria')->resetear();
+            $this->s__mostrar = 0;
             }
-            $count = $count + $datos[monto_max];
-            if ($count <= $bases[monto_max]) {
-                $this->dep('datos')->tabla('montos_convocatoria')->set($datos);
-                $this->dep('datos')->tabla('montos_convocatoria')->sincronizar();
-                $this->dep('datos')->tabla('montos_convocatoria')->cargar($datos);
-
-                toba::notificacion()->agregar(utf8_d_seguro('La limitación de monto ha sido guardado exitosamente'), 'info');
-            } else {
-                toba::notificacion()->agregar(utf8_d_seguro('No se pudo guardar la ultima limitación, se supera el maximo establecido'), 'info');
-            }
-        } else {
-            toba::notificacion()->agregar(utf8_d_seguro('Se produjo algun cambio sobre el monto maximo despues de la carga de esta limitación que genera un error'), 'info');
-        };
-        $this->s__mostrar = 0;
-    }
-
-    function evt__formulario_montos__baja() {
-        $this->dep('datos')->tabla('montos_convocatoria')->eliminar_todo();
-        toba::notificacion()->agregar('El registro se ha eliminado correctamente', 'info');
-
-        $this->dep('datos')->tabla('montos_convocatoria')->resetear();
-        $this->s__mostrar = 0;
     }
 
     function evt__formulario_montos__cancelar() {
@@ -397,9 +345,18 @@ class ci_bases extends extension_ci {
     }
 
     function evt__formulario__modificacion($datos) {
-
-        $this->dep('datos')->tabla('bases_convocatoria')->set($datos);
-        $this->dep('datos')->tabla('bases_convocatoria')->sincronizar();
+        if ($this->dep('datos')->tabla('bases_convocatoria')->esta_cargada()) {
+            $bases = $this->dep('datos')->tabla('bases_convocatoria')->get();
+            if(!$datos['tiene_monto']){
+                $datos['monto_max']=null;
+                $respuesta=$this->dep('datos')->tabla('montos_convocatoria')->eliminar_porcentajes_rubro($bases['id_bases']);
+                if($respuesta){
+                  toba::notificacion()->agregar('Se han eliminado los porcentajes maximos por rubro', 'info');  
+                }
+            }
+            $this->dep('datos')->tabla('bases_convocatoria')->set($datos);
+            $this->dep('datos')->tabla('bases_convocatoria')->sincronizar();
+        }
     }
 
     function evt__formulario__baja() {

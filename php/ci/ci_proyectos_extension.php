@@ -707,94 +707,94 @@ class ci_proyectos_extension extends extension_ci {
 
     //esta funcion es invocada desde javascript
     //cuando se presiona el boton pdf_acta
-    function ajax__cargar_aval($id_fila, toba_ajax_respuesta $respuesta) {
-        unset($this->s__cv_interno);
-        unset($this->s__organizacion);
-        unset($this->s__cv_externo);
-        $this->dep('datos')->tabla('organizaciones_participantes')->resetear(); //limpia
-        // Cuando se pasa de un formulario que hacer referenciua a un popup se reserva la primera dirección
-        // por lo cual cuando vengo de imprimir de un formulario con popup genera conflicto en este que no 
-        // tiene esta es la solución que puede encontrar 
-        $id_fila_aux = $id_fila;
-        if (is_null($this->s__datos_org[$id_fila]['id_organizacion'])) {
-            $id_fila_aux = $id_fila - 1;
-        }
+//    function ajax__cargar_aval($id_fila, toba_ajax_respuesta $respuesta) {
+//        unset($this->s__cv_interno);
+//        unset($this->s__organizacion);
+//        unset($this->s__cv_externo);
+//        $this->dep('datos')->tabla('organizaciones_participantes')->resetear(); //limpia
+//        // Cuando se pasa de un formulario que hacer referenciua a un popup se reserva la primera dirección
+//        // por lo cual cuando vengo de imprimir de un formulario con popup genera conflicto en este que no 
+//        // tiene esta es la solución que puede encontrar 
+//        $id_fila_aux = $id_fila;
+//        if (is_null($this->s__datos_org[$id_fila]['id_organizacion'])) {
+//            $id_fila_aux = $id_fila - 1;
+//        }
+//
+//        $datos['id_organizacion'] = $this->s__datos_org[$id_fila_aux]['id_organizacion'];
+//        $datos['nombre'] = $this->s__datos_org[$id_fila_aux]['nombre'];
+//        $this->s__organizacion = $datos;
+//
+//        $nombre = str_replace(',', '', $this->s__organizacion['nombre']);
+//        $nombre = str_replace(' ', '', $nombre);
+//
+//        $this->s__nombre = "aval_" . $nombre . ".pdf";
+//        $tiene = $this->dep('datos')->tabla('organizaciones_participantes')->tiene_aval($this->s__organizacion['id_organizacion']);
+//        if ($tiene == 1) {
+//            $respuesta->set($id_fila);
+//        } else {
+//            $respuesta->set(-1);
+//        }
+//    }
 
-        $datos['id_organizacion'] = $this->s__datos_org[$id_fila_aux]['id_organizacion'];
-        $datos['nombre'] = $this->s__datos_org[$id_fila_aux]['nombre'];
-        $this->s__organizacion = $datos;
+//    function ajax__descargar_cv_docente($id_fila, toba_ajax_respuesta $respuesta) {
+//        unset($this->s__cv_interno);
+//        unset($this->s__organizacion);
+//        unset($this->s__cv_externo);
+//
+//        $this->dep('datos')->tabla('integrante_interno_pe')->resetear(); // limpiar
+//
+//        $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
+//        if ($perfil == 'formulador') {
+//            $id_fila_aux = $id_fila - 1;
+//        } else {
+//            $id_fila_aux = $id_fila;
+//        }
+//
+//        $datos['id_pext'] = $this->s__datos_docente[$id_fila_aux]['id_pext'];
+//        $datos['desde'] = $this->s__datos_docente[$id_fila_aux]['desde'];
+//        $datos['id_designacion'] = $this->s__datos_docente[$id_fila_aux]['id_designacion'];
+//        $nombre = str_replace(',', '', $this->s__datos_docente[$id_fila_aux]['nombre']);
+//        $nombre = str_replace(' ', '_', $nombre);
+//
+//        $this->s__cv_interno = $datos;
+//        $this->s__nombre = "cv_docente_" . $nombre . ".pdf";
+//        $tiene = $this->dep('datos')->tabla('integrante_interno_pe')->tiene_cv($datos);
+//
+//        if ($tiene == 1) {
+//            $respuesta->set($id_fila);
+//        } else {
+//            $respuesta->set(-1);
+//        }
+//    }
 
-        $nombre = str_replace(',', '', $this->s__organizacion['nombre']);
-        $nombre = str_replace(' ', '', $nombre);
-
-        $this->s__nombre = "aval_" . $nombre . ".pdf";
-        $tiene = $this->dep('datos')->tabla('organizaciones_participantes')->tiene_aval($this->s__organizacion['id_organizacion']);
-        if ($tiene == 1) {
-            $respuesta->set($id_fila);
-        } else {
-            $respuesta->set(-1);
-        }
-    }
-
-    function ajax__descargar_cv_docente($id_fila, toba_ajax_respuesta $respuesta) {
-        unset($this->s__cv_interno);
-        unset($this->s__organizacion);
-        unset($this->s__cv_externo);
-
-        $this->dep('datos')->tabla('integrante_interno_pe')->resetear(); // limpiar
-
-        $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
-        if ($perfil == 'formulador') {
-            $id_fila_aux = $id_fila - 1;
-        } else {
-            $id_fila_aux = $id_fila;
-        }
-
-        $datos['id_pext'] = $this->s__datos_docente[$id_fila_aux]['id_pext'];
-        $datos['desde'] = $this->s__datos_docente[$id_fila_aux]['desde'];
-        $datos['id_designacion'] = $this->s__datos_docente[$id_fila_aux]['id_designacion'];
-        $nombre = str_replace(',', '', $this->s__datos_docente[$id_fila_aux]['nombre']);
-        $nombre = str_replace(' ', '_', $nombre);
-
-        $this->s__cv_interno = $datos;
-        $this->s__nombre = "cv_docente_" . $nombre . ".pdf";
-        $tiene = $this->dep('datos')->tabla('integrante_interno_pe')->tiene_cv($datos);
-
-        if ($tiene == 1) {
-            $respuesta->set($id_fila);
-        } else {
-            $respuesta->set(-1);
-        }
-    }
-
-    function ajax__descargar_cv_otro($id_fila, toba_ajax_respuesta $respuesta) {
-        unset($this->s__cv_interno);
-        unset($this->s__organizacion);
-        unset($this->s__cv_externo);
-
-        $this->dep('datos')->tabla('integrante_externo_pe')->resetear(); // limpiar
-        $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
-        if ($perfil == 'formulador') {
-            $id_fila_aux = $id_fila - 1;
-        } else {
-            $id_fila_aux = $id_fila;
-        }
-        $datos['id_pext'] = $this->s__datos_otro[$id_fila_aux]['id_pext'];
-        $datos['desde'] = $this->s__datos_otro[$id_fila_aux]['desde'];
-        $datos['tipo_docum'] = $this->s__datos_otro[$id_fila_aux]['tipo_docum'];
-        $datos['nro_docum'] = $this->s__datos_otro[$id_fila_aux]['nro_docum'];
-        $nombre = str_replace(',', '', $this->s__datos_otro[$id_fila_aux]['nombre']);
-        $nombre = str_replace(' ', '_', $nombre);
-
-        $this->s__cv_externo = $datos;
-        $this->s__nombre = "cv_" . $nombre . ".pdf";
-        $tiene = $this->dep('datos')->tabla('integrante_externo_pe')->tiene_cv($this->s__cv_externo);
-        if ($tiene == 1) {
-            $respuesta->set($id_fila);
-        } else {
-            $respuesta->set(-1);
-        }
-    }
+//    function ajax__descargar_cv_otro($id_fila, toba_ajax_respuesta $respuesta) {
+//        unset($this->s__cv_interno);
+//        unset($this->s__organizacion);
+//        unset($this->s__cv_externo);
+//
+//        $this->dep('datos')->tabla('integrante_externo_pe')->resetear(); // limpiar
+//        $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
+//        if ($perfil == 'formulador') {
+//            $id_fila_aux = $id_fila - 1;
+//        } else {
+//            $id_fila_aux = $id_fila;
+//        }
+//        $datos['id_pext'] = $this->s__datos_otro[$id_fila_aux]['id_pext'];
+//        $datos['desde'] = $this->s__datos_otro[$id_fila_aux]['desde'];
+//        $datos['tipo_docum'] = $this->s__datos_otro[$id_fila_aux]['tipo_docum'];
+//        $datos['nro_docum'] = $this->s__datos_otro[$id_fila_aux]['nro_docum'];
+//        $nombre = str_replace(',', '', $this->s__datos_otro[$id_fila_aux]['nombre']);
+//        $nombre = str_replace(' ', '_', $nombre);
+//
+//        $this->s__cv_externo = $datos;
+//        $this->s__nombre = "cv_" . $nombre . ".pdf";
+//        $tiene = $this->dep('datos')->tabla('integrante_externo_pe')->tiene_cv($this->s__cv_externo);
+//        if ($tiene == 1) {
+//            $respuesta->set($id_fila);
+//        } else {
+//            $respuesta->set(-1);
+//        }
+//    }
 
     function ajax__descargar_pext_completo($id_fila, toba_ajax_respuesta $respuesta) {
         if ($id_fila != 0) {
@@ -3288,144 +3288,159 @@ class ci_proyectos_extension extends extension_ci {
             $form->set_datos($datos);
         }
     }
-
-    function evt__formulario__alta($datos) {
-
-        $this->valido = false;
-        $perfil = toba::usuario()->get_perfil_datos();
-
-        if ($perfil != null) {
-            $ua = $this->dep('datos')->tabla('unidad_acad')->get_ua(); //trae la ua de acuerdo al perfil de datos  
-            $datos['uni_acad'] = $ua[0]['sigla'];
-        }
-        $ejes = $datos['eje_tematico'];
-        $array = '{' . $ejes[0];
-        unset($ejes[0]);
-        foreach ($ejes as $eje) {
-            $array = $array . ',' . $eje;
-        }
-        $array = $array . '}';
-        $datos['eje_tematico'] = $array;
-
-        $multi_uni = $datos['multi_uni'];
-        $array_uni = '{' . $multi_uni[0];
-        unset($multi_uni[0]);
-        foreach ($multi_uni as $multi) {
-            $array_uni = $array_uni . ',' . $multi;
-        }
-        $array_uni = $array_uni . '}';
-        $datos['multi_uni'] = $array_uni;
-
-        // Solo se muestran, no se guardan directamente en la tabla pextension
-        
-        unset($datos[director]);
-        unset($datos[dir_email]);
-        unset($datos[dir_telefono]);
-        unset($datos[co_director]);
-        unset($datos[co_email]);
-        unset($datos[co_telefono]);
-        unset($datos[tipo_convocatoria]);
-        unset($datos[codigo]);
-        unset($datos[res_rect]);
-        unset($datos[nro_ord_cs]);
-
-        //Cambio de estado a en formulacion ( ESTADO INICIAL )
-            $datos[id_estado] = 'FORM';
-
-        //responsable de carga proyecto
-        $datos[responsable_carga] = toba::manejador_sesiones()->get_id_usuario_instancia();
-
-        //control fechas
-
-        $this->dep('datos')->tabla('pextension')->set($datos);
-        $this->dep('datos')->tabla('pextension')->sincronizar();
-        $this->dep('datos')->tabla('pextension')->cargar($datos);
-
-        toba::notificacion()->agregar('El proyecto ha sido guardado exitosamente', 'info');
-    }
+//esto lo comento porque nunca se usa
+//    function evt__formulario__alta($datos) {
+//
+//        $this->valido = false;
+//        $perfil = toba::usuario()->get_perfil_datos();
+//
+//        if ($perfil != null) {
+//            $ua = $this->dep('datos')->tabla('unidad_acad')->get_ua(); //trae la ua de acuerdo al perfil de datos  
+//            $datos['uni_acad'] = $ua[0]['sigla'];
+//        }
+//        $ejes = $datos['eje_tematico'];
+//        $array = '{' . $ejes[0];
+//        unset($ejes[0]);
+//        foreach ($ejes as $eje) {
+//            $array = $array . ',' . $eje;
+//        }
+//        $array = $array . '}';
+//        $datos['eje_tematico'] = $array;
+//
+//        $multi_uni = $datos['multi_uni'];
+//        $array_uni = '{' . $multi_uni[0];
+//        unset($multi_uni[0]);
+//        foreach ($multi_uni as $multi) {
+//            $array_uni = $array_uni . ',' . $multi;
+//        }
+//        $array_uni = $array_uni . '}';
+//        $datos['multi_uni'] = $array_uni;
+//
+//        // Solo se muestran, no se guardan directamente en la tabla pextension
+//        
+//        unset($datos[director]);
+//        unset($datos[dir_email]);
+//        unset($datos[dir_telefono]);
+//        unset($datos[co_director]);
+//        unset($datos[co_email]);
+//        unset($datos[co_telefono]);
+//        unset($datos[tipo_convocatoria]);
+//        unset($datos[codigo]);
+//        unset($datos[res_rect]);
+//        unset($datos[nro_ord_cs]);
+//
+//        //Cambio de estado a en formulacion ( ESTADO INICIAL )
+//            $datos[id_estado] = 'FORM';
+//
+//        //responsable de carga proyecto
+//        $datos[responsable_carga] = toba::manejador_sesiones()->get_id_usuario_instancia();
+//
+//        //control fechas
+//
+//        $this->dep('datos')->tabla('pextension')->set($datos);
+//        $this->dep('datos')->tabla('pextension')->sincronizar();
+//        $this->dep('datos')->tabla('pextension')->cargar($datos);
+//
+//        toba::notificacion()->agregar('El proyecto ha sido guardado exitosamente', 'info');
+//    }
 
     function evt__formulario__modificacion($datos) {
         $this->valido = false;
+        $mensaje='';
         //Obtengo los datos del proyecto cargado
         $datos_pe = $this->dep('datos')->tabla('pextension')->get();
-        //Obtengo datos de integrantes externos cargados
-        $datos_integrantes_e = $this->dep('datos')->tabla('integrante_externo_pe')->get_listado($datos_pe['id_pext']);
-        //Obtengo datos de integrantes internos cargados
-        $datos_integrantes_i = $this->dep('datos')->tabla('integrante_interno_pe')->get_listado($datos_pe['id_pext']);
+        if($datos_pe['id_estado']=='FORM' or $datos_pe['id_estado']=='MODF'){//solo en estos estados puede modificar
+            $bases = $this->dep('datos')->tabla('bases_convocatoria')->get_datos($datos_pe[id_bases])[0];
+            $monto_max = $bases['monto_max'];
+            if(isset($monto_max)){
+                if($datos['monto']>$monto_max){
+                    $mensaje='El monto del proyecto supera el monto máximo definido para esta convocatoria';
+                }   
+            }
+        }
+        if($mensaje==''){//guardo
+            //Obtengo datos de integrantes externos cargados
+            $datos_integrantes_e = $this->dep('datos')->tabla('integrante_externo_pe')->get_listado($datos_pe['id_pext']);
+            //Obtengo datos de integrantes internos cargados
+            $datos_integrantes_i = $this->dep('datos')->tabla('integrante_interno_pe')->get_listado($datos_pe['id_pext']);
 
-        if ($datos_pe['fec_desde'] != $datos['fec_desde']) {
-            if (!is_null($datos_integrantes_e)) {
-                foreach ($datos_integrantes_e as $externo) {
-                    //Si es integrante vigente
-                    if (strcasecmp(date('Y-m-d'), date('Y-m-d', strtotime($externo['hasta']))) <= 0 && $datos_pe['fec_desde'] == $externo['desde']) {
-                        $sql = "UPDATE integrante_externo_pe SET desde ='" . $datos['fec_desde'] . "' where id_pext = " . $externo[id_pext] .
-                                " AND tipo_docum ='" . $externo['tipo_docum'] . " ' AND nro_docum = " . $externo['nro_docum'];
-                        toba::db('extension')->consultar($sql);
+            if ($datos_pe['fec_desde'] != $datos['fec_desde']) {
+                if (!is_null($datos_integrantes_e)) {
+                    foreach ($datos_integrantes_e as $externo) {
+                        //Si es integrante vigente
+                        if (strcasecmp(date('Y-m-d'), date('Y-m-d', strtotime($externo['hasta']))) <= 0 && $datos_pe['fec_desde'] == $externo['desde']) {
+                            $sql = "UPDATE integrante_externo_pe SET desde ='" . $datos['fec_desde'] . "' where id_pext = " . $externo[id_pext] .
+                                    " AND tipo_docum ='" . $externo['tipo_docum'] . " ' AND nro_docum = " . $externo['nro_docum'];
+                            toba::db('extension')->consultar($sql);
+                        }
+                    }
+                }
+                if (!is_null($datos_integrantes_i)) {
+                    foreach ($datos_integrantes_i as $interno) {
+                        //Si es integrante vigente
+                        if (strcasecmp(date('Y-m-d'), date('Y-m-d', strtotime($interno['hasta']))) <= 0 && $datos_pe['fec_desde'] == $interno['desde']) {
+                            $sql = "UPDATE integrante_interno_pe SET desde ='" . $datos['fec_desde'] . "' where id_pext = " . $datos_pe[id_pext] .
+                                    " AND id_designacion = " . $interno['id_designacion'];
+                            toba::db('extension')->consultar($sql);
+                        }
                     }
                 }
             }
-            if (!is_null($datos_integrantes_i)) {
-                foreach ($datos_integrantes_i as $interno) {
-                    //Si es integrante vigente
-                    if (strcasecmp(date('Y-m-d'), date('Y-m-d', strtotime($interno['hasta']))) <= 0 && $datos_pe['fec_desde'] == $interno['desde']) {
-                        $sql = "UPDATE integrante_interno_pe SET desde ='" . $datos['fec_desde'] . "' where id_pext = " . $datos_pe[id_pext] .
-                                " AND id_designacion = " . $interno['id_designacion'];
-                        toba::db('extension')->consultar($sql);
+
+            if ($datos_pe['fec_hasta'] != $datos['fec_hasta']) {
+                if (!is_null($datos_integrantes_e)) {
+                    foreach ($datos_integrantes_e as $externo) {
+                        //Si es integrante vigente
+                        if (strcasecmp(date('Y-m-d'), date('Y-m-d', strtotime($externo['hasta']))) <= 0) {
+                            $sql = "UPDATE integrante_externo_pe SET hasta ='" . $datos['fec_hasta'] . "' where id_pext = " . $datos_pe[id_pext] .
+                                    " AND tipo_docum ='" . $externo['tipo_docum'] . "' AND nro_docum = " . $externo['nro_docum'];
+                            toba::db('extension')->consultar($sql);
+                        }
+                    }
+                }
+                if (!is_null($datos_integrantes_i)) {
+                    foreach ($datos_integrantes_i as $interno) {
+                        //Si es integrante vigente
+                        if (strcasecmp(date('Y-m-d'), date('Y-m-d', strtotime($interno['hasta']))) <= 0) {
+                            $sql = "UPDATE integrante_interno_pe SET hasta =' " . $datos['fec_hasta'] . "' where id_pext = " . $datos_pe[id_pext] .
+                                    " AND id_designacion = " . $interno['id_designacion'];
+                            toba::db('extension')->consultar($sql);
+                        }
                     }
                 }
             }
-        }
 
-        if ($datos_pe['fec_hasta'] != $datos['fec_hasta']) {
-            if (!is_null($datos_integrantes_e)) {
-                foreach ($datos_integrantes_e as $externo) {
-                    //Si es integrante vigente
-                    if (strcasecmp(date('Y-m-d'), date('Y-m-d', strtotime($externo['hasta']))) <= 0) {
-                        $sql = "UPDATE integrante_externo_pe SET hasta ='" . $datos['fec_hasta'] . "' where id_pext = " . $datos_pe[id_pext] .
-                                " AND tipo_docum ='" . $externo['tipo_docum'] . "' AND nro_docum = " . $externo['nro_docum'];
-                        toba::db('extension')->consultar($sql);
-                    }
-                }
+            $ejes = $datos['eje_tematico'];
+            $array = '{' . $ejes[0];
+            unset($ejes[0]);
+            foreach ($ejes as $eje) {
+                $array = $array . ',' . $eje;
             }
-            if (!is_null($datos_integrantes_i)) {
-                foreach ($datos_integrantes_i as $interno) {
-                    //Si es integrante vigente
-                    if (strcasecmp(date('Y-m-d'), date('Y-m-d', strtotime($interno['hasta']))) <= 0) {
-                        $sql = "UPDATE integrante_interno_pe SET hasta =' " . $datos['fec_hasta'] . "' where id_pext = " . $datos_pe[id_pext] .
-                                " AND id_designacion = " . $interno['id_designacion'];
-                        toba::db('extension')->consultar($sql);
-                    }
-                }
+            $array = $array . '}';
+            $datos['eje_tematico'] = $array;
+
+            $multi_uni = $datos['multi_uni'];
+            $array_uni = '{' . $multi_uni[0];
+            unset($multi_uni[0]);
+            foreach ($multi_uni as $uni) {
+                $array_uni = $array_uni . ',' . $uni;
             }
+            $array_uni = $array_uni . '}';
+            if ($datos['es_multi'] == 0) {
+                $datos['multi_uni'] = null;
+            } else {
+                $datos['multi_uni'] = $array_uni;
+            }
+
+
+            $datos[id_estado] = $datos_pe[id_estado];
+
+            $this->dep('datos')->tabla('pextension')->set($datos);
+            $this->dep('datos')->tabla('pextension')->sincronizar();
+        }else{
+            throw new toba_error(utf8_decode($mensaje));    
         }
-
-        $ejes = $datos['eje_tematico'];
-        $array = '{' . $ejes[0];
-        unset($ejes[0]);
-        foreach ($ejes as $eje) {
-            $array = $array . ',' . $eje;
-        }
-        $array = $array . '}';
-        $datos['eje_tematico'] = $array;
-
-        $multi_uni = $datos['multi_uni'];
-        $array_uni = '{' . $multi_uni[0];
-        unset($multi_uni[0]);
-        foreach ($multi_uni as $uni) {
-            $array_uni = $array_uni . ',' . $uni;
-        }
-        $array_uni = $array_uni . '}';
-        if ($datos['es_multi'] == 0) {
-            $datos['multi_uni'] = null;
-        } else {
-            $datos['multi_uni'] = $array_uni;
-        }
-
-
-        $datos[id_estado] = $datos_pe[id_estado];
-
-        $this->dep('datos')->tabla('pextension')->set($datos);
-        $this->dep('datos')->tabla('pextension')->sincronizar();
+        
     }
 
     // ACTUALMENTE INHABILITADO -> HABILIDARLO PARA ADMIN
@@ -3716,6 +3731,14 @@ class ci_proyectos_extension extends extension_ci {
             $this->s__datos_docente = $this->dep('datos')->tabla('integrante_interno_pe')->get_vigentes($this->s__where, $pe['id_pext']);
         } else {
             $this->s__datos_docente = $this->dep('datos')->tabla('integrante_interno_pe')->get_listado($pe['id_pext']);
+        }
+        foreach ($this->s__datos_docente as $key => $value) {
+            if($this->s__datos_docente[$key]['cv']<>null and $this->s__datos_docente[$key]['cv']<>''){//tiene valor
+                    $nomb_ft="/extension/1.0/cv_interno/".$this->s__datos_docente[$key]['cv'];
+                    $fechaHora = idate("Y").idate("m").idate("d").idate("H").idate("i").idate("s");
+                    $nomb_ft.="?v=".$fechaHora;
+                    $this->s__datos_docente[$key]['archivo']="<a href='{$nomb_ft}' target='_blank'>cv</a>";    
+            }
         }
         $cuadro->set_datos($this->s__datos_docente);
     }
@@ -4120,6 +4143,14 @@ class ci_proyectos_extension extends extension_ci {
         } else {
             $this->s__datos_otro = $this->dep('datos')->tabla('integrante_externo_pe')->get_listado($pe['id_pext']);
         }
+         foreach ($this->s__datos_otro as $key => $value) {
+            if($this->s__datos_otro[$key]['cv']<>null and $this->s__datos_otro[$key]['cv']<>''){//tiene valor
+                    $nomb_ft="/extension/1.0/cv_externo/".$this->s__datos_otro[$key]['cv'];
+                    $fechaHora = idate("Y").idate("m").idate("d").idate("H").idate("i").idate("s");
+                    $nomb_ft.="?v=".$fechaHora;
+                    $this->s__datos_otro[$key]['archivo']="<a href='{$nomb_ft}' target='_blank'>cv</a>";    
+            }
+        }
         $cuadro->set_datos($this->s__datos_otro);
     }
 
@@ -4481,6 +4512,14 @@ class ci_proyectos_extension extends extension_ci {
             $this->controlador()->evento('alta')->mostrar();
         }
         $this->s__datos_org = $this->dep('datos')->tabla('organizaciones_participantes')->get_listado($pe['id_pext']);
+        foreach ($this->s__datos_org as $key => $value) {
+            if($this->s__datos_org[$key]['aval']<>null and $this->s__datos_org[$key]['aval']<>''){//tiene valor
+                    $nomb_ft="/extension/1.0/avales/".$this->s__datos_org[$key]['aval'];
+                    $fechaHora = idate("Y").idate("m").idate("d").idate("H").idate("i").idate("s");
+                    $nomb_ft.="?v=".$fechaHora;
+                    $this->s__datos_org[$key]['archivo']="<a href='{$nomb_ft}' target='_blank'>aval</a>";    
+            }
+        }
         $cuadro->set_datos($this->s__datos_org);
     }
 
@@ -5051,42 +5090,159 @@ class ci_proyectos_extension extends extension_ci {
         }
     }
 
+//    function evt__form_presupuesto__alta($datos) {
+//
+//        $this->valido = false;
+//        $pe = $this->dep('datos')->tabla('pextension')->get();
+//        $datos[id_pext] = $pe['id_pext'];
+//
+//        $presupuesto = $this->dep('datos')->tabla('presupuesto_extension')->get_listado_rubro($datos[id_rubro_extension]);
+//        $count = 0;
+//        foreach ($presupuesto as $value) {
+//            $count = $count + $value[monto];
+//        }
+//
+//        $bases = $this->dep('datos')->tabla('bases_convocatoria')->get_datos($pe[id_bases])[0];
+//        $monto_max = $bases[monto_max];
+//        $rubro = $this->dep('datos')->tabla('montos_convocatoria')->get_descripciones($datos[id_rubro_extension], $bases[id_bases])[0];
+//        if ($monto_max != 0 || !is_null($monto_max)) {
+//            if (($pe[monto] + $datos[monto]) <= $monto_max) {
+//                if ($datos[monto] + $count <= $rubro[monto_max]) {
+//                    $this->dep('datos')->tabla('presupuesto_extension')->set($datos);
+//                    $this->dep('datos')->tabla('presupuesto_extension')->sincronizar();
+//                    $this->dep('datos')->tabla('presupuesto_extension')->resetear();
+//                } else {
+//                    toba::notificacion()->agregar('Se supero el monto maximo para el rubro seleccionado', 'info');
+//                }
+//            } else {
+//                $monto_restante = $monto_max - $pe[monto];
+//                toba::notificacion()->agregar('Se supero el monto maximo de presupuesto , restantes: ' . $monto_restante, 'info');
+//            }
+//        } else {
+//            $this->dep('datos')->tabla('presupuesto_extension')->set($datos);
+//            $this->dep('datos')->tabla('presupuesto_extension')->sincronizar();
+//            $this->dep('datos')->tabla('presupuesto_extension')->resetear();
+//        }
+//        $this->s__mostrar_presup = 0;
+//    }
     function evt__form_presupuesto__alta($datos) {
 
         $this->valido = false;
+        $ingresar = false;
         $pe = $this->dep('datos')->tabla('pextension')->get();
-        $datos[id_pext] = $pe['id_pext'];
-
-        $presupuesto = $this->dep('datos')->tabla('presupuesto_extension')->get_listado_rubro($datos[id_rubro_extension]);
-        $count = 0;
-        foreach ($presupuesto as $value) {
-            $count = $count + $value[monto];
-        }
-
-        $bases = $this->dep('datos')->tabla('bases_convocatoria')->get_datos($pe[id_bases])[0];
-        $monto_max = $bases[monto_max];
-        $rubro = $this->dep('datos')->tabla('montos_convocatoria')->get_descripciones($datos[id_rubro_extension], $bases[id_bases])[0];
-        if ($monto_max != 0 || !is_null($monto_max)) {
-            if (($pe[monto] + $datos[monto]) <= $monto_max) {
-                if ($datos[monto] + $count <= $rubro[monto_max]) {
-                    $this->dep('datos')->tabla('presupuesto_extension')->set($datos);
-                    $this->dep('datos')->tabla('presupuesto_extension')->sincronizar();
-                    $this->dep('datos')->tabla('presupuesto_extension')->resetear();
-                } else {
-                    toba::notificacion()->agregar('Se supero el monto maximo para el rubro seleccionado', 'info');
+        $total= $this->dep('datos')->tabla('presupuesto_extension')->get_total($pe['id_pext']);
+        if($pe['id_estado']=='FORM' or $pe['id_estado']=='MODF'){//solo puede agregar el presupuesto en estos estados    
+            $tiene_monto=$this->dep('datos')->tabla('bases_convocatoria')->get_datos($pe['id_bases'])[0]['tiene_monto'];    
+        //hasta aca ok
+            if($tiene_monto==1){//si la convocatoria tiene monto maximo entonces verifica
+                $band= $this->dep('datos')->tabla('montos_convocatoria')->get_puedo_agregar_monto_max($datos['id_rubro_extension'],$pe['id_bases'],$pe['id_pext'],$datos['monto']);
+                if($band){//el monto ingresado no supera el porc maximo definido para el rubro dentro de la convoc
+                    if($pe['monto']>=$total+$datos['monto']){
+                        $ingresar=true;
+                    }else {
+                        $mensaje='El monto supera el total del proyecto';
+                    }
+                }else{
+                    $mensaje="El monto supera el porc maximo definido para el rubro en la convocatoria";
                 }
-            } else {
-                $monto_restante = $monto_max - $pe[monto];
-                toba::notificacion()->agregar('Se supero el monto maximo de presupuesto , restantes: ' . $monto_restante, 'info');
+            }else{//aca deberia verificar que no supere el monto del proyecto
+                if($pe['monto']>=$total+$datos['monto']){
+                        $ingresar=true;
+                }else{
+                    $mensaje='El monto supera el total del proyecto';
+                }
             }
-        } else {
+        }
+        if($ingresar){
+            $datos['id_pext'] = $pe['id_pext'];
             $this->dep('datos')->tabla('presupuesto_extension')->set($datos);
             $this->dep('datos')->tabla('presupuesto_extension')->sincronizar();
             $this->dep('datos')->tabla('presupuesto_extension')->resetear();
+            $this->s__mostrar_presup=0;
+        }else{
+            throw new toba_error($mensaje);
+        }
+    }
+    function evt__form_presupuesto__modificacion($datos) {
+
+        $this->valido = false;
+        $ingresar=false;
+        $presuesto_datos_anterior = $this->dep('datos')->tabla('presupuesto_extension')->get();
+        $pe = $this->dep('datos')->tabla('pextension')->get();
+        //trae el total de presupuestos del proyecto menos el que estoy editando
+        $total= $this->dep('datos')->tabla('presupuesto_extension')->get_total_modif($pe['id_pext'],$presuesto_datos_anterior['id_presupuesto']);
+        
+        if($pe['id_estado']=='FORM' or $pe['id_estado']=='MODF'){//solo puede agregar el presupuesto en estos estados    
+            $tiene_monto=$this->dep('datos')->tabla('bases_convocatoria')->get_datos($pe['id_bases'])[0]['tiene_monto'];    
+            if($tiene_monto==1){//si la convocatoria tiene monto maximo entonces verifica
+                $band= $this->dep('datos')->tabla('montos_convocatoria')->get_puedo_agregar_monto_max_modif($datos['id_rubro_extension'],$pe['id_bases'],$pe['id_pext'],$datos['monto'],$presuesto_datos_anterior['id_presupuesto']);
+                if($band){//el monto ingresado no supera el porc maximo definido para el rubro dentro de la convoc
+                    if($pe['monto']>=$total+$datos['monto']){
+                        $ingresar=true;
+                    }else {
+                        $mensaje='El monto supera el total del proyecto';
+                    }
+                }else{
+                    $mensaje="El monto supera el porc maximo definido para el rubro en la convocatoria";
+                }
+            }else{//aca deberia verificar que no supere el monto del proyecto
+                if($pe['monto']>=$total+$datos['monto']){
+                        $ingresar=true;
+                }else{
+                    $mensaje='El monto supera el total del proyecto';
+                }
+            }
+            if($ingresar){
+                $datos['id_pext'] = $pe['id_pext'];
+                $this->dep('datos')->tabla('presupuesto_extension')->set($datos);
+                $this->dep('datos')->tabla('presupuesto_extension')->sincronizar();
+                $this->dep('datos')->tabla('presupuesto_extension')->resetear();
+                $this->s__mostrar_presup=0;
+            }else{
+                throw new toba_error($mensaje);
+            }
         }
         $this->s__mostrar_presup = 0;
     }
 
+//    function evt__form_presupuesto__modificacion($datos) {
+//
+//        $this->valido = false;
+//        $presuesto_datos_anterior = $this->dep('datos')->tabla('presupuesto_extension')->get();
+//        $pe = $this->dep('datos')->tabla('pextension')->get();
+//        $datos[id_pext] = $pe['id_pext'];
+//
+//        $presupuesto = $this->dep('datos')->tabla('presupuesto_extension')->get_listado_rubro($datos[id_rubro_extension]);
+//        $count = 0;
+//        foreach ($presupuesto as $value) {
+//            $count = $count + $value[monto];
+//        }
+//        $count = $count + $datos[monto] - $presuesto_datos_anterior[monto];
+//
+//        $bases = $this->dep('datos')->tabla('bases_convocatoria')->get_datos($pe[id_bases])[0];
+//        $monto_max = $bases[monto_max];
+//        $rubro = $this->dep('datos')->tabla('montos_convocatoria')->get_descripciones($datos[id_rubro_extension], $bases[id_bases])[0];
+//        if ($monto_max != 0 || !is_null($monto_max)) {
+//            if ((($pe[monto] - $presuesto_datos_anterior[monto]) + $datos[monto]) <= $monto_max) {
+//                if ($count <= $rubro[monto_max]) {
+//                    $this->dep('datos')->tabla('presupuesto_extension')->set($datos);
+//                    $this->dep('datos')->tabla('presupuesto_extension')->sincronizar();
+//                    $this->dep('datos')->tabla('presupuesto_extension')->resetear();
+//                } else {
+//                    toba::notificacion()->agregar('Se supero el monto maximo para el rubro seleccionado', 'info');
+//                }
+//            } else {
+//                $monto_restante = $monto_max - $pe[monto];
+//                toba::notificacion()->agregar('Se supero el monto maximo de presupuesto , restantes: ' . $monto_restante, 'info');
+//            }
+//        } else {
+//            $this->dep('datos')->tabla('presupuesto_extension')->set($datos);
+//            $this->dep('datos')->tabla('presupuesto_extension')->sincronizar();
+//            $this->dep('datos')->tabla('presupuesto_extension')->resetear();
+//        }
+//        $this->s__mostrar_presup = 0;
+//    }
+    
     function evt__form_presupuesto__baja() {
         $this->valido = false;
         $this->dep('datos')->tabla('presupuesto_extension')->eliminar_todo();
@@ -5094,45 +5250,6 @@ class ci_proyectos_extension extends extension_ci {
         toba::notificacion()->agregar('El presupuesto se ha eliminado correctamente.', 'info');
         $this->s__mostrar_presup = 0;
     }
-
-    function evt__form_presupuesto__modificacion($datos) {
-
-        $this->valido = false;
-        $presuesto_datos_anterior = $this->dep('datos')->tabla('presupuesto_extension')->get();
-        $pe = $this->dep('datos')->tabla('pextension')->get();
-        $datos[id_pext] = $pe['id_pext'];
-
-        $presupuesto = $this->dep('datos')->tabla('presupuesto_extension')->get_listado_rubro($datos[id_rubro_extension]);
-        $count = 0;
-        foreach ($presupuesto as $value) {
-            $count = $count + $value[monto];
-        }
-        $count = $count + $datos[monto] - $presuesto_datos_anterior[monto];
-
-        $bases = $this->dep('datos')->tabla('bases_convocatoria')->get_datos($pe[id_bases])[0];
-        $monto_max = $bases[monto_max];
-        $rubro = $this->dep('datos')->tabla('montos_convocatoria')->get_descripciones($datos[id_rubro_extension], $bases[id_bases])[0];
-        if ($monto_max != 0 || !is_null($monto_max)) {
-            if ((($pe[monto] - $presuesto_datos_anterior[monto]) + $datos[monto]) <= $monto_max) {
-                if ($count <= $rubro[monto_max]) {
-                    $this->dep('datos')->tabla('presupuesto_extension')->set($datos);
-                    $this->dep('datos')->tabla('presupuesto_extension')->sincronizar();
-                    $this->dep('datos')->tabla('presupuesto_extension')->resetear();
-                } else {
-                    toba::notificacion()->agregar('Se supero el monto maximo para el rubro seleccionado', 'info');
-                }
-            } else {
-                $monto_restante = $monto_max - $pe[monto];
-                toba::notificacion()->agregar('Se supero el monto maximo de presupuesto , restantes: ' . $monto_restante, 'info');
-            }
-        } else {
-            $this->dep('datos')->tabla('presupuesto_extension')->set($datos);
-            $this->dep('datos')->tabla('presupuesto_extension')->sincronizar();
-            $this->dep('datos')->tabla('presupuesto_extension')->resetear();
-        }
-        $this->s__mostrar_presup = 0;
-    }
-
     function evt__form_presupuesto__cancelar() {
         $this->s__mostrar_presup = 0;
         $this->dep('datos')->tabla('presupuesto_extension')->resetear();

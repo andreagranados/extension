@@ -77,6 +77,10 @@ class ci_bases extends extension_ci {
             $datos[$i][porc] = $monto[porc];
             $i = $i + 1;
         }
+        $band = $this->dep('datos')->tabla('montos_convocatoria')->menor_a_100($bases[id_bases]);
+        if($band){
+            $this->pantalla('pant_rubros')->agregar_notificacion('La suma total de porcentajes debe ser igual o mayor a 100%','error');
+        }
         $cuadro->set_datos($datos);
     }
 

@@ -480,7 +480,7 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'concepto', --identificador
 	'ef_editable_textarea', --elemento_formulario
 	'concepto', --columnas
-	'0', --obligatorio
+	'1', --obligatorio
 	'0', --oculto_relaja_obligatorio
 	'3', --orden
 	'Concepto', --etiqueta
@@ -560,7 +560,7 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'cantidad', --identificador
 	'ef_editable_numero', --elemento_formulario
 	'cantidad', --columnas
-	'0', --obligatorio
+	'1', --obligatorio
 	'0', --oculto_relaja_obligatorio
 	'4', --orden
 	'Cantidad', --etiqueta
@@ -641,7 +641,7 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'monto', --identificador
 	'ef_editable_moneda', --elemento_formulario
 	'monto', --columnas
-	'0', --obligatorio
+	'1', --obligatorio
 	'0', --oculto_relaja_obligatorio
 	'5', --orden
 	'Monto Total', --etiqueta

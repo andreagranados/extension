@@ -64,5 +64,32 @@ class dt_presupuesto_extension extends extension_datos_tabla {
                 . "order by concepto,monto";
         return toba::db('extension')->consultar($sql);
     }
+    function get_total($id_pext = null){
+        $salida=0;
+        $sql="SELECT sum(monto) as total"
+                . " FROM presupuesto_extension "
+                . " WHERE id_pext=$id_pext";
+        
+        $resultado = toba::db('extension')->consultar($sql);
+        if(count($resultado)>0){
+            if(isset($resultado[0]['total'])){
+                $salida=$resultado[0]['total'];
+            } 
+        }
+        return $salida;
+    }
+    function get_total_modif($id_pext = null,$id_presup = null){
+        $salida=0;
+        $sql="SELECT sum(monto) as total"
+                . " FROM presupuesto_extension "
+                . " WHERE id_pext=$id_pext"
+                . " and id_presupuesto<>$id_presup ";
+        
+        $resultado = toba::db('extension')->consultar($sql);
+        if(isset($resultado[0]['total'])){
+           $salida=$resultado[0]['total'];
+        }
+        return $salida;
+    }
 
 }

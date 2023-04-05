@@ -237,7 +237,7 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'fecha_lim_modif', --identificador
 	'ef_editable_fecha', --elemento_formulario
 	'fecha_lim_modif', --columnas
-	'0', --obligatorio
+	'1', --obligatorio
 	'0', --oculto_relaja_obligatorio
 	'16', --orden
 	'Fecha Limite Envio Modif', --etiqueta
@@ -1120,7 +1120,7 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'bases_titulo', --identificador
 	'ef_editable', --elemento_formulario
 	'bases_titulo', --columnas
-	'0', --obligatorio
+	'1', --obligatorio
 	'0', --oculto_relaja_obligatorio
 	'1', --orden
 	'Bases titulo', --etiqueta
@@ -1280,7 +1280,7 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'tipo_convocatoria', --identificador
 	'ef_combo', --elemento_formulario
 	'tipo_convocatoria', --columnas
-	'0', --obligatorio
+	'1', --obligatorio
 	'0', --oculto_relaja_obligatorio
 	'2', --orden
 	'Tipo convocatoria', --etiqueta
@@ -1360,7 +1360,7 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'fecha_desde', --identificador
 	'ef_editable_fecha', --elemento_formulario
 	'fecha_desde', --columnas
-	'0', --obligatorio
+	'1', --obligatorio
 	'0', --oculto_relaja_obligatorio
 	'14', --orden
 	'Fecha desde', --etiqueta
@@ -1440,7 +1440,7 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'fecha_hasta', --identificador
 	'ef_editable_fecha', --elemento_formulario
 	'fecha_hasta', --columnas
-	'0', --obligatorio
+	'1', --obligatorio
 	'0', --oculto_relaja_obligatorio
 	'15', --orden
 	'Fecha hasta', --etiqueta
@@ -1520,7 +1520,7 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'duracion_convocatoria', --identificador
 	'ef_editable_numero', --elemento_formulario
 	'duracion_convocatoria', --columnas
-	'0', --obligatorio
+	'1', --obligatorio
 	'0', --oculto_relaja_obligatorio
 	'12', --orden
 	'Duración en años', --etiqueta
@@ -1680,8 +1680,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'monto_max', --identificador
 	'ef_editable_moneda', --elemento_formulario
 	'monto_max', --columnas
-	'0', --obligatorio
-	'0', --oculto_relaja_obligatorio
+	'1', --obligatorio
+	'1', --oculto_relaja_obligatorio
 	'10', --orden
 	'Monto Maximo', --etiqueta
 	NULL, --etiqueta_estilo

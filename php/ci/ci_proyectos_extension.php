@@ -916,21 +916,27 @@ class ci_proyectos_extension extends extension_ci {
         $id_pext = $this->dep('datos')->tabla('pextension')->get()['id_pext'];
         return $this->dep('datos')->tabla('objetivo_especifico')->get_descripcion($id_pext);
     }
-
+//retorna el monto maximo posible para ese rubro, de acuerdo a lo definido en la convocatoria
     function monto_rubro($id_rubro_extension) {
         $pe = $this->dep('datos')->tabla('pextension')->get();
         $bases = $this->dep('datos')->tabla('bases_convocatoria')->get_datos($pe[id_bases])[0];
         $monto = $this->dep('datos')->tabla('montos_convocatoria')->get_descripciones($id_rubro_extension, $bases[id_bases])[0];
         if ($bases[monto_max] != 0) {
-            $presupuesto = $this->dep('datos')->tabla('presupuesto_extension')->get_listado_rubro($id_rubro_extension);
-            $count = 0;
-            foreach ($presupuesto as $value) {
-                $count = $count + $value[monto];
+           if(isset($pe['monto']) and isset($monto['porc'])){
+               return $pe['monto']*$monto['porc']/100;
+            }else{
+                return 'No disponible';
             }
-            return ($monto[monto_max] - $count);
         } else {
-            return 'No existe monto maximo';
+            return 'No hay limite para el rubro';
         }
+    }
+    //monto maximo posible para ese rubro menos lo que ya tiene cargado del rubro
+    function monto_maximo_restante($id_rubro_extension) {
+        $mont=$this->monto_rubro($id_rubro_extension);
+        $pe = $this->dep('datos')->tabla('pextension')->get();
+        $total = $this->dep('datos')->tabla('presupuesto_extension')->get_total_rubro($pe['id_pext'],$id_rubro_extension);
+        return $mont-$total;
     }
     function convocatorias() {
         return $this->dep('datos')->tabla('bases_convocatoria')->get_convocatorias_vigentes();
@@ -1576,7 +1582,7 @@ class ci_proyectos_extension extends extension_ci {
     function conf__form_alta_proyecto(toba_ei_formulario $form) {
         
     }
-
+//crea el proyecto la primera vez
     function evt__form_alta_proyecto__alta($datos) {
 
         $perfil = toba::usuario()->get_perfil_datos();
@@ -1588,6 +1594,7 @@ class ci_proyectos_extension extends extension_ci {
 
         //Cambio de estado a en formulacion ( ESTADO INICIAL )
         $datos[id_estado] = 'FORM';
+        $datos[monto] = 0;
         $datos[fec_carga] = date('Y-m-d');
         $bases = $this->dep('datos')->tabla('bases_convocatoria')->get_datos($datos[id_bases])[0];
 
@@ -3345,8 +3352,12 @@ class ci_proyectos_extension extends extension_ci {
 //    }
 
     function evt__formulario__modificacion($datos) {
+        if(!isset($datos['monto'])){//sino trae valor le asigna $0
+            $datos['monto']=0;
+        }
         $this->valido = false;
         $mensaje='';
+        $cartel='';
         //Obtengo los datos del proyecto cargado
         $datos_pe = $this->dep('datos')->tabla('pextension')->get();
         if($datos_pe['id_estado']=='FORM' or $datos_pe['id_estado']=='MODF'){//solo en estos estados puede modificar
@@ -3359,6 +3370,10 @@ class ci_proyectos_extension extends extension_ci {
             }
         }
         if($mensaje==''){//guardo
+            if($datos['monto']<>$datos_pe['monto']){//esta modificando el monto del proyecto
+                $cartel="Usted a modificado el monto del proyecto. El monto de los items del presupuesto se ha modificado a $0. Debe reasignar los montos del presupuesto.";
+                $this->dep('datos')->tabla('presupuesto_extension')->resetear_montos($datos_pe['id_pext']);
+            }
             //Obtengo datos de integrantes externos cargados
             $datos_integrantes_e = $this->dep('datos')->tabla('integrante_externo_pe')->get_listado($datos_pe['id_pext']);
             //Obtengo datos de integrantes internos cargados
@@ -3437,10 +3452,12 @@ class ci_proyectos_extension extends extension_ci {
 
             $this->dep('datos')->tabla('pextension')->set($datos);
             $this->dep('datos')->tabla('pextension')->sincronizar();
+            if($cartel<>''){
+                toba::notificacion()->agregar($cartel, 'info');
+            }
         }else{
             throw new toba_error(utf8_decode($mensaje));    
         }
-        
     }
 
     // ACTUALMENTE INHABILITADO -> HABILIDARLO PARA ADMIN
@@ -5003,18 +5020,12 @@ class ci_proyectos_extension extends extension_ci {
 
     function conf__cuadro_presup(toba_ei_cuadro $cuadro) {
         $pe = $this->dep('datos')->tabla('pextension')->get();
+        $total=$this->dep('datos')->tabla('presupuesto_extension')->get_total($pe['id_pext']);//total del presupuesto
+        
+        if($total<>$pe['monto']){
+            $this->pantalla('pant_presupuesto')->agregar_notificacion('La suma total de los presupuestos asociados al proyecto debe ser igual al monto del proyecto','error');
+        }
         $cuadro->set_datos($this->dep('datos')->tabla('presupuesto_extension')->get_listado($pe['id_pext']));
-
-        // MONTO DECLARADO 
-//        $datos = $cuadro->get_datos();
-//        $monto = 0;
-//        foreach ($datos as $dato) {
-//            $monto = $monto + $dato[monto];
-//        }
-//        $pe[monto] = $monto;
-//
-//        $this->dep('datos')->tabla('pextension')->set($pe);
-//        $this->dep('datos')->tabla('pextension')->sincronizar();
     }
 
     function conf__cuadro_uni_acad(toba_ei_cuadro $cuadro) {
@@ -5067,8 +5078,6 @@ class ci_proyectos_extension extends extension_ci {
         if ($this->s__mostrar_presup == 1) {
             $pext = $this->dep('datos')->tabla('pextension')->get();
             $estado = $pext[id_estado];
-
-
             // si presiono el boton enviar no puede editar nada mas 
             if (($estado != 'FORM' && $estado != 'MODF') || $perfil != 'formulador') {
                 $this->dep('form_presupuesto')->set_solo_lectura();

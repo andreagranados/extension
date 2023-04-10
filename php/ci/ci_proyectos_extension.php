@@ -1150,16 +1150,28 @@ class ci_proyectos_extension extends extension_ci {
             $pextension = $this->dep('datos')->tabla('pextension')->get();
 
             $bases = $this->dep('datos')->tabla('bases_convocatoria')->get_datos($pextension['id_bases'])[0];
-
             /* Listado condiciones carga :
              * 1) Director 
              * 2) Co Director
              * 3) al menos un destinatario 
              */
-
-            //obtengo director 
-            if (!is_null($pextension['id_bases']) && strcasecmp(date('Y-m-d'), date('Y-m-d', strtotime($bases['fecha_hasta']))) <= 0) {
-
+            $cambiar=false;
+            if($pextension['id_estado']=='FORM'){
+                    if(date('Y-m-d')<=date('Y-m-d', strtotime($bases['fecha_hasta']))){
+                       $cambiar=true;
+                    }else{
+                       toba::notificacion()->agregar(utf8_decode("No hay una convocatoria seleccionada o se vencio el plazo de la misma"), "info"); 
+                    }
+            }else{
+                if($pextension['id_estado']=='MODF'){
+                   if(date('Y-m-d')<=date('Y-m-d',strtotime($bases['fecha_lim_modif']))){
+                        $cambiar=true;
+                    }else{
+                        toba::notificacion()->agregar(utf8_decode("Vencio el plazo para envio de proyectos en estado En Modificacion"), "info"); 
+                    } 
+                }
+            }
+            if($cambiar){
                 $pextension[id_estado] = 'EUA ';
                 $where = array();
                 $where[uni_acad] = $pextension[uni_acad];
@@ -1167,13 +1179,6 @@ class ci_proyectos_extension extends extension_ci {
 
                 $this->dep('datos')->tabla('pextension')->set($pextension);
                 $this->dep('datos')->tabla('pextension')->sincronizar();
-
-                /*
-                 * rol
-                 * id_pext (lo obtengo dentro de la función)
-                 * tipo_solicitud
-                 * tipo_cambio
-                 */
 
                 // cancelo alerta si existe por modificacion
                 $claves[rol] = 'formulador';
@@ -1200,9 +1205,52 @@ class ci_proyectos_extension extends extension_ci {
                     //Se generó algún error al guardar en la BD
                     toba::notificacion()->agregar(utf8_decode("Error al enviar la información, verifique su conexión a internet"), "info");
                 }
-            } else {
-                toba::notificacion()->agregar(utf8_decode("No hay una convocatoria seleccionada o se vencio el plazo de la misma"), "info");
             }
+//            if (!is_null($pextension['id_bases']) && strcasecmp(date('Y-m-d'), date('Y-m-d', strtotime($bases['fecha_hasta']))) <= 0) {
+//
+//                $pextension[id_estado] = 'EUA ';
+//                $where = array();
+//                $where[uni_acad] = $pextension[uni_acad];
+//                $where[id_pext] = $pextension[id_pext];
+//
+//                $this->dep('datos')->tabla('pextension')->set($pextension);
+//                $this->dep('datos')->tabla('pextension')->sincronizar();
+//
+//                /*
+//                 * rol
+//                 * id_pext (lo obtengo dentro de la función)
+//                 * tipo_solicitud
+//                 * tipo_cambio
+//                 */
+//
+//                // cancelo alerta si existe por modificacion
+//                $claves[rol] = 'formulador';
+//                $claves[tipo_cambio] = utf8_decode('EVALUACIÓN MODIFICACIÓN');
+//                $claves[tipo_solicitud] = utf8_decode('PROYECTO');
+//
+//                $this->alerta_finalizada($claves);
+//
+//                $pextension = $this->dep('datos')->tabla('pextension')->get_datos($where);
+//                if (($pextension[0][id_estado] == 'EUA ') == 1) {//Obtengo de la BD y verifico que hizo cambios en la BD
+//                    //Se enviaron correctamente los datos
+//                    toba::notificacion()->agregar(utf8_decode("Los datos fueron enviados con éxito"), "info");
+//                    // Crear Alerta UA
+//                    $alerta = array();
+//                    $alerta['rol'] = "sec_ext_ua";
+//                    $alerta['id_pext'] = $pextension[0]['id_pext'];
+//                    $alerta['tipo'] = "Evaluacion UA";
+//                    $alerta['tipo_cambio'] = utf8_decode('EVALUACIÓN UA');
+//                    $alerta['tipo_solicitud'] = utf8_decode('PROYECTO');
+//                    $alerta['descripcion'] = "El proyecto solicita ser evaluado por la Unidad Academica";
+//
+//                    $this->alerta_creada($alerta);
+//                } else {
+//                    //Se generó algún error al guardar en la BD
+//                    toba::notificacion()->agregar(utf8_decode("Error al enviar la información, verifique su conexión a internet"), "info");
+//                }
+//            } else {
+//                toba::notificacion()->agregar(utf8_decode("No hay una convocatoria seleccionada o se vencio el plazo de la misma"), "info");
+//            }
         }
     }
 
@@ -3369,9 +3417,13 @@ class ci_proyectos_extension extends extension_ci {
                 }   
             }
         }
-        if($mensaje==''){//guardo
-            if($datos['monto']<>$datos_pe['monto']){//esta modificando el monto del proyecto
-                $cartel="Usted a modificado el monto del proyecto. El monto de los items del presupuesto se ha modificado a $0. Debe reasignar los montos del presupuesto.";
+        if($mensaje==''){//guardar los cambios
+            if($datos['monto']<>$datos_pe['monto'] or $datos['id_bases']<>$datos_pe['id_bases']){//esta modificando el monto del proyecto o la convocatoria
+                if($datos['monto']<>$datos_pe['monto']){
+                    $cartel="Usted a modificado el monto del proyecto. El monto de los items del presupuesto se ha modificado a $0. Debe reasignar los montos del presupuesto.";
+                }else{
+                    $cartel="Usted a modificado la convocatoria del proyecto. El monto de los items del presupuesto se ha modificado a $0. Debe reasignar los montos del presupuesto.";
+                }
                 $this->dep('datos')->tabla('presupuesto_extension')->resetear_montos($datos_pe['id_pext']);
             }
             //Obtengo datos de integrantes externos cargados

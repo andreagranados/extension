@@ -37,15 +37,17 @@ class dt_solicitud extends extension_datos_tabla {
         return toba::db('extension')->consultar($sql);
     }
 
-    function get_listado($id_pext = null , $where = null) {
-        $sql = "SELECT tipo_solicitud,fecha_solicitud ,estado_solicitud, tipo_cambio "
-                . "FROM solicitud "
-                . "WHERE id_pext = $id_pext ";
+     function get_listado($id_pext = null , $where = null) {
+        $sql = "SELECT s.id_pext,s.tipo_solicitud,t.descripcion as tipo_solicitud_desc,fecha_solicitud ,estado_solicitud, s.tipo_cambio,c.descripcion as tipo_cambio_desc "
+                . "FROM solicitud s, tipo_solicitud t, tipo_cambio c"
+                . " WHERE id_pext = $id_pext "
+                . " and s.tipo_solicitud=t.id_tipo"
+                . " and s.tipo_cambio=c.id_tipo_cambio";
         if (!is_null($where)) {
-            $sql .= "AND $where ";
+            $sql .= " AND $where ";
         }
 
-        $sql .= "ORDER BY tipo_solicitud";
+        $sql .= " ORDER BY tipo_solicitud";
         return toba::db('extension')->consultar($sql);
     }
 

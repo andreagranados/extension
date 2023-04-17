@@ -9,21 +9,19 @@ class form_solicitud_ocultar_mostrar extends toba_ei_formulario {
                     
                 {$id_js}.evt__tipo_solicitud__procesar = function(es_inicial) 
                 {
-                    this.ef('cambio_integrante').ocultar();
-                    this.ef('cambio_proyecto').ocultar();
                     
                     switch (this.ef('tipo_solicitud').get_estado()) {
-                        case 'INTEGRANTE':
-                            this.ef('cambio_integrante').mostrar();
+                        case 'I':
+                            
                             this.ef('estado_solicitud_aux1').mostrar();
                             this.ef('recibido').mostrar();
                             this.ef('estado_solicitud_aux2').ocultar();
-                            
+
                             this.ef('barra1_aux').ocultar();
                             this.ef('barra2_aux').ocultar();
                             break;
-                        case 'PROYECTO':
-                            this.ef('cambio_proyecto').mostrar();
+                        case 'P':
+                            
                             this.ef('estado_solicitud_aux2').mostrar();
                             this.ef('recibido').mostrar();
                             this.ef('estado_solicitud_aux1').ocultar();
@@ -41,6 +39,7 @@ class form_solicitud_ocultar_mostrar extends toba_ei_formulario {
                             this.ef('barra1_aux').ocultar();
                             this.ef('barra2_aux').ocultar();
                             this.ef('recibido').ocultar();
+                            this.ef('fecha_dictamen').ocultar();/*andrea*/
                             break;
                             
                     }
@@ -48,27 +47,25 @@ class form_solicitud_ocultar_mostrar extends toba_ei_formulario {
 		
 		{$id_js}.evt__recibido__procesar = function(es_inicial) 
                 {
-
                     if(this.ef('recibido').chequeado())
                     {
                         switch (this.ef('tipo_solicitud').get_estado()) {
-                            case 'INTEGRANTE':
+                            case 'I':
                                 this.ef('descrip_ua').mostrar();
                                 this.ef('estado_solicitud_aux1').mostrar();
                                 
                                 break;
-                            case 'PROYECTO':
+                            case 'P':
                                     this.ef('descrip_ua').ocultar();
                                     this.ef('estado_solicitud_aux2').mostrar();
                                 break;
                             default:
+                                    
                                 break;
                         }
                         this.ef('fecha_solicitud').mostrar();
                         this.ef('fecha_recepcion').mostrar();
                         
-                        
-
                     }else{
                         this.ef('descrip_ua').ocultar();
                         this.ef('fecha_solicitud').ocultar();
@@ -81,7 +78,6 @@ class form_solicitud_ocultar_mostrar extends toba_ei_formulario {
                         this.ef('fecha_dictamen').ocultar();
                         this.ef('estado_solicitud_aux1').ocultar();
                         this.ef('estado_solicitud_aux2').ocultar();
-
                     }
                 }
                 
@@ -104,9 +100,9 @@ class form_solicitud_ocultar_mostrar extends toba_ei_formulario {
                                             this.ef('fecha_dictamen').mostrar();
                                             this.ef('obs_resolucion').mostrar();
                                             this.ef('descrip_ua').mostrar();
-
                                             this.ef('fecha_fin_prorroga').ocultar();
                                             this.ef('id_estado').ocultar();
+                                            
                                             break;
                                     case 'Enviada':
                                             this.ef('nro_acta').ocultar();
@@ -123,8 +119,8 @@ class form_solicitud_ocultar_mostrar extends toba_ei_formulario {
                                             this.ef('fecha_dictamen').ocultar();
                                             break;
                                     default:
-                                            
-                                            
+                                            this.ef('fecha_dictamen').ocultar();/*andrea*/
+                            
                                            break;
                     }
                 }
@@ -138,21 +134,17 @@ class form_solicitud_ocultar_mostrar extends toba_ei_formulario {
                                             this.ef('obs_resolucion').mostrar();
                                             this.ef('fecha_fin_prorroga').ocultar();
                                             this.ef('descrip_ua').ocultar();
-
-                                            switch (this.ef('cambio_proyecto').get_estado()) {
-                                                    case 'BAJA':
+                                            switch (this.ef('tipo_cambio').get_estado()) {
+                                                    case 'B':
                                                         this.ef('id_estado').mostrar();
                                                     break;
-
-                                                    case 'PRORROGA': 
+                                                    case 'P': 
                                                             this.ef('fecha_fin_prorroga').mostrar();
                                                             this.ef('id_estado').mostrar();
                                                     break;
-
-                                                    case 'FINALIZACION':
+                                                    case 'F':
                                                         this.ef('id_estado').mostrar();
                                                     break;
-
                                                     default:
                                                         this.ef('id_estado').ocultar();
                                                     break;
@@ -162,10 +154,8 @@ class form_solicitud_ocultar_mostrar extends toba_ei_formulario {
                                             this.ef('nro_acta').mostrar(); 
                                             this.ef('fecha_dictamen').mostrar();
                                             this.ef('obs_resolucion').mostrar();
-
                                             this.ef('fecha_fin_prorroga').ocultar();
                                             this.ef('id_estado').ocultar();
-
                                             break;
                                     case 'Enviada':
                                             this.ef('nro_acta').ocultar();
@@ -174,7 +164,7 @@ class form_solicitud_ocultar_mostrar extends toba_ei_formulario {
                                             this.ef('id_estado').ocultar();
                                             this.ef('fecha_dictamen').ocultar();
                                             this.ef('descrip_ua').ocultar();
-                                            
+                                            this.ef('estado_solicitud_aux2').ocultar();
                                             break;
                                     case 'Recibida':
                                             this.ef('nro_acta').ocultar();
@@ -185,15 +175,16 @@ class form_solicitud_ocultar_mostrar extends toba_ei_formulario {
                                             this.ef('descrip_ua').ocultar();
                                             break;
                                     default:
-   
+                                            this.ef('fecha_dictamen').ocultar();/*andrea*/
                                            break;
                     }
                 }
                 
+          
                 
                 ";
     }
 
 }
 
-?>
+?>                                                                                               

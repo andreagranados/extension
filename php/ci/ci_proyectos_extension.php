@@ -936,8 +936,14 @@ class ci_proyectos_extension extends extension_ci {
         $mont=$this->monto_rubro($id_rubro_extension);
         $pe = $this->dep('datos')->tabla('pextension')->get();
         $total = $this->dep('datos')->tabla('presupuesto_extension')->get_total_rubro($pe['id_pext'],$id_rubro_extension);
-        return $mont-$total;
+        $total_usado = $this->dep('datos')->tabla('presupuesto_extension')->get_total($pe['id_pext']);
+        if(($mont-$total)<=$pe['monto']-$total_usado){
+            return $mont-$total;
+        } else{
+            return $pe['monto']-$total_usado;
+	};
     }
+    
     function convocatorias() {
         return $this->dep('datos')->tabla('bases_convocatoria')->get_convocatorias_vigentes();
     }
@@ -2566,14 +2572,6 @@ class ci_proyectos_extension extends extension_ci {
     }
 
     function evt__cuadro_solicitud__seleccion($datos) {
-
-        $pe = $this->dep('datos')->tabla('pextension')->get();
-        $datos['id_pext'] = $pe['id_pext'];
-        //$datos['id_estado'] = $pe['id_estado'];
-
-        $datos = $this->dep('datos')->tabla('solicitud')->get_solicitud($datos)[0];
-
-
         $this->set_pantalla('pant_solicitud');
         $this->dep('datos')->tabla('solicitud')->cargar($datos);
         $this->s_mostrar_solicitud = 1;
@@ -2582,124 +2580,97 @@ class ci_proyectos_extension extends extension_ci {
     //------------------------- FORMULARIO SOLICITUDES  -----------------------------
 
     function conf__form_solicitud(toba_ei_formulario $form) {
-
         $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
+        
         $pe = $this->dep('datos')->tabla('pextension')->get();
         $estado = $pe[id_estado];
 
         if ($this->s_mostrar_solicitud == 1) {
             // si presiono el boton enviar no puede editar nada mas 
-            if ($estado != 'APRB' && $estado != 'PRG ') {
-                if ($perfil != 'sec_ext_central') {
-                    $this->dep('form_solicitud')->evento('modificacion')->ocultar();
-                    $this->dep('form_solicitud')->set_solo_lectura();
-                }
-                $this->dep('form_solicitud')->evento('baja')->ocultar();
-                $this->dep('form_solicitud')->evento('enviar')->ocultar();
-            }
-
-
-            if ($perfil != 'formulador') {
-                // Formulador
-                $form->ef('tipo_solicitud')->set_solo_lectura();
-                $form->ef('cambio_integrante')->set_solo_lectura();
-                $form->ef('cambio_proyecto')->set_solo_lectura();
-                $form->ef('motivo')->set_solo_lectura();
-            } else {
-                $form->ef('recibido')->set_solo_lectura();
-                $form->ef('estado_solicitud_aux1')->set_solo_lectura();
-                $form->ef('estado_solicitud_aux2')->set_solo_lectura();
-            }
-
-            $form->ef('fecha_solicitud')->set_solo_lectura();
-            $form->ef('fecha_recepcion')->set_solo_lectura();
-            $form->ef('id_estado')->set_solo_lectura();
-            $this->controlador()->evento('alta')->ocultar();
             $this->dep('form_solicitud')->descolapsar();
         } else {
             $this->dep('form_solicitud')->colapsar();
         }
-
-
-
         if ($this->dep('datos')->tabla('solicitud')->esta_cargada()) {
             $datos = $this->dep('datos')->tabla('solicitud')->get();
-            if (!is_null($datos['estado_solicitud']) && $datos[tipo_solicitud] == 'PROYECTO') {
-                $datos['estado_solicitud_aux2'] = $datos['estado_solicitud'];
-                unset($datos['estado_solicitud_aux1']);
-            } elseif (!is_null($datos['estado_solicitud'])) {
-                $datos['estado_solicitud_aux1'] = $datos['estado_solicitud'];
-                unset($datos['estado_solicitud_aux2']);
+            
+            switch ($datos['tipo_solicitud']) {
+                case 'P':
+                    $datos['estado_solicitud_aux2']=$datos['estado_solicitud'];
+                    $datos['estado_solicitud_aux1']=null;
+                    $this->dep('form_solicitud')->desactivar_efs(['barra1','barra2','barra2_aux','descrip_ua']);
+                    break;
+                case 'I':
+                    $datos['estado_solicitud_aux1']=$datos['estado_solicitud'];
+                    $datos['estado_solicitud_aux2']=null;
+                    $this->dep('form_solicitud')->desactivar_efs(['barra1_aux','barra2_aux']);
+                    break;
+                default:
+                    break;
             }
-
-            if ($perfil != 'sec_ext_central') {
-                // Secretaria Central
-
-                $form->ef('nro_acta')->set_solo_lectura();
-                $form->ef('fecha_dictamen')->set_solo_lectura();
-                $form->ef('obs_resolucion')->set_solo_lectura();
-                $form->ef('fecha_fin_prorroga')->set_solo_lectura();
-                $form->ef('estado_solicitud_aux2')->set_solo_lectura();
-            }
-            if ($perfil != 'sec_ext_ua') {
-                // Secretaria UA
-                if ($datos[tipo_solicitud] == 'PROYECTO' && $perfil == 'sec_ext_central') {
-                    $form->ef('estado_solicitud_aux1')->set_solo_lectura();
-                    $form->ef('descrip_ua')->set_solo_lectura();
-                } else {
-                    $form->ef('recibido')->set_solo_lectura();
-                    $form->ef('fecha_solicitud')->set_solo_lectura();
-                    $form->ef('fecha_recepcion')->set_solo_lectura();
-                    $form->ef('estado_solicitud_aux1')->set_solo_lectura();
-                    $form->ef('descrip_ua')->set_solo_lectura();
-                }
-            } elseif ($datos[tipo_solicitud] == 'PROYECTO') {
-                $form->ef('recibido')->set_solo_lectura();
-                $form->ef('fecha_solicitud')->set_solo_lectura();
-                $form->ef('fecha_recepcion')->set_solo_lectura();
-                $form->ef('estado_solicitud_aux1')->set_solo_lectura();
-                $form->ef('descrip_ua')->set_solo_lectura();
-            }
-
-
-            $datos[id_estado] = $estado;
-
-            if ($datos[estado_solicitud] != "Formulacion") {
+//           
+            if($datos['estado_solicitud']!='Formulacion'){//solo en estado formulacion aparecen los botones enviar y baja
+                
                 $this->dep('form_solicitud')->evento('baja')->ocultar();
-                $this->dep('form_solicitud')->evento('enviar')->ocultar();
-
-                if ($perfil == 'sec_ext_central') {
-                    if ($datos[tipo_solicitud] != 'PROYECTO') {
-                        if (($datos[estado_solicitud] != "Aceptada" && $datos[estado_solicitud] != "Rechazada")) {
-                            $this->dep('form_solicitud')->evento('modificacion')->ocultar();
-                        }
-                    } else {
-                        if (($datos[estado_solicitud] == "Aceptada" || $datos[estado_solicitud] == "Rechazada")) {
-                            $form->ef('estado_solicitud_aux2')->set_solo_lectura();
+                $this->dep('form_solicitud')->evento('enviar')->ocultar();  
+                if($perfil == 'formulador'){//oculta el boton modificar para el formulador cuando la solicitud ya no esta en formulacion
+                    $this->dep('form_solicitud')->evento('modificacion')->ocultar();  
+                }
+                
+                if($datos['tipo_solicitud']=='P'){
+                    if($datos['estado_solicitud']=='Enviada'){                
+                        $this->dep('form_solicitud')->desactivar_efs(['estado_solicitud_aux2']);
+                        $this->dep('form_solicitud')->desactivar_efs(['estado_solicitud_aux1']);
+                        $this->dep('form_solicitud')->desactivar_efs(['nro_acta']);
+                        $this->dep('form_solicitud')->desactivar_efs(['fecha_dictamen']);
+                        $this->dep('form_solicitud')->desactivar_efs(['obs_resolucion']);
+                        $this->dep('form_solicitud')->desactivar_efs(['fecha_fin_prorroga']);
+                    }else{
+                        
+                        if($datos['estado_solicitud']=='Recibida'){//si ya recibio no puede tocar
+                           $this->dep('form_solicitud')->desactivar_efs(['estado_solicitud_aux1']);
+                           $form->ef('recibido')->set_solo_lectura();
+                           $form->ef('fecha_solicitud')->set_solo_lectura();
+                           $form->ef('fecha_recepcion')->set_solo_lectura();
+                        }else{
+                            if($datos['estado_solicitud']=='Aceptada' or $datos['estado_solicitud']=='Rechazada'){
+                                $this->dep('form_solicitud')->desactivar_efs(['estado_solicitud_aux1']);
+                                $form->ef('recibido')->set_solo_lectura();
+                                $form->ef('fecha_solicitud')->set_solo_lectura();
+                                $form->ef('fecha_recepcion')->set_solo_lectura();
+                                $form->ef('nro_acta')->set_solo_lectura();
+                                $form->ef('fecha_dictamen')->set_solo_lectura();
+                                $form->ef('obs_resolucion')->set_solo_lectura();
+                               
+                            }
                         }
                     }
-                } elseif ($perfil == 'formulador') {
-                    $this->dep('form_solicitud')->evento('modificacion')->ocultar();
-                    $form->ef('tipo_solicitud')->set_solo_lectura();
-                    $form->ef('cambio_integrante')->set_solo_lectura();
-                    $form->ef('cambio_proyecto')->set_solo_lectura();
-                    $form->ef('motivo')->set_solo_lectura();
-                } elseif ($perfil == 'sec_ext_ua') {
-                    if ($datos[estado_solicitud] == "Aceptada" || $datos[estado_solicitud] == "Rechazada") {
-                        $this->dep('form_solicitud')->evento('modificacion')->ocultar();
-                        $form->ef('recibido')->set_solo_lectura();
-                        $form->ef('descrip_ua')->set_solo_lectura();
-                        $form->ef('estado_solicitud_aux1')->set_solo_lectura();
-                    }
+                }              
+            }else{//en estado "formulacion", central no puede modificar la solicitud
+                if($perfil == 'sec_ext_central'){
+                    $this->dep('form_solicitud')->evento('modificacion')->ocultar();  
+                }
+                 $this->dep('form_solicitud')->desactivar_efs(['barra1_aux','recibido','fecha_solicitud','nro_acta','obs_resolucion','fecha_recepcion','fecha_dictamen','estado_solicitud_aux1','estado_solicitud_aux2']);
+                 $this->dep('form_solicitud')->desactivar_efs(['fecha_fin_prorroga']);
+            }
+            if($perfil == 'sec_ext_ua' and $datos['tipo_solicitud']=='P'){
+                    $this->dep('form_solicitud')->evento('modificacion')->ocultar();  
+            }
+            //una vez que la solicitud fue aceptada o rechazada entonces central ya no ve el boton modificacion
+            if($datos['estado_solicitud']=='Aceptada' || $datos['estado_solicitud']=='Rechazada'){
+                if($perfil == 'sec_ext_central'){
+                 $this->dep('form_solicitud')->evento('modificacion')->ocultar();
+                 $form->ef('recibido')->set_solo_lectura();
+                 $form->ef('descrip_ua')->set_solo_lectura();
+                 $form->ef('estado_solicitud_aux2')->set_solo_lectura();
                 }
             }
-        } else {
-            $this->dep('form_solicitud')->evento('enviar')->ocultar();
+            
+            $form->set_datos($datos);
+        } else{//no esta cargada entonces ingresa la solicitud por primera vez
+            $this->dep('form_solicitud')->desactivar_efs(['barra1','barra1_aux','recibido','fecha_solicitud','fecha_recepcion','descrip_ua','estado_solicitud_aux1','barra2','barra2_aux','estado_solicitud_aux2','nro_acta','fecha_dictamen','obs_resolucion','fecha_fin_prorroga']);
         }
-
-        $form->set_datos($datos);
     }
-
     function evt__form_solicitud__alta($datos) {
 
         $pe = $this->dep('datos')->tabla('pextension')->get();
@@ -2730,13 +2701,10 @@ class ci_proyectos_extension extends extension_ci {
                 }
             }
         }
-
-        unset($datos[id_estado]);
         unset($datos[nro_acta_resolucion]);
         unset($datos[num_acta_prorroga]);
         unset($datos[observacion_prorroga]);
         unset($datos[fecha_fin_prorroga]);
-        unset($datos[id_estado]);
         unset($datos[barra]);
         unset($datos[barra1]);
         unset($datos[barra1_aux]);
@@ -2747,23 +2715,15 @@ class ci_proyectos_extension extends extension_ci {
 
         if ($carga) {
             $tipo_cambio_correcto = false;
-            if (!is_null($datos['cambio_proyecto'])) {
-                $datos['tipo_cambio'] = $datos['cambio_proyecto'];
+
+            if(!is_null($datos['tipo_cambio'])){
                 $tipo_cambio_correcto = true;
-            } else {
-                if (!is_null($datos['cambio_integrante'])) {
-                    $datos['tipo_cambio'] = $datos['cambio_integrante'];
-                    $tipo_cambio_correcto = true;
-                }
             }
             if ($tipo_cambio_correcto) {
                 $this->dep('datos')->tabla('solicitud')->set($datos);
                 $this->dep('datos')->tabla('solicitud')->sincronizar();
-                $this->dep('datos')->tabla('solicitud')->cargar($datos);
-
-                $solicitud = $this->dep('datos')->tabla('solicitud')->get();
-
-
+                $this->dep('datos')->tabla('solicitud')->resetear();
+                $this->s_mostrar_solicitud = 0;
                 toba::notificacion()->agregar('La solicitud se registro correctamente', 'info');
             } else {
                 toba::notificacion()->agregar('Falta agregar el tipo de cambio', 'info');
@@ -2774,53 +2734,70 @@ class ci_proyectos_extension extends extension_ci {
     }
 
     function evt__form_solicitud__modificacion($datos) {
-
+      if ($this->dep('datos')->tabla('solicitud')->esta_cargada()) {
+        $sol = $this->dep('datos')->tabla('solicitud')->get();
+        $datos['id_pext']=$sol['id_pext'];
+        $datos['fecha_solicitud']=$sol['fecha_solicitud'];
+        $datos['estado_solicitud']=$sol['estado_solicitud'];
         $pe = $this->dep('datos')->tabla('pextension')->get();
         unset($pe[x_dbr_clave]);
 
-        if (is_null($datos['estado_solicitud_aux2'])) {
-            $datos['estado_solicitud'] = $datos['estado_solicitud_aux1'];
-        } else {
-            $datos['estado_solicitud'] = $datos['estado_solicitud_aux2'];
-        }
-
-        if ($datos[estado_solicitud_aux2] == 'Aceptada' && $datos[tipo_solicitud] == 'PROYECTO') {
-            switch ($datos[cambio_proyecto]) {
-                case 'BAJA':
+        if($datos['estado_solicitud']!='Formulacion'){
+             if (is_null($datos['estado_solicitud_aux2'])) {
+                 if(isset($datos['estado_solicitud_aux1'])){
+                    $datos['estado_solicitud'] = $datos['estado_solicitud_aux1'];
+                 }
+                } else {
+                    if(isset($datos['estado_solicitud_aux2'])){
+                     $datos['estado_solicitud'] = $datos['estado_solicitud_aux2'];   
+                    }
+                } 
+               
+        }//si el estado es Formulacion entonces no puede cambiar estado de la solicitud
+        $band=false;
+        if ($datos['estado_solicitud_aux2'] == 'Aceptada' && $datos['tipo_solicitud'] == 'P') {
+            switch ($datos['tipo_cambio']) {
+                case 'B'://baja
                     $pe[id_estado] = 'BAJA';
+                    $mensaje=" El proyecto ha sido dado de baja correctamente";
+                    $band=true;
                     break;
 
-                case 'PRORROGA':
+                case 'P'://prorroga
                     $pe[id_estado] = 'PRG ';
                     $pe[fec_hasta] = $datos[fecha_fin_prorroga];
+                    $mensaje=" El proyecto ha sido prorrogado correctamente";
+                    $band=true;
                     break;
 
-                case 'FINALIZACION':
+                case 'F'://finalizacion
                     $pe['id_estado'] = 'FIN ';
+                    $mensaje=" El proyecto ha sido finalizado correctamente";
+                    $band=true;
                     break;
 
                 default:
                     break;
             }
-
-            $this->dep('datos')->tabla('pextension')->set($pe);
-            $this->dep('datos')->tabla('pextension')->sincronizar();
-            $this->dep('datos')->tabla('pextension')->cargar($pe);
+            if($band){
+                $this->dep('datos')->tabla('pextension')->set($pe);
+                $this->dep('datos')->tabla('pextension')->sincronizar();
+                $this->dep('datos')->tabla('pextension')->cargar($pe);
+                toba::notificacion()->agregar($mensaje, 'info');
+            }
+            
         }
 
-        if (!is_null($datos['cambio_proyecto'])) {
-            $datos['tipo_cambio'] = $datos['cambio_proyecto'];
-        } else {
-            $datos['tipo_cambio'] = $datos['cambio_integrante'];
-        }
 
         //Control por si Central se olvida de cambiar estado a Recibida
         if ($datos['recibido'] == 1) {
             if ($datos['estado_solicitud'] == 'Enviada') {
                 $datos['estado_solicitud'] = 'Recibida';
             }
-            // Quitar alerta 
-            if ($datos[id_estado] != 'ECEN') {
+            // Quitar alerta
+            $pe=$this->dep('datos')->tabla('pextension')->get();
+            if($pe['id_estado']!= 'ECEN'){
+            //if ($datos[id_estado] != 'ECEN') {//quito el id_estado del formu
                 $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
                 // Finalizo de haber alguna alerta
 
@@ -2863,33 +2840,28 @@ class ci_proyectos_extension extends extension_ci {
             }
             $datos['fecha_recepcion'] = date('Y-m-d');
         }
-
-        unset($datos[id_estado]);
-        unset($datos[barra]);
-        unset($datos[barra1]);
-        unset($datos[barra1_aux]);
-        unset($datos[barra2]);
-        unset($datos[barra2_aux]);
+        unset($datos['barra']);
+        unset($datos['barra1']);
+        unset($datos['barra1_aux']);
+        unset($datos['barra2']);
+        unset($datos['barra2_aux']);
         unset($datos['estado_solicitud_aux1']);
         unset($datos['estado_solicitud_aux2']);
-
-
-
         $this->dep('datos')->tabla('solicitud')->set($datos);
         $this->dep('datos')->tabla('solicitud')->sincronizar();
         $this->dep('datos')->tabla('solicitud')->cargar($datos);
+      }
     }
 
     // ACTUALMENTE HABILITADO -> HABILIDARLO PARA ADMIN
     function evt__form_solicitud__enviar($datos) {
 
         $pe = $this->dep('datos')->tabla('pextension')->get();
-        unset($datos[id_estado]);
         unset($datos[nro_acta_resolucion]);
         unset($datos[num_acta_prorroga]);
         unset($datos[observacion_prorroga]);
         unset($datos[fecha_fin_prorroga]);
-        unset($datos[id_estado]);
+        //unset($datos[id_estado]); elimino id_estado
         unset($datos[barra]);
         unset($datos[barra1]);
         unset($datos[barra1_aux]);
@@ -2908,7 +2880,7 @@ class ci_proyectos_extension extends extension_ci {
 
         // obtengo alertas perdientes del formulador 
         $clave[id_pext] = $pe[id_pext];
-        if ($datos[tipo_solicitud] == 'PROYECTO') {
+        if ($datos[tipo_solicitud] == 'P') {
             $clave[rol] = 'sec_ext_central';
         } else {
             $clave[rol] = 'sec_ext_ua';
@@ -2926,10 +2898,13 @@ class ci_proyectos_extension extends extension_ci {
             $alerta['tipo'] = "Evualuacion ua solicitud";
             $alerta['tipo_solicitud'] = $datos['tipo_solicitud'];
 
-            if (!is_null($datos['cambio_proyecto'])) {
-                $alerta['tipo_cambio'] = $datos['cambio_proyecto'];
-            } else {
-                $alerta['tipo_cambio'] = $datos['cambio_integrante'];
+//            if (!is_null($datos['cambio_proyecto'])) {
+//                $alerta['tipo_cambio'] = $datos['cambio_proyecto'];
+//            } else {
+//                $alerta['tipo_cambio'] = $datos['cambio_integrante'];
+//            }
+            if(!is_null($datos['tipo_cambio'])){
+                $alerta['tipo_cambio'] =$datos['tipo_cambio'];
             }
             $alerta['descripcion'] = "El formulador solicito un cambio de tipo " . $alerta['tipo_solicitud'] . " " . $alerta['tipo_cambio'];
 

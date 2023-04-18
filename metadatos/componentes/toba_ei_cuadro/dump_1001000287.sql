@@ -165,7 +165,7 @@ INSERT INTO apex_objeto_ei_cuadro_columna (objeto_cuadro_proyecto, objeto_cuadro
 	'extension', --objeto_cuadro_proyecto
 	'1001000287', --objeto_cuadro
 	'1001000579', --objeto_cuadro_col
-	'tipo_solicitud', --clave
+	'tipo_solicitud_desc', --clave
 	'2', --orden
 	'Tipo Solicitud', --titulo
 	'ei-cuadro-col-tit', --estilo_titulo
@@ -198,11 +198,11 @@ INSERT INTO apex_objeto_ei_cuadro_columna (objeto_cuadro_proyecto, objeto_cuadro
 	'1001000580', --objeto_cuadro_col
 	'fecha_solicitud', --clave
 	'4', --orden
-	'Fecha Solcitud', --titulo
+	'Fecha Solicitud', --titulo
 	'ei-cuadro-col-tit', --estilo_titulo
 	'4', --estilo
 	NULL, --ancho
-	'1', --formateo
+	'8', --formateo
 	NULL, --vinculo_indice
 	NULL, --no_ordenar
 	NULL, --mostrar_xls
@@ -227,7 +227,7 @@ INSERT INTO apex_objeto_ei_cuadro_columna (objeto_cuadro_proyecto, objeto_cuadro
 	'extension', --objeto_cuadro_proyecto
 	'1001000287', --objeto_cuadro
 	'1001000609', --objeto_cuadro_col
-	'tipo_cambio', --clave
+	'tipo_cambio_desc', --clave
 	'3', --orden
 	'Tipo Cambio', --titulo
 	'ei-cuadro-col-tit', --estilo_titulo

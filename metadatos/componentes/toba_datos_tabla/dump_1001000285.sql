@@ -89,7 +89,7 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	'1001000867', --col_id
 	'tipo_solicitud', --columna
 	'C', --tipo
-	'1', --pk
+	'0', --pk
 	'', --secuencia
 	NULL, --largo
 	NULL, --no_nulo
@@ -257,7 +257,7 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	'1001000881', --col_id
 	'tipo_cambio', --columna
 	'C', --tipo
-	'1', --pk
+	'0', --pk
 	'', --secuencia
 	NULL, --largo
 	NULL, --no_nulo

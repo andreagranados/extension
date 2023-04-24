@@ -428,7 +428,7 @@ INSERT INTO apex_objeto_ei_filtro_col (objeto_ei_filtro_col, objeto_ei_filtro, o
 	'booleano', --tipo
 	'alerta', --nombre
 	'alerta', --expresion
-	'Alerta', --etiqueta
+	'Alerta Pendiente', --etiqueta
 	NULL, --descripcion
 	'0', --obligatorio
 	'0', --inicial

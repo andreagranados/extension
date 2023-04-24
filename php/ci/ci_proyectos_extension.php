@@ -1562,7 +1562,6 @@ class ci_proyectos_extension extends extension_ci {
         $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
 
         $aux = 0;
-
         foreach ($this->s__datos as $proyecto) {
             $clave[id_pext] = $proyecto[id_pext];
             $clave[rol] = $perfil;
@@ -1573,16 +1572,20 @@ class ci_proyectos_extension extends extension_ci {
             } else {
                 $this->s__datos[$aux][es_multi] = "NO";
             }
-
-            if (!is_null($alerta) && $alerta['estado_alerta'] = 'Pendiente') {
+           
+           if (!is_null($alerta) && $alerta['estado_alerta'] = 'Pendiente') {
                 //$img_pendiente = toba_recurso::imagen_proyecto("alerta2.gif", true);
                 $this->s__datos[$aux][revision] = toba_recurso::imagen_proyecto("newMessage2.gif", true);
+//esto lo comento porque rompe los datos del cuadro
+//                if (isset($this->s__filtro_alerta) && $this->s__filtro_alerta[alerta][valor] == 0) {
+//                    unset($this->s__datos[$aux]);
+//                    }
             } else {
                 $this->s__datos[$aux][revision] = toba_recurso::imagen_proyecto("correcto2.jpg", true);
-
-                if (isset($this->s__filtro_alerta) && $this->s__filtro_alerta[alerta][valor] == 1) {
-                    unset($this->s__datos[$aux]);
-                }
+//esto lo comento porque rompe los datos del cuadro
+//                if (isset($this->s__filtro_alerta) && $this->s__filtro_alerta[alerta][valor] == 1) {
+//                    unset($this->s__datos[$aux]);
+//                }
             }
             if(strcasecmp(date('Y-m-d'), date('Y-m-d', strtotime($proyecto['fec_hasta']))) > 0 && $proyecto['id_estado'] == 'APRB') {
                 $personal = $this->dep('datos')->tabla('integrante_externo_pe')->get_plantilla($proyecto['id_pext'],$this->s__datos);
@@ -1591,13 +1594,10 @@ class ci_proyectos_extension extends extension_ci {
                         $proyecto[director]=$per['nombre']." ".$per['nro_docum'];
                         $this->s__datos[$aux][director] = $proyecto[director];
                     }
-                        
                 }
-                
             }
             $aux = $aux + 1;
         }
-
         $cuadro->set_datos($this->s__datos);
     }
 

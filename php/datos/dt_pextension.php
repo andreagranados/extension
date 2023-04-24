@@ -94,32 +94,17 @@ class dt_pextension extends extension_datos_tabla {
         $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
         $perfil_datos = toba::perfil_de_datos('designa')->get_restricciones_dimension('designa', 'unidad_acad')[0];
 
-        /* SI where == null  
-          $where = "WHERE " .  $where;
-         * SINO 
-         * $where = "WHERE 
-         * fin si
-         * 
-         * $where 
-         *           */
         if (!is_null($where)) {      
-
-            $where=str_replace("alerta = '1'","1=1" , $where);
-            $where=str_replace("alerta = '0'","1=1" , $where);
-           
             $where = "WHERE " . $where;
         } else {
             $where = "WHERE 1=1";
         }
-
+        
         if ('formulador' == $perfil) {
             $where .= " AND responsable_carga= '" . $usr . "'";
         } elseif ($perfil == 'sec_ext_ua') {
             $where .= " AND uni_acad='" . $perfil_datos . "'";
         }
-
-
-
         $sql = "SELECT * FROM ( SELECT
                         t_p.id_pext,
                         t_c.descripcion,
@@ -134,6 +119,7 @@ class dt_pextension extends extension_datos_tabla {
                         b_c.id_bases,
                         s_c.codigo,
                         t_p.monto,
+                        case when t_a.id_alerta is null then 0 else 1 end as alerta,
                         t_p.es_multi
                     FROM
                         pextension as t_p INNER JOIN
@@ -143,7 +129,9 @@ class dt_pextension extends extension_datos_tabla {
                         LEFT OUTER JOIN ( SELECT dc.* FROM dblink('" . $this->dblink_designa() . "', 'SELECT dc.id_docente,dc.nombre, dc.apellido, dc.tipo_docum, dc.nro_docum FROM docente as dc ') as dc ( id_docente INTEGER,apellido CHARACTER VARYING, nombre CHARACTER VARYING, tipo_docum CHARACTER(4), nro_docum INTEGER)) as dc ON (d.id_docente = dc.id_docente)
                         LEFT OUTER JOIN bases_convocatoria as b_c ON (t_p.id_bases = b_c.id_bases)
                         LEFT OUTER JOIN tipo_convocatoria as t_c ON (t_c.id_conv = b_c.tipo_convocatoria)  
-                        LEFT OUTER JOIN seguimiento_central as s_c ON (t_p.id_pext = s_c.id_pext)) AUX "
+                        LEFT OUTER JOIN seguimiento_central as s_c ON (t_p.id_pext = s_c.id_pext)
+                        LEFT OUTER JOIN (SELECT * FROM alerta WHERE rol='".$perfil."' and estado_alerta='Pendiente'"." ) t_a ON (t_p.id_pext=t_a.id_pext)
+                        ) AUX "
                 . $where;
         $sql = toba::perfil_de_datos()->filtrar($sql);
         return toba::db('extension')->consultar($sql);

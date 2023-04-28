@@ -1938,22 +1938,7 @@ class ci_proyectos_extension extends extension_ci {
         $datos['id_pext'] = $pe['id_pext'];
 
         $datosAux = $datos;
-
-        unset($datos[denominacion]);
-        unset($datos[duracion]);
-        unset($datos[monto]);
-        unset($datos[id_bases]);
-        unset($datos[fec_desde]);
-        unset($datos[fec_hasta]);
-        unset($datos[nombre_becario]);
-        unset($datos[dni_becario]);
-        unset($datos[id_estado]);
-
-        $this->dep('datos')->tabla('seguimiento_central')->set($datos);
-        $this->dep('datos')->tabla('seguimiento_central')->sincronizar();
-        $this->dep('datos')->tabla('seguimiento_central')->cargar($datos);
-
-        // Quitar alerta 
+// Quitar alerta 
         if ($datos[id_estado] != 'ECEN') {
 
             /*
@@ -1968,7 +1953,43 @@ class ci_proyectos_extension extends extension_ci {
             $claves[tipo_cambio] = utf8_decode('EVALUACIÓN CENTRAL');
             $claves[tipo_solicitud] = utf8_decode('PROYECTO');
             $this->alerta_finalizada($claves);
+            //nuevo andrea
+            // Crear Alerta UA
+            // obtengo alertas perdientes de sec central
+            $claves[id_pext] = $pe['id_pext'];
+            $claves[rol] = 'sec_ext_ua';
+            $alertas_c = $this->dep('datos')->tabla('alerta')->get_alerta($claves)[0];
+            // control de alertas no mas de una por rol
+            if (trim($datos[id_estado]) == 'EUA' && count($alertas_c) == 0) {
+                $alerta = null;
+                $alerta['rol'] = "sec_ext_ua";
+                $alerta['id_pext'] = $pextension[0]['id_pext'];
+                $alerta['tipo'] = "Evaluacion UA";
+                $alerta['tipo_cambio'] = utf8_decode('EVALUACIÓN UA');
+                $alerta['tipo_solicitud'] = utf8_decode('PROYECTO');
+                $alerta['descripcion'] = "El proyecto solicita ser evaluado por la Unidad Academica";
+
+                $this->alerta_creada($alerta);
+            }
+            //fin nuevo andrea
         }
+        
+        unset($datos[denominacion]);
+        unset($datos[duracion]);
+        unset($datos[monto]);
+        unset($datos[id_bases]);
+        unset($datos[fec_desde]);
+        unset($datos[fec_hasta]);
+        unset($datos[nombre_becario]);
+        unset($datos[dni_becario]);
+        unset($datos[id_estado]);
+
+        $this->dep('datos')->tabla('seguimiento_central')->set($datos);
+        $this->dep('datos')->tabla('seguimiento_central')->sincronizar();
+        $this->dep('datos')->tabla('seguimiento_central')->cargar($datos);
+
+    // Quitar alerta     
+    
 
         $cambio = false;
 
@@ -2086,6 +2107,27 @@ class ci_proyectos_extension extends extension_ci {
             $claves[tipo_cambio] = utf8_decode('EVALUACIÓN CENTRAL');
             $claves[tipo_solicitud] = utf8_decode('PROYECTO');
             $this->alerta_finalizada($claves);
+            // Crear Alerta UA
+            // obtengo alertas perdientes de sec central
+            $claves[id_pext] = $pe[id_pext];
+            $claves[rol] = 'sec_ext_ua';
+            $alertas_c = $this->dep('datos')->tabla('alerta')->get_alerta($claves)[0];
+
+            // control de alertas no mas de una por rol
+            if (trim($datos[id_estado]) == 'EUA' && count($alertas_c) == 0) {
+                $alerta = null;
+                $alerta['rol'] = "sec_ext_ua";
+                $alerta['id_pext'] = $pextension[0]['id_pext'];
+                $alerta['tipo'] = "Evaluacion UA";
+                $alerta['tipo_cambio'] = utf8_decode('EVALUACIÓN UA');
+                $alerta['tipo_solicitud'] = utf8_decode('PROYECTO');
+                $alerta['descripcion'] = "El proyecto solicita ser evaluado por la Unidad Academica";
+
+                $this->alerta_creada($alerta);
+                
+                
+            }
+            //fin nuevo andrea
         }
 
         $cambio = false;

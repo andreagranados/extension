@@ -12,9 +12,12 @@ class dt_presupuesto_extension extends extension_datos_tabla {
                 . "p_e.concepto,"
                 . "p_e.cantidad,"
                 . "p_e.monto,"
-                . "p_e.uni_acad "
-                . "from presupuesto_extension as p_e "
-                . "INNER JOIN rubro_presup_extension as r ON ( p_e.id_rubro_extension = r.id_rubro_extension )  "
+                . "p_e.uni_acad ,"
+                . " t_s.id_subrubro_extension ,"
+                . " t_s.descripcion as subrubroextension "
+                . " from presupuesto_extension as p_e "
+                . " INNER JOIN rubro_presup_extension as r ON ( p_e.id_rubro_extension = r.id_rubro_extension )  "
+                . " LEFT OUTER JOIN subrubro_presup_extension t_s ON (t_s.id_subrubro_extension=p_e.id_rubro_extension)"
                 . "where id_pext=" . $id_p
                 . "order by uni_acad,concepto";
         return toba::db('extension')->consultar($sql);

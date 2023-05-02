@@ -44,7 +44,10 @@ class dt_rubro_presup_extension extends extension_datos_tabla {
     }
 
     function get_tipo() {
-        $sql = "SELECT id_rubro_extension,tipo FROM rubro_presup_extension ORDER BY tipo";
+        $sql = "SELECT id_rubro_extension,tipo "
+                . " FROM rubro_presup_extension"
+                . " WHERE id_rubro_extension<>1 "
+                . " ORDER BY tipo";
         return toba::db('extension')->consultar($sql);
     }
 

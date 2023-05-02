@@ -2645,7 +2645,8 @@ class ci_proyectos_extension extends extension_ci {
                 case 'I':
                     $datos['estado_solicitud_aux1']=$datos['estado_solicitud'];
                     $datos['estado_solicitud_aux2']=null;
-                    $this->dep('form_solicitud')->desactivar_efs(['barra1_aux','barra2_aux']);
+                  //desactivar 'barra1_aux' me da error
+                    $this->dep('form_solicitud')->desactivar_efs(['barra2','barra2_aux']);
                     break;
                 default:
                     break;
@@ -2687,13 +2688,47 @@ class ci_proyectos_extension extends extension_ci {
                             }
                         }
                     }
+                }else{//tipo_solicitud=I integrante
+                    if($datos['estado_solicitud']=='Enviada'){                
+                        $this->dep('form_solicitud')->desactivar_efs(['estado_solicitud_aux2']);
+                        $this->dep('form_solicitud')->desactivar_efs(['estado_solicitud_aux1']);
+                        $this->dep('form_solicitud')->desactivar_efs(['nro_acta']);
+                        $this->dep('form_solicitud')->desactivar_efs(['fecha_dictamen']);
+                        $this->dep('form_solicitud')->desactivar_efs(['obs_resolucion']);
+                        $this->dep('form_solicitud')->desactivar_efs(['fecha_fin_prorroga']);
+                        $this->dep('form_solicitud')->desactivar_efs(['barra1_aux','descrip_ua']);
+                    }else{
+                        if($datos['estado_solicitud']=='Recibida'){//si ya recibio no puede tocar
+                           $this->dep('form_solicitud')->desactivar_efs(['estado_solicitud_aux2']);
+                           $this->dep('form_solicitud')->desactivar_efs(['barra1_aux','fecha_fin_prorroga']);
+                           $form->ef('recibido')->set_solo_lectura();
+                           $form->ef('fecha_solicitud')->set_solo_lectura();
+                           $form->ef('fecha_recepcion')->set_solo_lectura();
+                        }else{
+                            if($datos['estado_solicitud']=='Aceptada' or $datos['estado_solicitud']=='Rechazada'){
+                                $this->dep('form_solicitud')->desactivar_efs(['estado_solicitud_aux2']);
+                                $this->dep('form_solicitud')->desactivar_efs(['barra1_aux','fecha_fin_prorroga']);
+                                $form->ef('recibido')->set_solo_lectura();
+                                $form->ef('fecha_solicitud')->set_solo_lectura();
+                                $form->ef('fecha_recepcion')->set_solo_lectura();
+                                $form->ef('nro_acta')->set_solo_lectura();
+                                $form->ef('fecha_dictamen')->set_solo_lectura();
+                                $form->ef('obs_resolucion')->set_solo_lectura();
+                                $form->ef('descrip_ua')->set_solo_lectura();
+                               
+                            }
+                            
+                        }
+                        
+                    }
                 }              
             }else{//en estado "formulacion", central no puede modificar la solicitud
-                if($perfil == 'sec_ext_central'){
+                if($perfil == 'sec_ext_central' or $perfil== 'sec_ext_ua'){
                     $this->dep('form_solicitud')->evento('modificacion')->ocultar();  
                 }
                  $this->dep('form_solicitud')->desactivar_efs(['barra1_aux','recibido','fecha_solicitud','nro_acta','obs_resolucion','fecha_recepcion','fecha_dictamen','estado_solicitud_aux1','estado_solicitud_aux2']);
                  $this->dep('form_solicitud')->desactivar_efs(['fecha_fin_prorroga']);
+                 $this->dep('form_solicitud')->desactivar_efs(['barra1','descrip_ua']);
             }
             if($perfil == 'sec_ext_ua' and $datos['tipo_solicitud']=='P'){
                     $this->dep('form_solicitud')->evento('modificacion')->ocultar();  

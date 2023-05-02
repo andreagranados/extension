@@ -2715,7 +2715,7 @@ class ci_proyectos_extension extends extension_ci {
                                 $form->ef('fecha_dictamen')->set_solo_lectura();
                                 $form->ef('obs_resolucion')->set_solo_lectura();
                                 $form->ef('descrip_ua')->set_solo_lectura();
-                               
+                                $form->ef('estado_solicitud_aux1')->set_solo_lectura();
                             }
                             
                         }
@@ -2731,6 +2731,9 @@ class ci_proyectos_extension extends extension_ci {
                  $this->dep('form_solicitud')->desactivar_efs(['barra1','descrip_ua']);
             }
             if($perfil == 'sec_ext_ua' and $datos['tipo_solicitud']=='P'){
+                    $this->dep('form_solicitud')->evento('modificacion')->ocultar();  
+            }
+             if($perfil == 'sec_ext_central' and $datos['tipo_solicitud']=='I'){
                     $this->dep('form_solicitud')->evento('modificacion')->ocultar();  
             }
             //una vez que la solicitud fue aceptada o rechazada entonces central ya no ve el boton modificacion
@@ -2865,58 +2868,58 @@ class ci_proyectos_extension extends extension_ci {
             
         }
 
-
+//comentado porque da error
         //Control por si Central se olvida de cambiar estado a Recibida
-        if ($datos['recibido'] == 1) {
-            if ($datos['estado_solicitud'] == 'Enviada') {
-                $datos['estado_solicitud'] = 'Recibida';
-            }
-            // Quitar alerta
-            $pe=$this->dep('datos')->tabla('pextension')->get();
-            if($pe['id_estado']!= 'ECEN'){
-            //if ($datos[id_estado] != 'ECEN') {//quito el id_estado del formu
-                $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
-                // Finalizo de haber alguna alerta
-
-                /*
-                 * rol
-                 * id_pext (lo obtengo dentro de la función)
-                 * tipo_solicitud
-                 * tipo_cambio
-                 */
-
-                // cancelo alerta por evaluacion central 
-                $claves[rol] = $perfil;
-                $claves[tipo_cambio] = $datos[tipo_cambio];
-                $claves[tipo_solicitud] = $datos[tipo_solicitud];
-                $this->alerta_finalizada($claves);
-
-
-                // creo alerta Central 
-
-
-                if ($perfil == 'sec_ext_ua' && ($datos['estado_solicitud'] == 'Aceptada' || $datos['estado_solicitud'] == 'Rechazada' )) {
-                    // obtengo alertas perdientes del formulador 
-                    $clave[id_pext] = $pe[id_pext];
-                    $clave[rol] = 'sec_ext_central';
-                    $clave['id_solicitud'] = $datos['tipo_solicitud'];
-                    $clave['tipo_cambio'] = $datos[tipo_cambio];
-                    $alertas_c = $this->dep('datos')->tabla('alerta')->get_alerta_solicitud($clave)[0];
-                    if (count($alertas_c) == 0) {
-                        $alerta = null;
-                        $alerta['rol'] = 'sec_ext_central';
-                        $alerta['id_pext'] = $pe['id_pext'];
-                        $alerta['tipo'] = "Evualuacion ua solicitud";
-                        $alerta['tipo_solicitud'] = $datos['tipo_solicitud'];
-                        $alerta['tipo_cambio'] = $datos[tipo_cambio];
-                        $alerta['descripcion'] = "El formulador solicito un cambio de tipo " . $alerta['tipo_solicitud'] . " " . $alerta['tipo_cambio'];
-
-                        $this->alerta_creada($alerta);
-                    }
-                }
-            }
-            $datos['fecha_recepcion'] = date('Y-m-d');
-        }
+//        if ($datos['recibido'] == 1) {
+//            if ($datos['estado_solicitud'] == 'Enviada') {
+//                $datos['estado_solicitud'] = 'Recibida';
+//            }
+//            // Quitar alerta
+//            $pe=$this->dep('datos')->tabla('pextension')->get();
+//            if($pe['id_estado']!= 'ECEN'){
+//            //if ($datos[id_estado] != 'ECEN') {//quito el id_estado del formu
+//                $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
+//                // Finalizo de haber alguna alerta
+//
+//                /*
+//                 * rol
+//                 * id_pext (lo obtengo dentro de la función)
+//                 * tipo_solicitud
+//                 * tipo_cambio
+//                 */
+//
+//                // cancelo alerta por evaluacion central 
+//                $claves[rol] = $perfil;
+//                $claves[tipo_cambio] = $datos[tipo_cambio];
+//                $claves[tipo_solicitud] = $datos[tipo_solicitud];
+//                $this->alerta_finalizada($claves);
+//
+//
+//                // creo alerta Central 
+//
+//
+//                if ($perfil == 'sec_ext_ua' && ($datos['estado_solicitud'] == 'Aceptada' || $datos['estado_solicitud'] == 'Rechazada' )) {
+//                    // obtengo alertas perdientes del formulador 
+//                    $clave[id_pext] = $pe[id_pext];
+//                    $clave[rol] = 'sec_ext_central';
+//                    $clave['id_solicitud'] = $datos['tipo_solicitud'];
+//                    $clave['tipo_cambio'] = $datos[tipo_cambio];
+//                    $alertas_c = $this->dep('datos')->tabla('alerta')->get_alerta_solicitud($clave)[0];
+//                    if (count($alertas_c) == 0) {
+//                        $alerta = null;
+//                        $alerta['rol'] = 'sec_ext_central';
+//                        $alerta['id_pext'] = $pe['id_pext'];
+//                        $alerta['tipo'] = "Evualuacion ua solicitud";
+//                        $alerta['tipo_solicitud'] = $datos['tipo_solicitud'];
+//                        $alerta['tipo_cambio'] = $datos[tipo_cambio];
+//                        $alerta['descripcion'] = "El formulador solicito un cambio de tipo " . $alerta['tipo_solicitud'] . " " . $alerta['tipo_cambio'];
+//
+//                        $this->alerta_creada($alerta);
+//                    }
+//                }
+//            }
+//            $datos['fecha_recepcion'] = date('Y-m-d');
+//        }
         unset($datos['barra']);
         unset($datos['barra1']);
         unset($datos['barra1_aux']);

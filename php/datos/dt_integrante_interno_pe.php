@@ -306,6 +306,11 @@ class dt_integrante_interno_pe extends extension_datos_tabla {
         $res = toba::db('extension')->consultar($sql);
         return $res[0]['tiene'];
     }
+    function modif_fecha($id_pext,$fecha_prorroga,$fecha_fin){
+        $sql="update integrante_interno_pe set hasta='".$fecha_prorroga."' "
+                . " where id_pext=".$id_pext." and hasta='".$fecha_fin."'";
+        toba::db('extension')->consultar($sql);
+    }
 
 }
 

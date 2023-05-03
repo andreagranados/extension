@@ -2728,7 +2728,12 @@ class ci_proyectos_extension extends extension_ci {
                 }
                  $this->dep('form_solicitud')->desactivar_efs(['barra1_aux','recibido','fecha_solicitud','nro_acta','obs_resolucion','fecha_recepcion','fecha_dictamen','estado_solicitud_aux1','estado_solicitud_aux2']);
                  $this->dep('form_solicitud')->desactivar_efs(['fecha_fin_prorroga']);
-                 $this->dep('form_solicitud')->desactivar_efs(['barra1','descrip_ua']);
+                 //$this->dep('form_solicitud')->desactivar_efs(['barra1','descrip_ua']);
+                 //$this->dep('form_solicitud')->desactivar_efs(['descrip_ua']);
+                 if($datos['tipo_solicitud']=='I'){
+                     $this->dep('form_solicitud')->desactivar_efs(['descrip_ua']);
+                     $this->dep('form_solicitud')->desactivar_efs(['barra1']);
+                 }
             }
             if($perfil == 'sec_ext_ua' and $datos['tipo_solicitud']=='P'){
                     $this->dep('form_solicitud')->evento('modificacion')->ocultar();  
@@ -2820,6 +2825,7 @@ class ci_proyectos_extension extends extension_ci {
         $datos['fecha_solicitud']=$sol['fecha_solicitud'];
         $datos['estado_solicitud']=$sol['estado_solicitud'];
         $pe = $this->dep('datos')->tabla('pextension')->get();
+        $hasta=$pe['fec_hasta'];
         unset($pe[x_dbr_clave]);
 
         if($datos['estado_solicitud']!='Formulacion'){
@@ -2860,44 +2866,53 @@ class ci_proyectos_extension extends extension_ci {
                     break;
             }
             if($band){
-                $this->dep('datos')->tabla('pextension')->set($pe);
-                $this->dep('datos')->tabla('pextension')->sincronizar();
-                $this->dep('datos')->tabla('pextension')->cargar($pe);
-                toba::notificacion()->agregar($mensaje, 'info');
+                if($datos['fecha_fin_prorroga']>$hasta){
+                    $this->dep('datos')->tabla('pextension')->set($pe);
+                    $this->dep('datos')->tabla('pextension')->sincronizar();
+                    $this->dep('datos')->tabla('pextension')->cargar($pe);
+                    if($datos['tipo_cambio']=='P' and $band){
+                        $this->dep('datos')->tabla('integrante_interno_pe')->modif_fecha($pe['id_pext'],$datos['fecha_fin_prorroga'],$hasta);
+                        $this->dep('datos')->tabla('integrante_externo_pe')->modif_fecha($pe['id_pext'],$datos['fecha_fin_prorroga'],$hasta);
+                        $mensaje2=" La fecha de hasta de los integrantes ha sido modificada corractamente.";
+                        toba::notificacion()->agregar($mensaje2, 'info');   
+                    }
+                    toba::notificacion()->agregar($mensaje, 'info');   
+                }else{
+                    toba::notificacion()->agregar('La fecha de prorroga debe ser mayor a la fecha de hasta', 'info');   
+                }
             }
             
         }
 
-//comentado porque da error
+
         //Control por si Central se olvida de cambiar estado a Recibida
-//        if ($datos['recibido'] == 1) {
-//            if ($datos['estado_solicitud'] == 'Enviada') {
-//                $datos['estado_solicitud'] = 'Recibida';
-//            }
-//            // Quitar alerta
-//            $pe=$this->dep('datos')->tabla('pextension')->get();
-//            if($pe['id_estado']!= 'ECEN'){
-//            //if ($datos[id_estado] != 'ECEN') {//quito el id_estado del formu
-//                $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
-//                // Finalizo de haber alguna alerta
-//
-//                /*
-//                 * rol
-//                 * id_pext (lo obtengo dentro de la función)
-//                 * tipo_solicitud
-//                 * tipo_cambio
-//                 */
-//
-//                // cancelo alerta por evaluacion central 
-//                $claves[rol] = $perfil;
-//                $claves[tipo_cambio] = $datos[tipo_cambio];
-//                $claves[tipo_solicitud] = $datos[tipo_solicitud];
-//                $this->alerta_finalizada($claves);
-//
-//
-//                // creo alerta Central 
-//
-//
+        if ($datos['recibido'] == 1) {
+            if ($datos['estado_solicitud'] == 'Enviada') {
+                $datos['estado_solicitud'] = 'Recibida';
+            }
+            // Quitar alerta
+            $pe=$this->dep('datos')->tabla('pextension')->get();
+            if($pe['id_estado']!= 'ECEN'){
+            //if ($datos[id_estado] != 'ECEN') {//quito el id_estado del formu
+                $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
+                // Finalizo de haber alguna alerta
+
+                /*
+                 * rol
+                 * id_pext (lo obtengo dentro de la función)
+                 * tipo_solicitud
+                 * tipo_cambio
+                 */
+
+                // cancelo alerta por evaluacion central 
+                $claves[rol] = $perfil;
+                $claves[tipo_cambio] = $datos[tipo_cambio];
+                $claves[tipo_solicitud] = $datos[tipo_solicitud];
+                $this->alerta_finalizada($claves);
+
+
+                // creo alerta Central 
+//lo comento andrea
 //                if ($perfil == 'sec_ext_ua' && ($datos['estado_solicitud'] == 'Aceptada' || $datos['estado_solicitud'] == 'Rechazada' )) {
 //                    // obtengo alertas perdientes del formulador 
 //                    $clave[id_pext] = $pe[id_pext];
@@ -2917,9 +2932,9 @@ class ci_proyectos_extension extends extension_ci {
 //                        $this->alerta_creada($alerta);
 //                    }
 //                }
-//            }
-//            $datos['fecha_recepcion'] = date('Y-m-d');
-//        }
+            }
+            $datos['fecha_recepcion'] = date('Y-m-d');
+        }
         unset($datos['barra']);
         unset($datos['barra1']);
         unset($datos['barra1_aux']);

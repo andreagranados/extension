@@ -343,9 +343,17 @@ class ci_bases extends extension_ci {
         /*
          * todo: el periodo por defecto
          */
-        $this->dep('datos')->tabla('bases_convocatoria')->set($datos);
-        $this->dep('datos')->tabla('bases_convocatoria')->sincronizar();
-        $this->dep('datos')->tabla('bases_convocatoria')->cargar($datos);
+        if($datos['fecha_desde']>=$datos['fecha_hasta']){
+                throw new toba_error(utf8_decode('La fecha hasta debe ser mayor a la fecha desde'));
+        }else{ 
+            if($datos['fecha_hasta']>=$datos['fecha_lim_modif']){
+                throw new toba_error(utf8_decode('La fecha límite de modificación debe ser mayor a la fecha hasta'));
+            }else{
+                $this->dep('datos')->tabla('bases_convocatoria')->set($datos);
+                $this->dep('datos')->tabla('bases_convocatoria')->sincronizar();
+                $this->dep('datos')->tabla('bases_convocatoria')->cargar($datos);
+            }
+        }
     }
 
     function evt__formulario__modificacion($datos) {
@@ -358,8 +366,16 @@ class ci_bases extends extension_ci {
                   toba::notificacion()->agregar('Se han eliminado los porcentajes maximos por rubro', 'info');  
                 }
             }
-            $this->dep('datos')->tabla('bases_convocatoria')->set($datos);
-            $this->dep('datos')->tabla('bases_convocatoria')->sincronizar();
+            if($datos['fecha_desde']>=$datos['fecha_hasta']){
+                toba::notificacion()->agregar('La fecha de fin debe ser mayor a la fecha desde', 'error');  
+            }else{ 
+                if($datos['fecha_hasta']>=$datos['fecha_lim_modif']){
+                    toba::notificacion()->agregar('La fecha limite de modificacion debe ser mayor a la fecha hasta', 'error');  
+                }else{
+                    $this->dep('datos')->tabla('bases_convocatoria')->set($datos);
+                    $this->dep('datos')->tabla('bases_convocatoria')->sincronizar();
+                }
+            }
         }
     }
 

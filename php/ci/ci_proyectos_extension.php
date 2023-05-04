@@ -1994,7 +1994,6 @@ class ci_proyectos_extension extends extension_ci {
         $cambio = false;
 
         if ($datosAux[fecha_ordenanza] != null && $pe[fec_desde] != $datosAux[fecha_ordenanza] && $datosAux[id_estado] == 'APRB') {
-
             //Obtengo datos de integrantes externos cargados
             $datos_integrantes_e = $this->dep('datos')->tabla('integrante_externo_pe')->get_listado($pe['id_pext']);
             //Obtengo datos de integrantes internos cargados
@@ -2874,12 +2873,11 @@ class ci_proyectos_extension extends extension_ci {
                         $this->dep('datos')->tabla('pextension')->cargar($pe);
                         $this->dep('datos')->tabla('integrante_interno_pe')->modif_fecha($pe['id_pext'],$datos['fecha_fin_prorroga'],$hasta);
                         $this->dep('datos')->tabla('integrante_externo_pe')->modif_fecha($pe['id_pext'],$datos['fecha_fin_prorroga'],$hasta);
-                        $mensaje2=" La fecha de hasta de los integrantes ha sido modificada corractamente.";
-                        toba::notificacion()->agregar($mensaje2, 'info');   
                         toba::notificacion()->agregar($mensaje, 'info');   
+                        toba::notificacion()->agregar(utf8_encode('También se ha modificado la fecha de hasta de los integrantes '),'info');   
                     }else{
                         $guardar=false;
-                        toba::notificacion()->agregar('La fecha de prorroga debe ser mayor a la fecha de finalizacion del proyecto', 'error');   
+                        toba::notificacion()->agregar(utf8_decode('La fecha de prórroga debe ser mayor a la fecha de finalización del proyecto. Ingrese otra fecha.', 'error'));   
                     }
                 }else{
                     $this->dep('datos')->tabla('pextension')->set($pe);

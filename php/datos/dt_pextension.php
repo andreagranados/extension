@@ -105,7 +105,7 @@ class dt_pextension extends extension_datos_tabla {
         } elseif ($perfil == 'sec_ext_ua') {
             $where .= " AND uni_acad='" . $perfil_datos . "'";
         }
-        $sql = "SELECT * FROM ( SELECT
+        $sql = "SELECT distinct * FROM ( SELECT
                         t_p.id_pext,
                         t_c.descripcion,
                         dc.apellido || ' '|| dc.nombre || ' '|| dc.tipo_docum || ' '|| dc.nro_docum as director,

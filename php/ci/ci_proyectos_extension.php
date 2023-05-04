@@ -2820,6 +2820,7 @@ class ci_proyectos_extension extends extension_ci {
 
     function evt__form_solicitud__modificacion($datos) {
       if ($this->dep('datos')->tabla('solicitud')->esta_cargada()) {
+        $guardar=true;  
         $sol = $this->dep('datos')->tabla('solicitud')->get();
         $datos['id_pext']=$sol['id_pext'];
         $datos['fecha_solicitud']=$sol['fecha_solicitud'];
@@ -2877,6 +2878,7 @@ class ci_proyectos_extension extends extension_ci {
                         toba::notificacion()->agregar($mensaje2, 'info');   
                         toba::notificacion()->agregar($mensaje, 'info');   
                     }else{
+                        $guardar=false;
                         toba::notificacion()->agregar('La fecha de prorroga debe ser mayor a la fecha de finalizacion del proyecto', 'error');   
                     }
                 }else{
@@ -2885,20 +2887,6 @@ class ci_proyectos_extension extends extension_ci {
                     $this->dep('datos')->tabla('pextension')->cargar($pe);
                     toba::notificacion()->agregar($mensaje, 'info');   
                 }
-//                if($datos['fecha_fin_prorroga']>$hasta){  
-//                    $this->dep('datos')->tabla('pextension')->set($pe);
-//                    $this->dep('datos')->tabla('pextension')->sincronizar();
-//                    $this->dep('datos')->tabla('pextension')->cargar($pe);
-//                    if($datos['tipo_cambio']=='P' and $band){
-//                        $this->dep('datos')->tabla('integrante_interno_pe')->modif_fecha($pe['id_pext'],$datos['fecha_fin_prorroga'],$hasta);
-//                        $this->dep('datos')->tabla('integrante_externo_pe')->modif_fecha($pe['id_pext'],$datos['fecha_fin_prorroga'],$hasta);
-//                        $mensaje2=" La fecha de hasta de los integrantes ha sido modificada corractamente.";
-//                        toba::notificacion()->agregar($mensaje2, 'info');   
-//                    }
-//                    toba::notificacion()->agregar($mensaje, 'info');   
-//                }else{
-//                    toba::notificacion()->agregar('La fecha de prorroga debe ser mayor a la fecha de hasta', 'info');   
-//                }
             }
             
         }
@@ -2954,16 +2942,18 @@ class ci_proyectos_extension extends extension_ci {
             }
             $datos['fecha_recepcion'] = date('Y-m-d');
         }
-        unset($datos['barra']);
-        unset($datos['barra1']);
-        unset($datos['barra1_aux']);
-        unset($datos['barra2']);
-        unset($datos['barra2_aux']);
-        unset($datos['estado_solicitud_aux1']);
-        unset($datos['estado_solicitud_aux2']);
-        $this->dep('datos')->tabla('solicitud')->set($datos);
-        $this->dep('datos')->tabla('solicitud')->sincronizar();
-        $this->dep('datos')->tabla('solicitud')->cargar($datos);
+        if($guardar){
+            unset($datos['barra']);
+            unset($datos['barra1']);
+            unset($datos['barra1_aux']);
+            unset($datos['barra2']);
+            unset($datos['barra2_aux']);
+            unset($datos['estado_solicitud_aux1']);
+            unset($datos['estado_solicitud_aux2']);
+            $this->dep('datos')->tabla('solicitud')->set($datos);
+            $this->dep('datos')->tabla('solicitud')->sincronizar();
+            $this->dep('datos')->tabla('solicitud')->cargar($datos);
+        }
       }
     }
 

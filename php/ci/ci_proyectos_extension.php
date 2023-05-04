@@ -2885,7 +2885,7 @@ class ci_proyectos_extension extends extension_ci {
                     $this->dep('datos')->tabla('pextension')->cargar($pe);
                     toba::notificacion()->agregar($mensaje, 'info');   
                 }
-//                if($datos['fecha_fin_prorroga']>$hasta){
+//                if($datos['fecha_fin_prorroga']>$hasta){  
 //                    $this->dep('datos')->tabla('pextension')->set($pe);
 //                    $this->dep('datos')->tabla('pextension')->sincronizar();
 //                    $this->dep('datos')->tabla('pextension')->cargar($pe);

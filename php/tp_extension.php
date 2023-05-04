@@ -13,8 +13,8 @@
 		echo "<div style='font-size:15px;font-family:Verdana,Helvetica;color:#660033;font-weight:bold;'>";
 		echo "Modulo Proyectos de Extensi&oacute;n";
 		echo "</div>";
-		echo "<div>versi&oacute;n ".toba::proyecto()->get_version();
-                echo " <a href='Manual_de_Uso___Mocovi_Extensi_n.pdf'>Descargar Manual Ayuda</a>" ."</div>";
+		//echo "<div>versi&oacute;n ".toba::proyecto()->get_version();
+                //echo " <a href='Manual_de_Uso___Mocovi_Extensi_n.pdf'>Descargar Manual Ayuda</a>" ."</div>";
 		echo "</div>";
 		echo "</div>\n\n";    
 		
@@ -100,7 +100,7 @@
 		echo "<div class='login-pie'>";
                 $anio=date('Y');
 		echo "<div style='font-size:10px;'>Desarrollado por <strong>".toba_recurso::imagen_proyecto('logo_sti_sin.png',true,'30','30')."</strong><br>Equipo de Desarrollo TOBA-UNCOMA<br>Universidad Nacional del Comahue</div>
-			<div >2015 - ".$anio."</div>";
+			<div >2020 - ".$anio."</div>";
 		echo "</div>";
 	}
 			

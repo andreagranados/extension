@@ -3494,14 +3494,31 @@ class ci_proyectos_extension extends extension_ci {
                 }   
             }
         }
+        $cartel="";
         if($mensaje==''){//guardar los cambios
             if($datos['monto']<>$datos_pe['monto'] or $datos['id_bases']<>$datos_pe['id_bases']){//esta modificando el monto del proyecto o la convocatoria
                 if($datos['monto']<>$datos_pe['monto']){
-                    $cartel="Usted a modificado el monto del proyecto. El monto de los items del presupuesto se ha modificado a $0. Debe reasignar los montos del presupuesto.";
-                }else{
-                    $cartel="Usted a modificado la convocatoria del proyecto. El monto de los items del presupuesto se ha modificado a $0. Debe reasignar los montos del presupuesto.";
+                    $cartel.="Usted a modificado el monto del proyecto. El monto de los items del presupuesto se ha modificado a $0. Debe reasignar los montos del presupuesto.";
+                    $this->dep('datos')->tabla('presupuesto_extension')->resetear_montos($datos_pe['id_pext']);
                 }
-                $this->dep('datos')->tabla('presupuesto_extension')->resetear_montos($datos_pe['id_pext']);
+                if($datos['id_bases']<>$datos_pe['id_bases']){//modifica la convocatoria
+                    if($datos_pe['id_estado']=='FORM'){
+                        $cartel.="Usted a modificado la convocatoria del proyecto. ";
+                        $this->dep('datos')->tabla('integrante_interno_pe')->eliminar_integrantes($datos_pe['id_pext']);
+                        $this->dep('datos')->tabla('integrante_externo_pe')->eliminar_integrantes($datos_pe['id_pext']);
+                        $datos['monto'] =0;
+                        //comento porque da error de concurrencia de datos porque pextension esta cargada
+                        //$this->dep('datos')->tabla('pextension')->resetear_monto($datos_pe['id_pext']);
+                        $this->dep('datos')->tabla('presupuesto_extension')->eliminar_presupuesto($datos_pe['id_pext']);
+                        $cartel.="Se ha eliminado los integrantes, el presupuesto y el monto del proyecto queda en $0";
+                    }else{//estado MODF
+                        $cartel.="Usted a modificado la convocatoria del proyecto. El monto de los items del presupuesto se ha modificado a $0. Debe reasignar los montos del presupuesto.";
+                        $datos['monto'] =0;
+                        //comento porque da error de concurrencia de datos porque pextension esta cargada
+                        //$this->dep('datos')->tabla('pextension')->resetear_monto($datos_pe['id_pext']);
+                        $this->dep('datos')->tabla('presupuesto_extension')->resetear_montos($datos_pe['id_pext']);
+                    }
+                }
             }
             //Obtengo datos de integrantes externos cargados
             $datos_integrantes_e = $this->dep('datos')->tabla('integrante_externo_pe')->get_listado($datos_pe['id_pext']);

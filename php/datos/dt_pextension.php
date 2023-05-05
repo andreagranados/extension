@@ -242,5 +242,9 @@ class dt_pextension extends extension_datos_tabla {
         $sql = "SELECT id_pext, denominacion FROM pextension ORDER BY denominacion";
         return toba::db('extension')->consultar($sql);
     }
+    function resetear_monto($id_pext) {
+        $sql = "update pextension set monto=0 where id_pext=".$id_pext;
+        toba::db('extension')->consultar($sql);
+    }
 
 }

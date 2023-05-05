@@ -116,5 +116,9 @@ class dt_presupuesto_extension extends extension_datos_tabla {
                 . " WHERE id_pext=$id_pext";
          toba::db('extension')->consultar($sql);
     }
-
+    function eliminar_presupuesto($id_pext = null){
+         $sql=" delete from  presupuesto_extension"
+                . " WHERE id_pext=$id_pext";
+         toba::db('extension')->consultar($sql);
+    }
 }

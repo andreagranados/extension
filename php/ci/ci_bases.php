@@ -359,7 +359,7 @@ class ci_bases extends extension_ci {
     function evt__formulario__modificacion($datos) {
         if ($this->dep('datos')->tabla('bases_convocatoria')->esta_cargada()) {
             $bases = $this->dep('datos')->tabla('bases_convocatoria')->get();
-            if(!$datos['tiene_monto']){
+            if(!$datos['tiene_monto']){//cuando modifica el monto
                 $datos['monto_max']=null;
                 $respuesta=$this->dep('datos')->tabla('montos_convocatoria')->eliminar_porcentajes_rubro($bases['id_bases']);
                 if($respuesta){

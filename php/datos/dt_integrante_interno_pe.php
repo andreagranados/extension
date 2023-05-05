@@ -311,6 +311,11 @@ class dt_integrante_interno_pe extends extension_datos_tabla {
                 . " where id_pext=".$id_pext." and hasta='".$fecha_fin."'";
         toba::db('extension')->consultar($sql);
     }
+    function eliminar_integrantes($id_pext){
+        $sql="delete from integrante_interno_pe "
+                . " where id_pext=".$id_pext;
+        toba::db('extension')->consultar($sql);
+    }
 
 }
 

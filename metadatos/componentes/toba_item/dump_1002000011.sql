@@ -1,5 +1,5 @@
 ------------------------------------------------------------
---[1002000011]--  Manual de Evaluacion Unidad Academica 
+--[1002000011]--  Manual de Evaluación Unidad Académica 
 ------------------------------------------------------------
 
 ------------------------------------------------------------
@@ -16,19 +16,19 @@ INSERT INTO apex_item (item_id, proyecto, item, padre_id, padre_proyecto, padre,
 	'3856', --padre
 	'0', --carpeta
 	'0', --nivel_acceso
-	'accion', --solicitud_tipo
+	'web', --solicitud_tipo
 	'toba', --pagina_tipo_proyecto
-	'normal', --pagina_tipo
+	'NO', --pagina_tipo
 	NULL, --actividad_buffer_proyecto
 	NULL, --actividad_buffer
 	NULL, --actividad_patron_proyecto
 	NULL, --actividad_patron
-	'Manual de Evaluacion Unidad Academica', --nombre
+	'Manual de Evaluación Unidad Académica', --nombre
 	NULL, --descripcion
 	'1001000004', --punto_montaje
 	'manual_evaluacion_ua.php', --actividad_accion
 	'1', --menu
-	NULL, --orden
+	'2', --orden
 	'0', --solicitud_registrar
 	NULL, --solicitud_obs_tipo_proyecto
 	NULL, --solicitud_obs_tipo
@@ -44,7 +44,7 @@ INSERT INTO apex_item (item_id, proyecto, item, padre_id, padre_proyecto, padre,
 	NULL, --parametro_a
 	NULL, --parametro_b
 	NULL, --parametro_c
-	'1', --publico
+	'0', --publico
 	NULL, --redirecciona
 	NULL, --usuario
 	'0', --exportable

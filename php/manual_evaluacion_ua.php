@@ -1,5 +1,5 @@
 <?php
-    $file = "Manual_de_Uso___Secretar_a_de_Extensi_n_de_Unidad_Acad_mica___Mocovi_Extensi_n.pdf";
+    $file = "Manual_extension_secretaria_academica.pdf";
 
     if(!file_exists($file)) die("Disculpe hubo un error al momento de obtener el Manual intente nuevamente.");
 
@@ -10,7 +10,7 @@
     // Send file headers
     header("Content-type: $type");
 
-    header("Content-Disposition: attachment;filename=Manual_Ayuda.pdf");
+    header("Content-Disposition: attachment;filename=Manual_extension_secretaria_academica.pdf");
     header("Content-Transfer-Encoding: binary"); 
     header('Pragma: no-cache'); 
     header('Expires: 0');

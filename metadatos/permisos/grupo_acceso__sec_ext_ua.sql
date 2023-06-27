@@ -40,6 +40,12 @@ INSERT INTO apex_usuario_grupo_acc_item (proyecto, usuario_grupo_acc, item_id, i
 	NULL, --item_id
 	'3856'  --item
 );
+INSERT INTO apex_usuario_grupo_acc_item (proyecto, usuario_grupo_acc, item_id, item) VALUES (
+	'extension', --proyecto
+	'sec_ext_ua', --usuario_grupo_acc
+	NULL, --item_id
+	'3862'  --item
+);
 --- FIN Grupo de desarrollo 0
 
 --- INICIO Grupo de desarrollo 1001
@@ -61,7 +67,22 @@ INSERT INTO apex_usuario_grupo_acc_item (proyecto, usuario_grupo_acc, item_id, i
 	NULL, --item_id
 	'1001000056'  --item
 );
+INSERT INTO apex_usuario_grupo_acc_item (proyecto, usuario_grupo_acc, item_id, item) VALUES (
+	'extension', --proyecto
+	'sec_ext_ua', --usuario_grupo_acc
+	NULL, --item_id
+	'1001000070'  --item
+);
 --- FIN Grupo de desarrollo 1001
+
+--- INICIO Grupo de desarrollo 1002
+INSERT INTO apex_usuario_grupo_acc_item (proyecto, usuario_grupo_acc, item_id, item) VALUES (
+	'extension', --proyecto
+	'sec_ext_ua', --usuario_grupo_acc
+	NULL, --item_id
+	'1002000011'  --item
+);
+--- FIN Grupo de desarrollo 1002
 
 ------------------------------------------------------------
 -- apex_grupo_acc_restriccion_funcional

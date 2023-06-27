@@ -1,5 +1,5 @@
 <?php
-    $file = "Manual_de_Uso___Mocovi_Extensi_n.pdf";
+    $file = "Manual_extension_carga_formulador.pdf";
 
     if(!file_exists($file)) die("Disculpe hubo un error al momento de obtener el Manual intente nuevamente.");
 
@@ -10,7 +10,7 @@
     // Send file headers
     header("Content-type: $type");
 
-    header("Content-Disposition: attachment;filename=Manual_Ayuda.pdf");
+    header("Content-Disposition: attachment;filename=Manual_extension_carga_formulador.pdf");
     header("Content-Transfer-Encoding: binary"); 
     header('Pragma: no-cache'); 
     header('Expires: 0');

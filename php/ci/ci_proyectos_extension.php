@@ -1050,6 +1050,17 @@ class ci_proyectos_extension extends extension_ci {
     }
 
     function evt__alta() {
+       $band=true;
+       if ($this->dep('datos')->tabla('pextension')->esta_cargada()) {
+            $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
+            $pextension = $this->dep('datos')->tabla('pextension')->get();
+            $estado=$pextension['id_estado'];
+            if (!(($perfil == 'formulador' and ($estado == 'FORM' or $estado == 'MODF')) or ($perfil=='sec_ext_ua' and ($estado=='APRB' or $estado == 'PRG'))) ) {
+                      toba::notificacion()->agregar(utf8_decode("No puede agregar"), "info"); 
+                      $band=false;
+            }
+        }            
+       if($band){
         switch ($this->s__pantalla) {
             case 'pant_alta_proyecto':
                 $this->set_pantalla('pant_formulario');
@@ -1095,6 +1106,7 @@ class ci_proyectos_extension extends extension_ci {
                 $this->dep('datos')->tabla('avance')->resetear();
                 break;
         }
+     }
     }
 
     function evt__volver() {
@@ -2888,7 +2900,7 @@ class ci_proyectos_extension extends extension_ci {
                         $this->dep('datos')->tabla('integrante_interno_pe')->modif_fecha($pe['id_pext'],$datos['fecha_fin_prorroga'],$hasta);
                         $this->dep('datos')->tabla('integrante_externo_pe')->modif_fecha($pe['id_pext'],$datos['fecha_fin_prorroga'],$hasta);
                         toba::notificacion()->agregar($mensaje, 'info');   
-                        toba::notificacion()->agregar(utf8_encode('También se ha modificado la fecha de hasta de los integrantes '),'info');   
+                        toba::notificacion()->agregar(utf8_decode('También se ha modificado la fecha de hasta de los integrantes '),'info');   
                     }else{
                         $guardar=false;
                         toba::notificacion()->agregar(utf8_decode('La fecha de prórroga debe ser mayor a la fecha de finalización del proyecto. Ingrese otra fecha.', 'error'));   
@@ -3691,26 +3703,23 @@ class ci_proyectos_extension extends extension_ci {
             $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
             $estado = $this->dep('datos')->tabla('pextension')->get()[id_estado];
             // si presiono el boton enviar no puede editar nada mas 
-            if (($estado != 'FORM' && $estado != 'MODF' && $estado != 'APRB' && $estado != 'PRG ') || ($perfil == 'sec_ext_ua' || $perfil == 'sec_ext_central')) {
+            
+            //if (($estado != 'FORM' && $estado != 'MODF' && $estado != 'APRB' && $estado != 'PRG ') || ($perfil == 'sec_ext_ua' || $perfil == 'sec_ext_central')) {
+            //solo en estado FORM o MODF el formulador puede modificar/eliminar
+            if (!(($perfil == 'formulador' and ($estado == 'FORM' or $estado == 'MODF')) or ($perfil=='sec_ext_ua' and ($estado=='APRB' or $estado == 'PRG'))) ) {
                 $this->dep('formulario_destinatarios')->set_solo_lectura();
                 $this->dep('formulario_destinatarios')->evento('modificacion')->ocultar();
                 $this->dep('formulario_destinatarios')->evento('baja')->ocultar();
                 //$this->dep('formulario_destinatarios')->evento('cancelar')->ocultar();
             }
 
-            $this->controlador()->evento('alta')->ocultar();
             $this->dep('formulario_destinatarios')->descolapsar();
         } else {
             $this->dep('formulario_destinatarios')->colapsar();
         }
 
         if ($this->dep('datos')->tabla('destinatarios')->esta_cargada()) {
-            if ($estado == 'APRB' || $estado == 'PRG') {
-                $this->dep('formulario_destinatarios')->evento('baja')->ocultar();
-                $form->ef('descripcion')->set_solo_lectura();
-            }
             $datos = $this->dep('datos')->tabla('destinatarios')->get();
-
             $form->set_datos($datos);
         }
     }
@@ -3929,15 +3938,12 @@ class ci_proyectos_extension extends extension_ci {
         if ($this->s__mostrar == 1) {
             $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
             $estado = $this->dep('datos')->tabla('pextension')->get()[id_estado];
-            // si presiono el boton enviar no puede editar nada mas 
-            if (($estado != 'FORM' && $estado != 'MODF' && $estado != 'APRB' && $estado != 'PRG ') || $perfil != 'formulador') {
+            // solo en FORM o MODF el formulador puede modif o baja, o la sec ua en estado APRB o PRG
+            if (!(($perfil == 'formulador' and ($estado == 'FORM' or $estado == 'MODF')) or ($perfil=='sec_ext_ua' and ($estado=='APRB' or $estado == 'PRG'))) ) {
                 $this->dep('form_integrantes')->set_solo_lectura();
                 $this->dep('form_integrantes')->evento('modificacion')->ocultar();
                 $this->dep('form_integrantes')->evento('baja')->ocultar();
-                //$this->dep('form_integrantes')->evento('cancelar')->ocultar();
             }
-
-            $this->controlador()->evento('alta')->ocultar();
             $this->dep('form_integrantes')->descolapsar();
         } else {
             $this->dep('form_integrantes')->colapsar();
@@ -3947,29 +3953,7 @@ class ci_proyectos_extension extends extension_ci {
         if ($this->dep('datos')->tabla('integrante_interno_pe')->esta_cargada()) {
 
             if ($estado == 'APRB' || $estado == 'PRG ') {
-                $this->dep('form_integrantes')->evento('baja')->ocultar();
-                /*
-                  // Obtener solicitudes
-                  $pe = $this->dep('datos')->tabla('pextension')->get();
-                  $datos_sol['id_pext'] = $pe['id_pext'];
-                  $datos_sol['estado_solicitud'] = 'Aceptada';
-                  $datos_sol['cambio_integrante'] = utf8_d_seguro('MODIFICACIÓN');
-                  $datos_sol['tipo_solicitud'] = 'INTEGRANTE';
-
-                  $solicitudes = $this->dep('datos')->tabla('solicitud')->get_solicitud_vigente($datos_sol);
-                  $modif = true;
-                  foreach ($solicitudes as $solicitud) {
-                  // control fecha actual mayor o igual fecha solicitud + mes
-                  if (strcasecmp(date('Y-m-d'), date("Y-m-d", strtotime($solicitud['fecha_dictamen'] . "+" . 1 . " month"))) >= 0) {
-                  $modif = false;
-                  }
-                  }
-
-                  if (!$modif || count($solicitudes) == 0) {
-                  $this->dep('form_integrantes')->evento('modificacion')->ocultar();
-                  }
-                 */
-
+                     
                 $form->ef('id_docente')->set_solo_lectura();
                 $form->ef('funcion_p')->set_solo_lectura();
             }
@@ -3981,12 +3965,12 @@ class ci_proyectos_extension extends extension_ci {
                 }  
             $form->ef('id_docente')->set_solo_lectura();
 
-            $datos['funcion_p'] = str_pad($datos['funcion_p'], 5);
-            if ($estado == 'PRG ' && ($datos['funcion_p'] == 'CD-Co' || $datos['funcion_p'] == 'D    ')) {
-                $this->dep('form_integrantes')->evento('baja')->ocultar();
-                $form->ef('id_docente')->set_solo_lectura();
-                $form->ef('funcion_p')->set_solo_lectura();
-            }
+            //$datos['funcion_p'] = str_pad($datos['funcion_p'], 5);
+//            if ($estado == 'PRG ' && ($datos['funcion_p'] == 'CD-Co' || $datos['funcion_p'] == 'D    ')) {
+//                $this->dep('form_integrantes')->evento('baja')->ocultar();
+//                $form->ef('id_docente')->set_solo_lectura();
+//                $form->ef('funcion_p')->set_solo_lectura();
+//            }
             $docente = $this->dep('datos')->tabla('docente')->get_id_docente($datos['id_designacion']);
             if (count($docente) > 0) {
                 $datos['id_docente'] = $docente['id_docente'];
@@ -4339,15 +4323,14 @@ class ci_proyectos_extension extends extension_ci {
         if ($this->s__mostrar_e == 1) {
             $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
             $estado = $this->dep('datos')->tabla('pextension')->get()[id_estado];
-            // si presiono el boton enviar no puede editar nada mas 
-            if (($estado != 'FORM' && $estado != 'MODF' && $estado != 'APRB' && $estado != 'PRG ') || $perfil != 'formulador') {
+            
+            //solo en estado FORM o MODF el formulador puede modificar/bajar o si es la sec ua en APRB o PRG
+            if (!(($perfil == 'formulador' and ($estado == 'FORM' or $estado == 'MODF')) or ($perfil=='sec_ext_ua' and ($estado=='APRB' or $estado == 'PRG'))) ) {
                 $this->dep('form_integrante_e')->set_solo_lectura();
                 $this->dep('form_integrante_e')->evento('modificacion')->ocultar();
                 $this->dep('form_integrante_e')->evento('baja')->ocultar();
-                //$this->dep('form_integrante_e')->evento('cancelar')->ocultar();
+                //$this->dep('formulario_destinatarios')->evento('cancelar')->ocultar();
             }
-
-            $this->controlador()->evento('alta')->ocultar();
 
             $this->dep('form_integrante_e')->descolapsar();
         } else {
@@ -4357,33 +4340,12 @@ class ci_proyectos_extension extends extension_ci {
         //para la edicion de los integrantes ya cargados
         if ($this->dep('datos')->tabla('integrante_externo_pe')->esta_cargada()) {
 
-            if ($estado == 'APRB' || $estado == 'PRG ') {
-                $this->dep('form_integrante_e')->evento('baja')->ocultar();
-                $form->ef('integrante')->set_solo_lectura();
-                $form->ef('tipo')->set_solo_lectura();
-                $form->ef('funcion_p')->set_solo_lectura();
-
-                /*
-                  // Obtener solicitudes
-                  $pe = $this->dep('datos')->tabla('pextension')->get();
-                  $datos_sol['id_pext'] = $pe['id_pext'];
-                  $datos_sol['estado_solicitud'] = 'Aceptada';
-                  $datos_sol['cambio_integrante'] = utf8_d_seguro('MODIFICACIÓN');
-                  $datos_sol['tipo_solicitud'] = 'INTEGRANTE';
-
-                  $solicitudes = $this->dep('datos')->tabla('solicitud')->get_solicitud_vigente($datos_sol);
-                  $modif = true;
-                  foreach ($solicitudes as $solicitud) {
-                  // control fecha actual mayor o igual fecha solicitud + mes
-                  if (strcasecmp(date('Y-m-d'), date("Y-m-d", strtotime($solicitud['fecha_dictamen'] . "+" . 1 . " month"))) >= 0) {
-                  $modif = false;
-                  }
-                  }
-
-                  if (!$modif || count($solicitudes) == 0) {
-                  $this->dep('form_integrante_e')->evento('modificacion')->ocultar();
-                  } */
-            }
+//            if ($estado == 'APRB' || $estado == 'PRG ') {
+//                $this->dep('form_integrante_e')->evento('baja')->ocultar();
+//                $form->ef('integrante')->set_solo_lectura();
+//                $form->ef('tipo')->set_solo_lectura();
+//                $form->ef('funcion_p')->set_solo_lectura();
+//            }
 
             $datos = $this->dep('datos')->tabla('integrante_externo_pe')->get();
             $datos['funcion_p'] = str_pad($datos['funcion_p'], 5);
@@ -4712,15 +4674,13 @@ class ci_proyectos_extension extends extension_ci {
         $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
         if ($this->s__mostrar_org == 1) {
             $estado = $this->dep('datos')->tabla('pextension')->get()[id_estado];
-            // si presiono el boton enviar no puede editar nada mas 
-            if (($estado != 'FORM' && $estado != 'MODF' && $estado != 'APRB' && $estado != 'PRG ') || $perfil != 'formulador') {
+            // solo en FORM o MODF el formulador puede modif o baja, o la sec ua en estado APRB o PRG
+            if (!(($perfil == 'formulador' and ($estado == 'FORM' or $estado == 'MODF')) or ($perfil=='sec_ext_ua' and ($estado=='APRB' or $estado == 'PRG'))) ) {
                 $this->dep('form_organizacion')->set_solo_lectura();
                 $this->dep('form_organizacion')->evento('modificacion')->ocultar();
                 $this->dep('form_organizacion')->evento('baja')->ocultar();
-                //$this->dep('form_organizacion')->evento('cancelar')->ocultar();
+                //$this->dep('formulario_destinatarios')->evento('cancelar')->ocultar();
             }
-
-            $this->controlador()->evento('alta')->ocultar();
             $this->dep('form_organizacion')->descolapsar();
         } else {
             $this->dep('form_organizacion')->colapsar();
@@ -4728,11 +4688,6 @@ class ci_proyectos_extension extends extension_ci {
 
         if ($this->dep('datos')->tabla('organizaciones_participantes')->esta_cargada()) {
 
-            if ($estado == 'APRB' || $estado == 'PRG ') {
-                $this->dep('form_organizacion')->evento('baja')->ocultar();
-                $form->ef('nombre')->set_solo_lectura();
-                $form->ef('id_tipo_organizacion')->set_solo_lectura();
-            }
             $datos = $this->dep('datos')->tabla('organizaciones_participantes')->get();
             if(isset($datos['aval'])){
                     $nomb_ft="/extension/1.0/avales/".$datos['aval'];
@@ -4875,13 +4830,13 @@ class ci_proyectos_extension extends extension_ci {
         $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
         if ($this->s__mostrar_obj == 1) {
             $estado = $this->dep('datos')->tabla('pextension')->get()[id_estado];
-            // si presiono el boton enviar no puede editar nada mas 
-            if (($estado != 'FORM' && $estado != 'MODF') || $perfil != 'formulador') {
+            // solo en estado FORM o MODF el formulador puede modif 
+            if (!(($perfil == 'formulador' and ($estado == 'FORM' or $estado == 'MODF')) or ($perfil=='sec_ext_ua' and ($estado=='APRB' or $estado == 'PRG'))) ) {
                 $this->dep('form_objetivos_esp')->set_solo_lectura();
                 $this->dep('form_objetivos_esp')->evento('modificacion')->ocultar();
                 $this->dep('form_objetivos_esp')->evento('baja')->ocultar();
                 //$this->dep('form_objetivos_esp')->evento('cancelar')->ocultar();
-            }
+            }  
             $this->controlador()->evento('alta')->ocultar();
             $this->dep('form_objetivos_esp')->descolapsar();
         } else {
@@ -5045,13 +5000,14 @@ class ci_proyectos_extension extends extension_ci {
         $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
         if ($this->s__mostrar_activ == 1) {
             $estado = $this->dep('datos')->tabla('pextension')->get()[id_estado];
-            // si presiono el boton enviar no puede editar nada mas 
-            if (($estado != 'FORM' && $estado != 'MODF') || $perfil != 'formulador') {
+         
+            // solo en estado FORM o MODF el formulador puede modif 
+            if (!(($perfil == 'formulador' and ($estado == 'FORM' or $estado == 'MODF')) or ($perfil=='sec_ext_ua' and ($estado=='APRB' or $estado == 'PRG'))) ) {
                 $this->dep('form_actividad')->set_solo_lectura();
                 $this->dep('form_actividad')->evento('modificacion')->ocultar();
                 $this->dep('form_actividad')->evento('baja')->ocultar();
                 //$this->dep('form_actividad')->evento('cancelar')->ocultar();
-            }
+            }        
             $this->controlador()->evento('alta')->ocultar();
             $this->dep('form_actividad')->descolapsar();
         } else {
@@ -5239,14 +5195,14 @@ class ci_proyectos_extension extends extension_ci {
         if ($this->s__mostrar_presup == 1) {
             $pext = $this->dep('datos')->tabla('pextension')->get();
             $estado = $pext[id_estado];
+            print_r($estado);
             // si presiono el boton enviar no puede editar nada mas 
-            if (($estado != 'FORM' && $estado != 'MODF') || $perfil != 'formulador') {
+             if (!(($perfil == 'formulador' and ($estado == 'FORM' or $estado == 'MODF')) or ($perfil=='sec_ext_ua' and ($estado=='APRB' or $estado == 'PRG'))) ) {
                 $this->dep('form_presupuesto')->set_solo_lectura();
                 $this->dep('form_presupuesto')->evento('modificacion')->ocultar();
                 $this->dep('form_presupuesto')->evento('baja')->ocultar();
                 //$this->dep('form_presupuesto')->evento('cancelar')->ocultar();
             }
-            $this->controlador()->evento('alta')->ocultar();
             $this->dep('form_presupuesto')->descolapsar();
         } else {
             $this->dep('form_presupuesto')->colapsar();

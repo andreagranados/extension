@@ -1055,7 +1055,12 @@ class ci_proyectos_extension extends extension_ci {
             $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
             $pextension = $this->dep('datos')->tabla('pextension')->get();
             $estado=$pextension['id_estado'];
-            if (!(($perfil == 'formulador' and ($estado == 'FORM' or $estado == 'MODF')) or ($perfil=='sec_ext_ua' and ($estado=='APRB' or $estado == 'PRG'))) ) {
+            //solo en estado FORM o MODF el formulador puede agregar 
+            if(!((($this->s__pantalla=='pant_formulario' or $this->s__pantalla=='pant_destinatarios' or $this->s__pantalla=='pant_planilla' or $this->s__pantalla=='pant_organizaciones' or $this->s__pantalla=='pant_objetivos' or $this->s__pantalla=='pant_presup' or $this->s__pantalla=='pant_interno' or $this->s__pantalla=='pant_externo' or $this->s__pantalla=='pant_actividad') and $perfil == 'formulador' and ($estado == 'FORM' or $estado == 'MODF')) or
+                    //solo en estado APRB o PRG el formulador puede agregar solicitudes y avances
+                    (($this->s__pantalla =='pant_solicitud' or $this->s__pantalla=='pant_avance') and $perfil=='formulador' and ($estado=='APRB' or $estado=='PRG')) or
+                    //si es la sec ua y el estado del proyecto es APRB o PRG y estoy en alguna de las sig pantallas (1,2,3,4,5)
+                    (($this->s__pantalla =='pant_formulario' or $this->s__pantalla=='pant_destinatarios' or $this->s__pantalla=='pant_planilla' or $this->s__pantalla=='pant_organizaciones' or $this->s__pantalla=='pant_objetivos' or $this->s__pantalla=='pant_interno' or $this->s__pantalla=='pant_externo' or $this->s__pantalla=='pant_actividad') and $perfil =='sec_ext_ua' and ($estado=='APRB' or $estado == 'PRG')))){
                       toba::notificacion()->agregar(utf8_decode("No puede agregar"), "info"); 
                       $band=false;
             }
@@ -3859,17 +3864,18 @@ class ci_proyectos_extension extends extension_ci {
         $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
         $estado = $this->dep('datos')->tabla('pextension')->get()[id_estado];
         // si presiono el boton enviar no puede editar nada mas 
-        if ($estado != 'FORM' && $estado != 'MODF' && $estado != 'PRG ' && $estado != 'APRB') {
-            $this->controlador()->evento('alta')->ocultar();
-        }
+        // andrea comenta
+//        if ($estado != 'FORM' && $estado != 'MODF' && $estado != 'PRG ' && $estado != 'APRB') {
+//            $this->controlador()->evento('alta')->ocultar();
+//        }
         if ($perfil == 'formulador') {
             $this->pantalla()->tab("pant_seguimiento")->ocultar();
         }
 
 
-        if ($perfil == 'sec_ext_central' || $perfil == 'sec_ext_ua') {
-            $this->controlador()->evento('alta')->ocultar();
-        } else {
+//        if ($perfil == 'sec_ext_central' || $perfil == 'sec_ext_ua') {
+//            $this->controlador()->evento('alta')->ocultar();
+//        } else {
             /*
               // Obtener solicitudes alta aprobadas
               $pe = $this->dep('datos')->tabla('pextension')->get();
@@ -3898,7 +3904,7 @@ class ci_proyectos_extension extends extension_ci {
               if (!$alta || count($solicitudes) == 0) {
               $this->controlador()->evento('alta')->ocultar();
               } */
-        }
+//        }
         $this->s__imprimir = 0;
     }
 
@@ -4248,40 +4254,40 @@ class ci_proyectos_extension extends extension_ci {
         $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
         $estado = $this->dep('datos')->tabla('pextension')->get()[id_estado];
         // si presiono el boton enviar no puede editar nada mas 
-        if ($estado != 'FORM' && $estado != 'MODF' && $estado != 'PRG ' && $estado != 'APRB') {
-            $this->controlador()->evento('alta')->ocultar();
-        }
+//        if ($estado != 'FORM' && $estado != 'MODF' && $estado != 'PRG ' && $estado != 'APRB') {
+//            $this->controlador()->evento('alta')->ocultar();
+//        }
 
         if ($perfil == 'formulador') {
             $this->pantalla()->tab("pant_seguimiento")->ocultar();
         }
 
-        if ($perfil == 'sec_ext_central' || $perfil == 'sec_ext_ua') {
-            $this->controlador()->evento('alta')->ocultar();
-        } else {
-
-            /*
-              // Obtener solicitudes alta aprobadas
-              $pe = $this->dep('datos')->tabla('pextension')->get();
-              $datos_sol['id_pext'] = $pe['id_pext'];
-              $datos_sol['estado_solicitud'] = 'Aceptada';
-              $datos_sol['cambio_integrante'] = 'ALTA';
-              $datos_sol['tipo_solicitud'] = 'INTEGRANTE';
-
-
-              $solicitudes = $this->dep('datos')->tabla('solicitud')->get_solicitud_vigente($datos_sol);
-              $alta = true;
-              foreach ($solicitudes as $solicitud) {
-              // control fecha actual mayor o igual fecha solicitud + mes
-              if (strcasecmp(date('Y-m-d'), date("Y-m-d", strtotime($solicitud['fecha_dictamen'] . "+" . 1 . " month"))) >= 0) {
-              $alta = false;
-              }
-              }
-
-              if (!$alta || count($solicitudes) == 0) {
-              $this->controlador()->evento('alta')->ocultar();
-              } */
-        }
+//        if ($perfil == 'sec_ext_central' || $perfil == 'sec_ext_ua') {
+//            $this->controlador()->evento('alta')->ocultar();
+//        } else {
+//
+//            /*
+//              // Obtener solicitudes alta aprobadas
+//              $pe = $this->dep('datos')->tabla('pextension')->get();
+//              $datos_sol['id_pext'] = $pe['id_pext'];
+//              $datos_sol['estado_solicitud'] = 'Aceptada';
+//              $datos_sol['cambio_integrante'] = 'ALTA';
+//              $datos_sol['tipo_solicitud'] = 'INTEGRANTE';
+//
+//
+//              $solicitudes = $this->dep('datos')->tabla('solicitud')->get_solicitud_vigente($datos_sol);
+//              $alta = true;
+//              foreach ($solicitudes as $solicitud) {
+//              // control fecha actual mayor o igual fecha solicitud + mes
+//              if (strcasecmp(date('Y-m-d'), date("Y-m-d", strtotime($solicitud['fecha_dictamen'] . "+" . 1 . " month"))) >= 0) {
+//              $alta = false;
+//              }
+//              }
+//
+//              if (!$alta || count($solicitudes) == 0) {
+//              $this->controlador()->evento('alta')->ocultar();
+//              } */
+//        }
         $this->s__imprimir = 0;
     }
 
@@ -4783,16 +4789,16 @@ class ci_proyectos_extension extends extension_ci {
 //        if ($perfil == 'formulador') {
 //            $this->pantalla()->tab("pant_seguimiento")->ocultar();
 //        }
-        if ($perfil == 'sec_ext_ua' || $perfil == 'sec_ext_central') {
-            $this->controlador()->evento('alta')->ocultar();
-        }
+//        if ($perfil == 'sec_ext_ua' || $perfil == 'sec_ext_central') {
+//            $this->controlador()->evento('alta')->ocultar();
+//        }
         $pext = $this->dep('datos')->tabla('pextension')->get();
         $estado = $pext[id_estado];
         $obj_esp = $this->dep('datos')->tabla('objetivo_especifico')->get_listado($pext['id_pext']);
         // si presiono el boton enviar no puede editar nada mas 
-        if (($estado != 'FORM' && $estado != 'MODF') || count($obj_esp) == 5) {
-            $this->controlador()->evento('alta')->ocultar();
-        } 
+//        if (($estado != 'FORM' && $estado != 'MODF') || count($obj_esp) == 5) {
+//            $this->controlador()->evento('alta')->ocultar();
+//        } 
 //        else {
 //            $this->pantalla()->tab("pant_solicitud")->ocultar();
 //            $this->pantalla()->tab("pant_avance")->ocultar();
@@ -5118,14 +5124,14 @@ class ci_proyectos_extension extends extension_ci {
         if ($estado == 'FORM') {
             $this->pantalla()->tab("pant_seguimiento")->ocultar();
         }
-        if ($perfil == 'sec_ext_ua' || $perfil == 'sec_ext_central') {
-            $this->controlador()->evento('alta')->ocultar();
-        }
+//        if ($perfil == 'sec_ext_ua' || $perfil == 'sec_ext_central') {
+//            $this->controlador()->evento('alta')->ocultar();
+//        }
 
         // si presiono el boton enviar no puede editar nada mas 
-        if ($estado != 'FORM' && $estado != 'MODF') {
-            $this->controlador()->evento('alta')->ocultar();
-        } 
+//        if ($estado != 'FORM' && $estado != 'MODF') {
+//            $this->controlador()->evento('alta')->ocultar();
+//        } 
 //        else {andrea
 //            $this->pantalla()->tab("pant_solicitud")->ocultar();
 //            $this->pantalla()->tab("pant_avance")->ocultar();
@@ -5195,7 +5201,6 @@ class ci_proyectos_extension extends extension_ci {
         if ($this->s__mostrar_presup == 1) {
             $pext = $this->dep('datos')->tabla('pextension')->get();
             $estado = $pext[id_estado];
-            print_r($estado);
             // si presiono el boton enviar no puede editar nada mas 
              if (!(($perfil == 'formulador' and ($estado == 'FORM' or $estado == 'MODF')) or ($perfil=='sec_ext_ua' and ($estado=='APRB' or $estado == 'PRG'))) ) {
                 $this->dep('form_presupuesto')->set_solo_lectura();

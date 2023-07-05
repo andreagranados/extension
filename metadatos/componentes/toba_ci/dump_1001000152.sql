@@ -288,7 +288,7 @@ INSERT INTO apex_objeto_ci_pantalla (objeto_ci_proyecto, objeto_ci, pantalla, id
 	'pant_cuadro', --identificador
 	'1', --orden
 	'Pantalla cuadro', --etiqueta
-	NULL, --descripcion
+	'Recuerde que los datos de la convocatoria no pueden ser alterados una vez que comienza', --descripcion
 	NULL, --tip
 	'apex', --imagen_recurso_origen
 	NULL, --imagen

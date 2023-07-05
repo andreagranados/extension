@@ -209,7 +209,6 @@ class ci_bases extends extension_ci {
         } else {
             $this->dep('form_ejes')->colapsar();
         }
-
         if ($this->dep('datos')->tabla('eje_tematico_conv')->esta_cargada()) {
             $form->set_datos($this->dep('datos')->tabla('eje_tematico_conv')->get());
         }
@@ -221,73 +220,89 @@ class ci_bases extends extension_ci {
          */
 
         $bases = $this->dep('datos')->tabla('bases_convocatoria')->get();
-        $tipo = $this->dep('datos')->tabla('tipos_ejes_tematicos')->get_tipo($datos['descripcion'])[0];
+        $fecha_actual=date('Y-m-d');
+        if($fecha_actual>=$bases['fecha_desde']){
+            toba::notificacion()->agregar('La convocatoria ya comenzo. Ya no puede modificar sus datos.', 'error');  
+        }else{
+            $tipo = $this->dep('datos')->tabla('tipos_ejes_tematicos')->get_tipo($datos['descripcion'])[0];
 
-        $correcto = true;
-        $ejes_conv = $this->dep('datos')->tabla('eje_tematico_conv')->get_listado($bases['id_bases']);
-        // Control Ejes no repetidos 
-        foreach ($ejes_conv as $eje) {
-            if ($eje['id_eje'] == $tipo['id_eje']) {
-                $correcto = false;
-                toba::notificacion()->agregar('Eje tematico repetido, vuelva a intentarlo', 'info');
+            $correcto = true;
+            $ejes_conv = $this->dep('datos')->tabla('eje_tematico_conv')->get_listado($bases['id_bases']);
+            // Control Ejes no repetidos 
+            foreach ($ejes_conv as $eje) {
+                if ($eje['id_eje'] == $tipo['id_eje']) {
+                    $correcto = false;
+                    toba::notificacion()->agregar('Eje tematico repetido, vuelva a intentarlo', 'info');
+                }
             }
+            if ($correcto) {
+                $datos['id_bases'] = $bases['id_bases'];
+                $datos['descripcion'] = $tipo['descripcion'];
+                $datos['id_eje'] = $tipo['id_eje'];
+
+                // control clave unica
+
+                $this->dep('datos')->tabla('eje_tematico_conv')->set($datos);
+                $this->dep('datos')->tabla('eje_tematico_conv')->sincronizar();
+                $this->dep('datos')->tabla('eje_tematico_conv')->cargar($datos);
+
+                $this->s__mostrar = 0;
+            }
+            //$this->dep('datos')->resetear();
+            //$this->set_pantalla('pant_ejes');
         }
-        if ($correcto) {
-            $datos['id_bases'] = $bases['id_bases'];
-            $datos['descripcion'] = $tipo['descripcion'];
-            $datos['id_eje'] = $tipo['id_eje'];
-
-            // control clave unica
-
-            $this->dep('datos')->tabla('eje_tematico_conv')->set($datos);
-            $this->dep('datos')->tabla('eje_tematico_conv')->sincronizar();
-            $this->dep('datos')->tabla('eje_tematico_conv')->cargar($datos);
-
-            $this->s__mostrar = 0;
-        }
-        //$this->dep('datos')->resetear();
-        //$this->set_pantalla('pant_ejes');
     }
 
     // problemas con la clave al modificar, no se actualiza ( Se elimino el evento )
     function evt__form_ejes__modificacion($datos) {
         $ejes = $this->dep('datos')->tabla('eje_tematico_conv')->get();
         $bases = $this->dep('datos')->tabla('bases_convocatoria')->get();
-        if ($ejes['descripcion'] == $datos['descripcion']) {
-            $datos['descripcion'] = $ejes['id_eje'];
-        }
-        $tipo = $this->dep('datos')->tabla('tipos_ejes_tematicos')->get_tipo($datos['descripcion'])[0];
-
-        $correcto = true;
-        $ejes_conv = $this->dep('datos')->tabla('eje_tematico_conv')->get_listado($bases['id_bases']);
-        // Control Ejes no repetidos 
-        foreach ($ejes_conv as $eje) {
-            if ($eje['id_eje'] == $tipo['id_eje']) {
-                $correcto = false;
-                toba::notificacion()->agregar('Eje tematico repetido, vuelva a intentarlo', 'info');
+        $fecha_actual=date('Y-m-d');
+        if($fecha_actual>=$bases['fecha_desde']){
+            toba::notificacion()->agregar('La convocatoria ya comenzo. Ya no puede modificar sus datos.', 'error');  
+        }else{
+            if ($ejes['descripcion'] == $datos['descripcion']) {
+                $datos['descripcion'] = $ejes['id_eje'];
             }
-        }
-        if ($correcto) {
-            $datos['id_bases'] = $bases['id_bases'];
-            $datos['descripcion'] = $tipo['descripcion'];
-            $datos['id_eje'] = $tipo['id_eje'];
+            $tipo = $this->dep('datos')->tabla('tipos_ejes_tematicos')->get_tipo($datos['descripcion'])[0];
 
-            // control clave unica
+            $correcto = true;
+            $ejes_conv = $this->dep('datos')->tabla('eje_tematico_conv')->get_listado($bases['id_bases']);
+            // Control Ejes no repetidos 
+            foreach ($ejes_conv as $eje) {
+                if ($eje['id_eje'] == $tipo['id_eje']) {
+                    $correcto = false;
+                    toba::notificacion()->agregar('Eje tematico repetido, vuelva a intentarlo', 'info');
+                }
+            }
+            if ($correcto) {
+                $datos['id_bases'] = $bases['id_bases'];
+                $datos['descripcion'] = $tipo['descripcion'];
+                $datos['id_eje'] = $tipo['id_eje'];
 
-            $this->dep('datos')->tabla('eje_tematico_conv')->set($datos);
-            $this->dep('datos')->tabla('eje_tematico_conv')->sincronizar();
+                // control clave unica
 
-            $this->s__mostrar = 0;
+                $this->dep('datos')->tabla('eje_tematico_conv')->set($datos);
+                $this->dep('datos')->tabla('eje_tematico_conv')->sincronizar();
+
+                $this->s__mostrar = 0;
+            }
         }
     }
 
     function evt__form_ejes__baja() {
-        $this->dep('datos')->tabla('eje_tematico_conv')->eliminar_todo();
-        toba::notificacion()->agregar('El registro se ha eliminado correctamente', 'info');
+        $bases = $this->dep('datos')->tabla('bases_convocatoria')->get();
+        $fecha_actual=date('Y-m-d');
+        if($fecha_actual>=$bases['fecha_desde']){
+            toba::notificacion()->agregar('La convocatoria ya comenzo. Ya no puede modificar sus datos.', 'error');  
+        }else{
+            $this->dep('datos')->tabla('eje_tematico_conv')->eliminar_todo();
+            toba::notificacion()->agregar('El registro se ha eliminado correctamente', 'info');
 
-        $this->dep('datos')->tabla('eje_tematico_conv')->resetear();
-        //$this->set_pantalla('pant_ejes');
-        $this->s__mostrar = 0;
+            $this->dep('datos')->tabla('eje_tematico_conv')->resetear();
+            //$this->set_pantalla('pant_ejes');
+            $this->s__mostrar = 0;
+        }
     }
 
     function evt__form_ejes__cancelar() {
@@ -317,13 +332,18 @@ class ci_bases extends extension_ci {
             toba::notificacion()->agregar('El porcentaje del rubro de la convocatoria no puede superar el 100%', 'info');
         }else{
             $bases = $this->dep('datos')->tabla('bases_convocatoria')->get();
-            $datos['id_bases'] = $bases['id_bases'];
-            $datos[id_rubro_extension] = $this->s__rubro;
-            $this->dep('datos')->tabla('montos_convocatoria')->set($datos);
-            $this->dep('datos')->tabla('montos_convocatoria')->sincronizar();
-            $this->dep('datos')->tabla('montos_convocatoria')->resetear();
-            $this->s__mostrar = 0;
+            $fecha_actual=date('Y-m-d');
+            if($fecha_actual>=$bases['fecha_desde']){
+                toba::notificacion()->agregar('La convocatoria ya comenzo. Ya no puede modificar sus datos.', 'error');  
+            }else{
+                $datos['id_bases'] = $bases['id_bases'];
+                $datos[id_rubro_extension] = $this->s__rubro;
+                $this->dep('datos')->tabla('montos_convocatoria')->set($datos);
+                $this->dep('datos')->tabla('montos_convocatoria')->sincronizar();
+                $this->dep('datos')->tabla('montos_convocatoria')->resetear();
+                $this->s__mostrar = 0;
             }
+        }
     }
 
     function evt__formulario_montos__cancelar() {
@@ -357,23 +377,30 @@ class ci_bases extends extension_ci {
     }
 
     function evt__formulario__modificacion($datos) {
+       
         if ($this->dep('datos')->tabla('bases_convocatoria')->esta_cargada()) {
             $bases = $this->dep('datos')->tabla('bases_convocatoria')->get();
-            if(!$datos['tiene_monto']){//cuando modifica el monto
-                $datos['monto_max']=null;
-                $respuesta=$this->dep('datos')->tabla('montos_convocatoria')->eliminar_porcentajes_rubro($bases['id_bases']);
-                if($respuesta){
-                  toba::notificacion()->agregar('Se han eliminado los porcentajes maximos por rubro', 'info');  
-                }
-            }
+           
             if($datos['fecha_desde']>=$datos['fecha_hasta']){
                 toba::notificacion()->agregar('La fecha de fin debe ser mayor a la fecha desde', 'error');  
             }else{ 
                 if($datos['fecha_hasta']>=$datos['fecha_lim_modif']){
                     toba::notificacion()->agregar('La fecha limite de modificacion debe ser mayor a la fecha hasta', 'error');  
                 }else{
-                    $this->dep('datos')->tabla('bases_convocatoria')->set($datos);
-                    $this->dep('datos')->tabla('bases_convocatoria')->sincronizar();
+                    $fecha_actual=date('Y-m-d');
+                    if($fecha_actual>=$bases['fecha_desde']){
+                        toba::notificacion()->agregar('La convocatoria ya comenzo. Ya no puede modificar sus datos.', 'error');  
+                    }else{
+                        if(!$datos['tiene_monto']){//cuando modifica el monto
+                            $datos['monto_max']=null;
+                            $respuesta=$this->dep('datos')->tabla('montos_convocatoria')->eliminar_porcentajes_rubro($bases['id_bases']);
+                            if($respuesta){
+                              toba::notificacion()->agregar('Se han eliminado los porcentajes maximos por rubro', 'info');  
+                            }
+                        }
+                        $this->dep('datos')->tabla('bases_convocatoria')->set($datos);
+                        $this->dep('datos')->tabla('bases_convocatoria')->sincronizar();
+                    }
                 }
             }
         }

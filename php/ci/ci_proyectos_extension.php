@@ -3707,8 +3707,7 @@ class ci_proyectos_extension extends extension_ci {
         if ($this->s__mostrar_dest == 1) {
             $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
             $estado = $this->dep('datos')->tabla('pextension')->get()[id_estado];
-            // si presiono el boton enviar no puede editar nada mas 
-            
+                        
             //if (($estado != 'FORM' && $estado != 'MODF' && $estado != 'APRB' && $estado != 'PRG ') || ($perfil == 'sec_ext_ua' || $perfil == 'sec_ext_central')) {
             //solo en estado FORM o MODF el formulador puede modificar/eliminar
             if (!(($perfil == 'formulador' and ($estado == 'FORM' or $estado == 'MODF')) or ($perfil=='sec_ext_ua' and ($estado=='APRB' or $estado == 'PRG'))) ) {
@@ -3717,7 +3716,6 @@ class ci_proyectos_extension extends extension_ci {
                 $this->dep('formulario_destinatarios')->evento('baja')->ocultar();
                 //$this->dep('formulario_destinatarios')->evento('cancelar')->ocultar();
             }
-
             $this->dep('formulario_destinatarios')->descolapsar();
         } else {
             $this->dep('formulario_destinatarios')->colapsar();

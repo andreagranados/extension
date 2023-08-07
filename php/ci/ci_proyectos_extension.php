@@ -962,7 +962,13 @@ class ci_proyectos_extension extends extension_ci {
     }
     
     function convocatorias() {
-        return $this->dep('datos')->tabla('bases_convocatoria')->get_convocatorias_vigentes();
+        $pe = $this->dep('datos')->tabla('pextension')->get();
+        if($pe['id_estado']=='MODF'){
+            return $this->dep('datos')->tabla('bases_convocatoria')->get_convocatorias_vigentes_para_modf();
+        }else{
+            return $this->dep('datos')->tabla('bases_convocatoria')->get_convocatorias_vigentes();
+        }
+        
     }
 //    function convocatorias() {
 //        $where = "WHERE 1=1 ";

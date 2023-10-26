@@ -27,10 +27,13 @@ class ci_docentes extends extension_ci {
 
     function conf__cuadro(toba_ei_cuadro $cuadro) {
         $cuadro->desactivar_modo_clave_segura();
-        if (isset($this->s__datos_filtro)) {
-            $cuadro->set_datos($this->dep('datos')->tabla('docente')->get_listado($this->s__where));
+        
+        if (isset($this->s__where)) {
+            //$cuadro->set_datos($this->dep('datos')->tabla('docente')->get_listado($this->s__where));
+            $cuadro->set_datos($this->dep('datos')->tabla('unidad')->get_docentes($this->s__where));
         } else {
-            $cuadro->set_datos($this->dep('datos')->tabla('docente')->get_listado());
+//            $cuadro->set_datos($this->dep('datos')->tabla('docente')->get_listado());
+            $cuadro->set_datos($this->dep('datos')->tabla('unidad')->get_docentes());
         }
     }
 

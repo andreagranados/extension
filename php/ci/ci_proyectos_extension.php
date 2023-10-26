@@ -1626,15 +1626,15 @@ class ci_proyectos_extension extends extension_ci {
 //                    unset($this->s__datos[$aux]);
 //                }
             }
-            if(strcasecmp(date('Y-m-d'), date('Y-m-d', strtotime($proyecto['fec_hasta']))) > 0 && $proyecto['id_estado'] == 'APRB') {
-                $personal = $this->dep('datos')->tabla('integrante_externo_pe')->get_plantilla($proyecto['id_pext'],$this->s__datos);
-                foreach($personal as $per){
-                    if($per['funcion_p'] == "Director"){
-                        $proyecto[director]=$per['nombre']." ".$per['nro_docum'];
-                        $this->s__datos[$aux][director] = $proyecto[director];
-                    }
-                }
-            }
+//            if(strcasecmp(date('Y-m-d'), date('Y-m-d', strtotime($proyecto['fec_hasta']))) > 0 && $proyecto['id_estado'] == 'APRB') {
+//                $personal = $this->dep('datos')->tabla('integrante_externo_pe')->get_plantilla($proyecto['id_pext'],$this->s__datos);
+//                foreach($personal as $per){
+//                    if($per['funcion_p'] == "Director"){
+//                        $proyecto[director]=$per['nombre']." ".$per['nro_docum'];
+//                        $this->s__datos[$aux][director] = $proyecto[director];
+//                    }
+//                }
+//            }
             $aux = $aux + 1;
         }
         $cuadro->set_datos($this->s__datos);
@@ -3431,22 +3431,23 @@ class ci_proyectos_extension extends extension_ci {
             $datos['eje_tematico'] = $ejes;
             $datos['multi_uni'] = $multi_uni;
             
-            if(strcasecmp(date('Y-m-d'), date('Y-m-d', strtotime($datos['fec_hasta']))) > 0) {
-                
-                $personal = $this->dep('datos')->tabla('integrante_externo_pe')->get_plantilla($datos['id_pext'],$this->s__datos_filtro);
-                foreach($personal as $per){
-                    if($per['funcion_p'] == "Director"){
-                        $datos[director]=$per['nombre'];
-                        $datos[dir_email]=$per['mail'];
-                        $datos[dir_telefono]=$per['telefono'];
-                    } else if($per['funcion_p'] == "Codirector"){
-                        $datos[co_director]=$per['nombre'];
-                        $datos[co_email]=$per['mail'];
-                        $datos[co_telefono]=$per['telefono'];
-                    }
-                }
-                
-            }
+//            if(strcasecmp(date('Y-m-d'), date('Y-m-d', strtotime($datos['fec_hasta']))) > 0) {
+//                
+//                $personal = $this->dep('datos')->tabla('integrante_externo_pe')->get_plantilla($datos['id_pext'],$this->s__datos_filtro);
+//                foreach($personal as $per){
+//                    if($per['funcion_p'] == "Director"){
+//                        $datos[director]=$per['nombre'];
+//                        $datos[dir_email]=$per['mail'];
+//                        $datos[dir_telefono]=$per['telefono'];
+//                    } else if($per['funcion_p'] == "Codirector"){
+//                        $datos[co_director]=$per['nombre'];
+//                        $datos[co_email]=$per['mail'];
+//                        $datos[co_telefono]=$per['telefono'];
+//                    }
+//                }
+//                
+//            }
+           
             $form->set_datos($datos);
         }
     }

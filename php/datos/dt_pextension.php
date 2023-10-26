@@ -1,4 +1,5 @@
 <?php
+require 'dt_unidad.php';
 
 class dt_pextension extends extension_datos_tabla {
 
@@ -7,12 +8,157 @@ class dt_pextension extends extension_datos_tabla {
         return toba::db('extension')->consultar($sql);
     }
 
+//    function get_datos($filtro = array()) {
+//        $where = array();
+//        if (isset($filtro['uni_acad'])) {
+//            $where[] = "t_p.uni_acad = " . quote($filtro['uni_acad']);
+//            $where[] = "t_p.id_pext = " . quote($filtro['id_pext']);
+//        }
+//        $sql = "SELECT
+//			t_p.id_pext,
+//                        t_p.denominacion,
+//                        t_ua.descripcion as uni_acad_nombre,
+//                        t_p.departamento,
+//                        t_p.area,
+//                        t_p.fec_desde,
+//                        t_p.fec_hasta,
+//                        t_p.fec_carga,
+//                        t_p.expediente,
+//                        t_p.duracion,
+//                        t_p.palabras_clave,
+//                        t_p.objetivo,
+//                        t_e.id_estado,
+//                        t_e.descripcion as descripcion_estado,
+//                        t_p.financiacion,
+//                        t_p.monto,
+//                        t_p.uni_acad,
+//                        
+//                        d.apellido || ' '|| d.nombre || ' '|| d.tipo_docum || ' '|| d.nro_docum as director,
+//                        d.correo_institucional as dir_email,
+//                        d.telefono_celular as dir_telefono,
+//               
+//                        co.apellido || ' '|| co.nombre || ' '|| co.tipo_docum || ' '|| co.nro_docum as co_director,
+//                        co.correo_institucional as co_email,
+//                        
+//                        p.apellido || ' '|| p.nombre || ' '|| t_eco.tipo_docum || ' '|| t_eco.nro_docum as co_director_e,
+//                        p.mail as co_email_e,
+//                        p.telefono as co_telefono,
+//   
+// 
+//                        t_p.eje_tematico,
+//                        t_p.descripcion_situacion,
+//                        t_p.caracterizacion_poblacion,
+//                        t_p.localizacion_geo,
+//                        t_p.antecedente_participacion,
+//                        t_p.importancia_necesidad,
+//                        b_c.id_bases,
+//                        t_c.id_conv,
+//                        t_p.responsable_carga,
+//                        t_p.impacto,
+//                        t_p.multi_uni,
+//                        t_p.es_multi
+//                    FROM
+//                        pextension as t_p INNER JOIN"
+//                . "(SELECT t_ua.* FROM dblink('" . $this->dblink_designa() . "','SELECT sigla,descripcion FROM unidad_acad') as t_ua (sigla CHARACTER(5), descripcion CHARACTER(60))) as t_ua ON (t_p.uni_acad = t_ua.sigla)
+//                        LEFT OUTER JOIN integrante_interno_pe as i ON (t_p.id_pext = i.id_pext AND i.funcion_p='D' AND i.hasta >= '" . date('Y-m-d') . "')
+//                        LEFT OUTER JOIN (SELECT d.* FROM  dblink('" . $this->dblink_designa() . "', 
+//                                    'SELECT d.id_designacion, dc.id_docente , dc.apellido, dc.nombre, dc.tipo_docum, dc.nro_docum,dc.correo_institucional,dc.telefono_celular 
+//                                     FROM designacion as d LEFT OUTER JOIN docente as dc
+//                                            ON(dc.id_docente = d.id_docente)') as d 
+//                                            ( id_designacion INTEGER ,id_docente INTEGER ,apellido CHARACTER VARYING, nombre CHARACTER VARYING, tipo_docum CHARACTER(4), nro_docum INTEGER,correo_institucional CHARACTER(60),telefono_celular CHARACTER(30) )) as d ON (i.id_designacion=d.id_designacion)
+//                                            
+//                        LEFT OUTER JOIN integrante_interno_pe as i_co ON (t_p.id_pext = i_co.id_pext AND i_co.funcion_p='CD-Co' AND i_co.hasta >= '" . date('Y-m-d') . "')                        
+//                        LEFT OUTER JOIN (SELECT co.* FROM  dblink('" . $this->dblink_designa() . "', 
+//                                    'SELECT d.id_designacion, dc.id_docente , dc.apellido, dc.nombre, dc.tipo_docum, dc.nro_docum,dc.correo_institucional,dc.telefono_celular 
+//                                     FROM designacion as d LEFT OUTER JOIN docente as dc
+//                                            ON(dc.id_docente = d.id_docente)') as co 
+//                                            ( id_designacion INTEGER ,id_docente INTEGER ,apellido CHARACTER VARYING, nombre CHARACTER VARYING, tipo_docum CHARACTER(4), nro_docum INTEGER,correo_institucional CHARACTER(60),telefono_celular CHARACTER(30) )) as co ON (i_co.id_designacion=co.id_designacion)
+//                        
+//                        LEFT OUTER JOIN integrante_externo_pe as t_eco ON (t_p.id_pext = t_eco.id_pext AND t_eco.funcion_p='CD-Co' AND t_eco.hasta >= '" . date('Y-m-d') . "') 
+//                        LEFT OUTER JOIN persona as p ON (p.tipo_docum = t_eco.tipo_docum AND p.nro_docum = t_eco.nro_docum ) 
+//                        
+//                        LEFT OUTER JOIN bases_convocatoria as b_c ON (b_c.id_bases = t_p.id_bases)
+//                        LEFT OUTER JOIN tipo_convocatoria as t_c ON (t_c.id_conv = b_c.tipo_convocatoria)
+//                        LEFT OUTER JOIN estado_pe as t_e ON (t_e.id_estado = t_p.id_estado)
+//                        ";
+//
+//
+//        if (count($where) > 0) {
+//            $sql = sql_concatenar_where($sql, $where);
+//        }
+//
+//        return toba::db('extension')->consultar($sql);
+//    }
+    
+    function tieneClavesNumericas($array) {
+        // Filtrar las claves numéricas
+        $clavesNumericas = array_filter(array_keys($array), 'is_int');
+
+        // Comparar el tamaño del array original con el tamaño del array de claves numéricas
+        return count($array) === count($clavesNumericas);
+    }
     function get_datos($filtro = array()) {
         $where = array();
         if (isset($filtro['uni_acad'])) {
             $where[] = "t_p.uni_acad = " . quote($filtro['uni_acad']);
             $where[] = "t_p.id_pext = " . quote($filtro['id_pext']);
         }
+        ///-------------recuperar director
+        
+        $query = "CREATE TEMPORARY TABLE pg_temp.tabla_temporal_docentesd (
+            id serial NOT NULL PRIMARY KEY,
+            docente json
+            )"; # Consulta Final
+        
+        toba::db('extension')->consultar($query);
+        $recurso='docentes';
+        $condicion='docentesdirectorespe';
+        if(isset($filtro['id_pext'])){//si tiene el id_pext
+            $valor=$filtro['id_pext'];
+        }else{
+            $valor=null;
+        }
+        
+        $res = dt_unidad::get_directores($recurso,$condicion,$valor);
+        $band=$this->tieneClavesNumericas($res);
+                
+        if(!$band){//no es un arreglo
+            $res= [$res];
+        }
+        foreach ($res as $datos) {
+            $datos_json = json_encode($datos);
+           // $datos_json = pg_escape_string($datos_json);//lo saco porque no me agrega cosas a la tabla temporal
+            // Consulta SQL para insertar los datos en la tabla
+            $query = "INSERT INTO pg_temp.tabla_temporal_docentesd (docente) VALUES (".quote($datos_json).")"; # Consulta Final
+            toba::db('extension')->consultar($query);
+
+        }
+        ///-------------recuperar director
+        
+        $query = "CREATE TEMPORARY TABLE pg_temp.tabla_temporal_docentesc (
+            id serial NOT NULL PRIMARY KEY,
+            docente json
+            )"; # Consulta Final
+        
+        toba::db('extension')->consultar($query);
+        $recurso='docentes';
+        $condicion='codocentesdirectorespe';
+        
+        $res = dt_unidad::get_codirectores($recurso,$condicion,$valor);
+        $band=$this->tieneClavesNumericas($res);
+                
+        if(!$band){//no es un arreglo
+            $res= [$res];
+        }
+        foreach ($res as $datos) {
+            $datos_json = json_encode($datos);
+           // $datos_json = pg_escape_string($datos_json);//lo saco porque no me agrega cosas a la tabla temporal
+            // Consulta SQL para insertar los datos en la tabla
+            $query = "INSERT INTO pg_temp.tabla_temporal_docentesc (docente) VALUES (".quote($datos_json).")"; # Consulta Final
+            toba::db('extension')->consultar($query);
+
+        }
+        ////-------------------------------------
         $sql = "SELECT
 			t_p.id_pext,
                         t_p.denominacion,
@@ -34,12 +180,12 @@ class dt_pextension extends extension_datos_tabla {
                         
                         d.apellido || ' '|| d.nombre || ' '|| d.tipo_docum || ' '|| d.nro_docum as director,
                         d.correo_institucional as dir_email,
-                        d.telefono_celular as dir_telefono,
+                        d.telefono_celular as dir_telefono,".
                
-                        co.apellido || ' '|| co.nombre || ' '|| co.tipo_docum || ' '|| co.nro_docum as co_director,
-                        co.correo_institucional as co_email,
+                        "co.apellido || ' '|| co.nombre || ' '|| co.tipo_docum || ' '|| co.nro_docum as co_director,
+                        co.correo_institucional as co_email,".
                         
-                        p.apellido || ' '|| p.nombre || ' '|| t_eco.tipo_docum || ' '|| t_eco.nro_docum as co_director_e,
+                        "p.apellido || ' '|| p.nombre || ' '|| t_eco.tipo_docum || ' '|| t_eco.nro_docum as co_director_e,
                         p.mail as co_email_e,
                         p.telefono as co_telefono,
    
@@ -57,29 +203,39 @@ class dt_pextension extends extension_datos_tabla {
                         t_p.multi_uni,
                         t_p.es_multi
                     FROM
-                        pextension as t_p INNER JOIN"
-                . "(SELECT t_ua.* FROM dblink('" . $this->dblink_designa() . "','SELECT sigla,descripcion FROM unidad_acad') as t_ua (sigla CHARACTER(5), descripcion CHARACTER(60))) as t_ua ON (t_p.uni_acad = t_ua.sigla)
-                        LEFT OUTER JOIN integrante_interno_pe as i ON (t_p.id_pext = i.id_pext AND i.funcion_p='D' AND i.hasta >= '" . date('Y-m-d') . "')
-                        LEFT OUTER JOIN (SELECT d.* FROM  dblink('" . $this->dblink_designa() . "', 
-                                    'SELECT d.id_designacion, dc.id_docente , dc.apellido, dc.nombre, dc.tipo_docum, dc.nro_docum,dc.correo_institucional,dc.telefono_celular 
-                                     FROM designacion as d LEFT OUTER JOIN docente as dc
-                                            ON(dc.id_docente = d.id_docente)') as d 
-                                            ( id_designacion INTEGER ,id_docente INTEGER ,apellido CHARACTER VARYING, nombre CHARACTER VARYING, tipo_docum CHARACTER(4), nro_docum INTEGER,correo_institucional CHARACTER(60),telefono_celular CHARACTER(30) )) as d ON (i.id_designacion=d.id_designacion)
-                                            
-                        LEFT OUTER JOIN integrante_interno_pe as i_co ON (t_p.id_pext = i_co.id_pext AND i_co.funcion_p='CD-Co' AND i_co.hasta >= '" . date('Y-m-d') . "')                        
-                        LEFT OUTER JOIN (SELECT co.* FROM  dblink('" . $this->dblink_designa() . "', 
-                                    'SELECT d.id_designacion, dc.id_docente , dc.apellido, dc.nombre, dc.tipo_docum, dc.nro_docum,dc.correo_institucional,dc.telefono_celular 
-                                     FROM designacion as d LEFT OUTER JOIN docente as dc
-                                            ON(dc.id_docente = d.id_docente)') as co 
-                                            ( id_designacion INTEGER ,id_docente INTEGER ,apellido CHARACTER VARYING, nombre CHARACTER VARYING, tipo_docum CHARACTER(4), nro_docum INTEGER,correo_institucional CHARACTER(60),telefono_celular CHARACTER(30) )) as co ON (i_co.id_designacion=co.id_designacion)
-                        
-                        LEFT OUTER JOIN integrante_externo_pe as t_eco ON (t_p.id_pext = t_eco.id_pext AND t_eco.funcion_p='CD-Co' AND t_eco.hasta >= '" . date('Y-m-d') . "') 
-                        LEFT OUTER JOIN persona as p ON (p.tipo_docum = t_eco.tipo_docum AND p.nro_docum = t_eco.nro_docum ) 
-                        
-                        LEFT OUTER JOIN bases_convocatoria as b_c ON (b_c.id_bases = t_p.id_bases)
-                        LEFT OUTER JOIN tipo_convocatoria as t_c ON (t_c.id_conv = b_c.tipo_convocatoria)
-                        LEFT OUTER JOIN estado_pe as t_e ON (t_e.id_estado = t_p.id_estado)
-                        ";
+                        pextension as t_p ".
+                " INNER JOIN unidad t_ua ON (t_p.uni_acad = t_ua.sigla)".
+                " LEFT OUTER JOIN integrante_interno_pe as i ON (t_p.id_pext = i.id_pext AND i.funcion_p='D') ".//AND i.hasta = t_p.fec_hasta) ".
+                " LEFT OUTER JOIN (SELECT 
+                                (docente->>'id_designacion')::int AS id_designacion,
+                                (docente->>'id_docente')::int  AS id_docente,
+                                docente->>'apellido' AS apellido,
+                                docente->>'nombre' AS nombre,
+                                (docente->>'legajo')::int AS legajo,
+                                docente->>'tipo_docum' AS tipo_docum,
+                                docente->>'nro_docum' AS nro_docum,
+                                docente->>'uni_acad' AS uni_acad,
+                                docente->>'correo_institucional' AS correo_institucional,
+                                docente->>'telefono_celular' AS telefono_celular
+                                FROM pg_temp.tabla_temporal_docentesd ) AS d ON (d.id_designacion = i.id_designacion)".
+                " LEFT OUTER JOIN (SELECT 
+                                (docente->>'id_designacion')::int AS id_designacion,
+                                (docente->>'id_docente')::int  AS id_docente,
+                                docente->>'apellido' AS apellido,
+                                docente->>'nombre' AS nombre,
+                                (docente->>'legajo')::int AS legajo,
+                                docente->>'tipo_docum' AS tipo_docum,
+                                docente->>'nro_docum' AS nro_docum,
+                                docente->>'uni_acad' AS uni_acad,
+                                docente->>'correo_institucional' AS correo_institucional,
+                                docente->>'telefono_celular' AS telefono_celular
+                                FROM pg_temp.tabla_temporal_docentesd ) AS co ON (co.id_designacion = i.id_designacion)".
+                " LEFT OUTER JOIN integrante_externo_pe as t_eco ON (t_p.id_pext = t_eco.id_pext AND t_eco.funcion_p='CD-Co' AND t_eco.hasta = t_p.fec_hasta) ". // date('Y-m-d') . "') 
+                " LEFT OUTER JOIN persona as p ON (p.tipo_docum = t_eco.tipo_docum AND p.nro_docum = t_eco.nro_docum ) 
+
+                LEFT OUTER JOIN bases_convocatoria as b_c ON (b_c.id_bases = t_p.id_bases)
+                LEFT OUTER JOIN tipo_convocatoria as t_c ON (t_c.id_conv = b_c.tipo_convocatoria)
+                LEFT OUTER JOIN estado_pe as t_e ON (t_e.id_estado = t_p.id_estado)";
 
 
         if (count($where) > 0) {
@@ -88,51 +244,134 @@ class dt_pextension extends extension_datos_tabla {
 
         return toba::db('extension')->consultar($sql);
     }
+//    function get_listado($where = null) {
+//        $usr = toba::manejador_sesiones()->get_id_usuario_instancia();
+//        $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
+//        //$perfil_datos = toba::perfil_de_datos('designa')->get_restricciones_dimension('designa', 'unidad_acad')[0];
+//        $perfil_datos = toba::perfil_de_datos('extension')->get_restricciones_dimension('extension', 'unidad')[0];
+//
+//        if (!is_null($where)) {      
+//            $where = "WHERE " . $where;
+//        } else {
+//            $where = "WHERE 1=1";
+//        }
+//        
+//        if ('formulador' == $perfil) {
+//            $where .= " AND responsable_carga= '" . $usr . "'";
+//        } elseif ($perfil == 'sec_ext_ua') {
+//            $where .= " AND uni_acad='" . $perfil_datos . "'";
+//        }
+//        $sql = "SELECT distinct * FROM ( SELECT
+//                        t_p.id_pext,
+//                        t_c.descripcion,
+//                        dc.apellido || ' '|| dc.nombre || ' '|| dc.tipo_docum || ' '|| dc.nro_docum as director,
+//                        t_p.denominacion,
+//                        t_p.uni_acad,
+//                        t_p.fec_desde,
+//                        t_p.fec_hasta,  
+//                        t_p.ord_priori,
+//                        t_p.id_estado,
+//                        t_p.responsable_carga,
+//                        b_c.id_bases,
+//                        s_c.codigo,
+//                        t_p.monto,
+//                        case when t_a.id_alerta is null then 0 else 1 end as alerta,
+//                        t_p.es_multi
+//                    FROM
+//                        pextension as t_p INNER JOIN
+//                        (SELECT t_ua.* FROM dblink('" . $this->dblink_designa() . "','SELECT sigla FROM unidad_acad ') as t_ua (sigla CHARACTER(5) )) as t_ua ON (t_p.uni_acad = t_ua.sigla)
+//                        LEFT OUTER JOIN integrante_interno_pe as i ON (t_p.id_pext = i.id_pext AND i.funcion_p='D' AND i.hasta >= '" . date('Y-m-d') . "')
+//                        LEFT OUTER JOIN ( SELECT d.* FROM dblink('" . $this->dblink_designa() . "', 'SELECT d.id_designacion,d.id_docente FROM designacion as d ') as d ( id_designacion INTEGER,id_docente INTEGER)) as d ON (i.id_designacion = d.id_designacion)
+//                        LEFT OUTER JOIN ( SELECT dc.* FROM dblink('" . $this->dblink_designa() . "', 'SELECT dc.id_docente,dc.nombre, dc.apellido, dc.tipo_docum, dc.nro_docum FROM docente as dc ') as dc ( id_docente INTEGER,apellido CHARACTER VARYING, nombre CHARACTER VARYING, tipo_docum CHARACTER(4), nro_docum INTEGER)) as dc ON (d.id_docente = dc.id_docente)
+//                        LEFT OUTER JOIN bases_convocatoria as b_c ON (t_p.id_bases = b_c.id_bases)
+//                        LEFT OUTER JOIN tipo_convocatoria as t_c ON (t_c.id_conv = b_c.tipo_convocatoria)  
+//                        LEFT OUTER JOIN seguimiento_central as s_c ON (t_p.id_pext = s_c.id_pext)
+//                        LEFT OUTER JOIN (SELECT * FROM alerta WHERE rol='".$perfil."' and estado_alerta='Pendiente'"." ) t_a ON (t_p.id_pext=t_a.id_pext)
+//                        ) AUX "
+//                . $where;
+//        $sql = toba::perfil_de_datos()->filtrar($sql);
+//        return toba::db('extension')->consultar($sql);
+//    }
+    //Lucas
+     function get_listado($where = null) {
+        
+        #Crea la tabla temporal para recuperar los datos personales de los directores de proyectos de extension
+        $query = "CREATE TEMPORARY TABLE pg_temp.tabla_temporal_docentes (
+            id serial NOT NULL PRIMARY KEY,
+            docente json
+            )"; # Consulta Final
+        toba::db('extension')->consultar($query);
+        
+        $recurso='docentes';
+        $condicion='docentesdirectorespe';
+        $valor=null;
+        $res = dt_unidad::get_directores($recurso,$condicion,$valor);
+        
+        
+        foreach ($res as $datos) {
+            $datos_json = json_encode($datos);
+           // $datos_json = pg_escape_string($datos_json);//lo saco porque no me agrega cosas a la tabla temporal
+            // Consulta SQL para insertar los datos en la tabla
+            $query = "INSERT INTO pg_temp.tabla_temporal_docentes (docente) VALUES (".quote($datos_json).")"; # Consulta Final
+            toba::db('extension')->consultar($query);
 
-    function get_listado($where = null) {
+        }
+
         $usr = toba::manejador_sesiones()->get_id_usuario_instancia();
         $perfil = toba::manejador_sesiones()->get_perfiles_funcionales()[0];
-        $perfil_datos = toba::perfil_de_datos('designa')->get_restricciones_dimension('designa', 'unidad_acad')[0];
+        //$perfil_datos = toba::perfil_de_datos('designa')->get_restricciones_dimension('designa', 'unidad_acad')[0];
+        $perfil_datos = toba::perfil_de_datos('extension')->get_restricciones_dimension('extension', 'unidad')[0];
 
         if (!is_null($where)) {      
             $where = "WHERE " . $where;
         } else {
             $where = "WHERE 1=1";
         }
-        
         if ('formulador' == $perfil) {
-            $where .= " AND responsable_carga= '" . $usr . "'";
+            $where .= " AND pext.responsable_carga= '" . $usr . "'";
         } elseif ($perfil == 'sec_ext_ua') {
-            $where .= " AND uni_acad='" . $perfil_datos . "'";
+            $where .= " AND pext.uni_acad='" . $perfil_datos . "'";
         }
-        $sql = "SELECT distinct * FROM ( SELECT
-                        t_p.id_pext,
-                        t_c.descripcion,
-                        dc.apellido || ' '|| dc.nombre || ' '|| dc.tipo_docum || ' '|| dc.nro_docum as director,
-                        t_p.denominacion,
-                        t_p.uni_acad,
-                        t_p.fec_desde,
-                        t_p.fec_hasta,  
-                        t_p.ord_priori,
-                        t_p.id_estado,
-                        t_p.responsable_carga,
-                        b_c.id_bases,
-                        s_c.codigo,
-                        t_p.monto,
-                        case when t_a.id_alerta is null then 0 else 1 end as alerta,
-                        t_p.es_multi
-                    FROM
-                        pextension as t_p INNER JOIN
-                        (SELECT t_ua.* FROM dblink('" . $this->dblink_designa() . "','SELECT sigla FROM unidad_acad ') as t_ua (sigla CHARACTER(5) )) as t_ua ON (t_p.uni_acad = t_ua.sigla)
-                        LEFT OUTER JOIN integrante_interno_pe as i ON (t_p.id_pext = i.id_pext AND i.funcion_p='D' AND i.hasta >= '" . date('Y-m-d') . "')
-                        LEFT OUTER JOIN ( SELECT d.* FROM dblink('" . $this->dblink_designa() . "', 'SELECT d.id_designacion,d.id_docente FROM designacion as d ') as d ( id_designacion INTEGER,id_docente INTEGER)) as d ON (i.id_designacion = d.id_designacion)
-                        LEFT OUTER JOIN ( SELECT dc.* FROM dblink('" . $this->dblink_designa() . "', 'SELECT dc.id_docente,dc.nombre, dc.apellido, dc.tipo_docum, dc.nro_docum FROM docente as dc ') as dc ( id_docente INTEGER,apellido CHARACTER VARYING, nombre CHARACTER VARYING, tipo_docum CHARACTER(4), nro_docum INTEGER)) as dc ON (d.id_docente = dc.id_docente)
-                        LEFT OUTER JOIN bases_convocatoria as b_c ON (t_p.id_bases = b_c.id_bases)
-                        LEFT OUTER JOIN tipo_convocatoria as t_c ON (t_c.id_conv = b_c.tipo_convocatoria)  
-                        LEFT OUTER JOIN seguimiento_central as s_c ON (t_p.id_pext = s_c.id_pext)
-                        LEFT OUTER JOIN (SELECT * FROM alerta WHERE rol='".$perfil."' and estado_alerta='Pendiente'"." ) t_a ON (t_p.id_pext=t_a.id_pext)
-                        ) AUX "
-                . $where;
+        $where .= " AND pext.uni_acad IS NOT NULL";
+
+        $sql = "SELECT DISTINCT
+                    pext.id_pext,
+                    tc.descripcion,
+                    (temp_d.apellido || ' ' || temp_d.nombre || ' ' || temp_d.tipo_docum || ' ' || temp_d.nro_docum) as director,
+                    pext.denominacion,
+                    pext.uni_acad,
+                    pext.fec_desde,
+                    pext.fec_hasta,  
+                    pext.ord_priori,
+                    pext.id_estado,
+                    pext.responsable_carga,
+                    bc.id_bases,
+                    sc.codigo,
+                    pext.monto,
+                    case when a.id_alerta is null then 0 else 1 end as alerta,
+                    pext.es_multi
+                    FROM 
+                    pextension as pext
+                    LEFT OUTER JOIN integrante_interno_pe as i ON (pext.id_pext = i.id_pext AND i.funcion_p='D' 
+                    ". 
+                    "AND i.hasta = pext.fec_hasta".
+                    //"AND i.hasta >= '" . date('Y-m-d') . "'".
+                    ")
+                    LEFT OUTER JOIN (SELECT 
+                    (docente->>'id_designacion')::int AS id_designacion,
+                    (docente->>'id_docente')::int  AS id_docente,
+                    docente->>'apellido' AS apellido,
+                    docente->>'nombre' AS nombre,
+                    (docente->>'legajo')::int AS legajo,
+                    docente->>'tipo_docum' AS tipo_docum,
+                    docente->>'nro_docum' AS nro_docum,
+                    docente->>'uni_acad' AS uni_acad
+                    FROM pg_temp.tabla_temporal_docentes) AS temp_d ON temp_d.id_designacion = i.id_designacion
+                    LEFT OUTER JOIN bases_convocatoria AS bc ON bc.id_bases = pext.id_bases
+                    LEFT OUTER JOIN tipo_convocatoria AS tc ON tc.id_conv = bc.tipo_convocatoria
+                    LEFT OUTER JOIN seguimiento_central AS sc ON sc.id_pext = pext.id_pext
+                    LEFT OUTER JOIN (SELECT * FROM alerta WHERE rol='".$perfil."' AND alerta.estado_alerta='Pendiente'"." ) AS a ON (a.id_pext=pext.id_pext)
+                    ". $where;
         $sql = toba::perfil_de_datos()->filtrar($sql);
         return toba::db('extension')->consultar($sql);
     }

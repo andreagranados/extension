@@ -51,7 +51,7 @@ class dt_unidad extends extension_datos_tabla
         $res = consultas_designa::get_datos($recurso,$condicion,$valor);
         return $res;
     }   
-    function get_areas($id_nro_dpto=null)
+    static function get_areas($id_nro_dpto=null)
     {
         $recurso='areas';
         $condicion=null;
@@ -80,13 +80,18 @@ class dt_unidad extends extension_datos_tabla
         return $res; 
     }
      //
-    function get_integrantes($valor)
+    static function get_integrantes($valor)
     {
         $recurso='integrantes-pext';
         $condicion='integrantespext';
         //$valor=null;  
         $res = consultas_designa::get_datos($recurso,$condicion,$valor);
         return $res; 
+    }
+    static function get_director_pext($valor){
+        $recurso='director-pext';
+        #$condicion='integrantespext'; //En recurso de el rest en designa es uno solo y tiene el mismo nombre que su directorio, no es necesario en este caso una condicion
+        $res = consultas_designa::get_datos($recurso,null,$valor);
     }
   //trae todos los docentes de designa
     function get_docentes($where=null) {

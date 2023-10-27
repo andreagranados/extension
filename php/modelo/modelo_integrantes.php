@@ -9,7 +9,8 @@ class modelo_integrantes
             $order_by = "ORDER BY id_designacion ASC";
         }
         $sql = "SELECT DISTINCT
-                    id_designacion
+                    id_designacion,
+                    id_pext
                 FROM 
                     integrante_interno_pe
                 WHERE  $where $order_by $limit";
@@ -37,7 +38,8 @@ class modelo_integrantes
     function get_datos()
     {
         $sql = "SELECT
-                    id_designacion
+                    id_designacion,
+                    id_pext
                 FROM 
                     integrante_interno_pe
                 WHERE id_designacion = " . quote($this->id);

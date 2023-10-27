@@ -28,33 +28,85 @@ class dt_integrante_interno_pe extends extension_datos_tabla {
     }
 
     function get_listado($id_p = null) {
-        $sql = "select "
-                . "id_pext,"
-                . "trim(dc.apellido)||', '||trim(dc.nombre) as nombre,"
-                . "t_i.id_designacion,"
-                . "dc.tipo_docum,"
-                . "dc.nro_docum,"
-                . "dc.fec_nacim,"
-                . "dc.tipo_sexo,"
-                . "dc.pais_nacim,"
-                . "f_e.descripcion as funcion_p,"
-                . "carga_horaria,"
-                . "t_i.desde,"
-                . "t_i.hasta,"
-                . "rescd,"
-                . "tipo,"
-                . "ad_honorem,"
-                . "cv "
-                . "from integrante_interno_pe as t_i "
-                . "LEFT OUTER JOIN funcion_extension as f_e ON (t_i.funcion_p = f_e.id_extension) "
-                . "INNER JOIN  ( SELECT d.* FROM dblink('" . $this->dblink_designa() . "', 'SELECT d.id_designacion,d.id_docente FROM designacion as d ') as d ( id_designacion INTEGER,id_docente INTEGER)) as d ON (t_i.id_designacion = d.id_designacion) "
-                . "LEFT OUTER JOIN (SELECT dc.* FROM dblink('" . $this->dblink_designa() . "',
-                    'SELECT dc.id_docente,dc.nombre, dc.apellido, dc.tipo_docum,dc.nro_docum, dc.fec_nacim,dc.tipo_sexo,dc.pais_nacim 
-                    FROM docente as dc ') as dc 
-                    ( id_docente INTEGER,nombre CHARACTER VARYING,apellido CHARACTER VARYING,tipo_docum CHARACTER(4) ,nro_docum INTEGER,fec_nacim DATE,tipo_sexo CHARACTER(1),pais_nacim CHARACTER(2)) ) as dc ON (d.id_docente = dc.id_docente)  "
-                . "where id_pext=" . $id_p
-                . "order by nombre,desde"
-        ;
+        # Crea la tabla temporal
+        $query = "CREATE TEMPORARY TABLE pg_temp.tabla_temporal_integrante_interno (
+            id serial NOT NULL PRIMARY KEY,
+            integrante json
+            )"; # Consulta Final
+        toba::db('extension')->consultar($query);
+        
+        
+        
+        $res = dt_unidad::get_integrantes(null);
+        //$res = $this->get_SW();
+        //$res = dt_get_sw::consumir($url);
+       
+        foreach ($res as $datos) {
+            $datos_json = json_encode($datos);
+            $datos_json = pg_escape_string($datos_json);
+            // Consulta SQL para insertar los datos en la tabla
+            $query = "INSERT INTO pg_temp.tabla_temporal_integrante_interno (integrante) VALUES ('$datos_json')"; # Consulta Final
+            toba::db('extension')->consultar($query);
+        }
+        $sql = "SELECT 
+                t_i.id_pext,
+                trim(temp_ii.apellido)||', '||trim(temp_ii.nombre) AS nombre,
+                t_i.id_designacion,
+                temp_ii.tipo_docum,
+                temp_ii.nro_docum,
+                temp_ii.fec_nacim,
+                temp_ii.tipo_sexo,
+                temp_ii.pais_nacim,
+                f_e.descripcion AS funcion_p,
+                t_i.carga_horaria,
+                t_i.desde,
+                t_i.hasta,
+                t_i.rescd,
+                t_i.tipo,
+                t_i.ad_honorem,
+                t_i.cv 
+                FROM integrante_interno_pe AS t_i 
+                LEFT OUTER JOIN funcion_extension AS f_e ON (t_i.funcion_p = f_e.id_extension) 
+                LEFT OUTER JOIN (SELECT 
+                    (integrante->>'id_designacion')::int AS id_designacion,
+                    (integrante->>'id_docente')::int AS id_docente,
+                    integrante->>'nombre' AS nombre,
+                    integrante->>'apellido' AS apellido,
+                    integrante->>'tipo_docum' AS tipo_docum,
+                    (integrante->>'nro_docum')::int AS nro_docum,
+                    integrante->>'fec_nacim' AS fec_nacim,
+                    integrante->>'tipo_sexo' AS tipo_sexo,
+                    integrante->>'pais_nacim' AS pais_nacim
+                    FROM pg_temp.tabla_temporal_integrante_interno) AS temp_ii ON (temp_ii.id_designacion = t_i.id_designacion)
+                WHERE t_i.id_pext = $id_p
+                ORDER BY nombre, t_i.desde";
+        // $sql = "select "
+        //         . "id_pext,"
+        //         . "trim(dc.apellido)||', '||trim(dc.nombre) as nombre,"
+        //         . "t_i.id_designacion,"
+        //         . "dc.tipo_docum,"
+        //         . "dc.nro_docum,"
+        //         . "dc.fec_nacim,"
+        //         . "dc.tipo_sexo,"
+        //         . "dc.pais_nacim,"
+        //         . "f_e.descripcion as funcion_p,"
+        //         . "carga_horaria,"
+        //         . "t_i.desde,"
+        //         . "t_i.hasta,"
+        //         . "rescd,"
+        //         . "tipo,"
+        //         . "ad_honorem,"
+        //         . "cv "
+        //         . "from integrante_interno_pe as t_i "
+        //         . "LEFT OUTER JOIN funcion_extension as f_e ON (t_i.funcion_p = f_e.id_extension) "
+        //         . "INNER JOIN  ( SELECT d.* FROM dblink('" . $this->dblink_designa() . "', 'SELECT d.id_designacion,d.id_docente FROM designacion as d ') as d ( id_designacion INTEGER,id_docente INTEGER)) as d ON (t_i.id_designacion = d.id_designacion) "
+        //         . "LEFT OUTER JOIN (SELECT dc.* FROM dblink('" . $this->dblink_designa() . "',
+        //             'SELECT dc.id_docente,dc.nombre, dc.apellido, dc.tipo_docum,dc.nro_docum, dc.fec_nacim,dc.tipo_sexo,dc.pais_nacim 
+        //             FROM docente as dc ') as dc 
+        //             ( id_docente INTEGER,nombre CHARACTER VARYING,apellido CHARACTER VARYING,tipo_docum CHARACTER(4) ,nro_docum INTEGER,fec_nacim DATE,tipo_sexo CHARACTER(1),pais_nacim CHARACTER(2)) ) as dc ON (d.id_docente = dc.id_docente)  "
+        //         . "where id_pext=" . $id_p
+        //         . "order by nombre,desde"
+        // ;
         return toba::db('extension')->consultar($sql);
     }
     

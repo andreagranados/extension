@@ -3,7 +3,7 @@ class consultas_designa
 {
      //metodo generico para todos los servicios web que consume el modulo extension del modulo designa 
     //variables definidas en extension
-    function get_datos($recurso,$cond=null,$valor=null){
+    static function get_datos($recurso,$cond=null,$valor=null){
         $username = getenv('SW_USUARIO');   
         $password = getenv('SW_CLAVE');
         $condicion = ""; 
@@ -47,17 +47,34 @@ class consultas_designa
                 break;
             case 'integrantes-pext': 
                 $url=getenv('SW_URL_EXT_INT');
-                
+
+                //Trae director especifico en base a su ID DESIGNACION USANDO el filtro proporcionado por la api rest
                 if(!is_null($cond)){
                     if(!is_null($valor)){
-                        //http://localhost/designa/1.0/rest/docentes/docentesdirectorespe/503
-                        $condicion = "/".$cond."/".$valor;
-                    }else{//trae todos
-                        $condicion = "/".$cond;//http://localhost/designa/1.0/rest/docentes/docentesunco
-                        ////http://localhost/designa/1.0/rest/docentes/docentesdirectorespe
+                        $condicion = "?id_designacion=es_igual_a;".$valor;
                     }
-                }
-                break;    
+                }//SINO TRAE TODO
+
+
+
+
+                // if(!is_null($cond)){
+                //     if(!is_null($valor)){
+                //         //http://localhost/designa/1.0/rest/docentes/docentesdirectorespe/503
+                //         $condicion = "/".$cond."/".$valor;
+                //     }else{//trae todos
+                //         $condicion = "/".$cond;//http://localhost/designa/1.0/rest/docentes/docentesunco
+                //         ////http://localhost/designa/1.0/rest/docentes/docentesdirectorespe
+                //     }
+                // }
+                break;
+            case 'director-pext': //NUEVO LUCAS
+                    $url=getenv('SW_URL_EXT_INT');
+                    //Trae director especifico como json sin ser arreglo, y la el valor es el id del proyecto de extension del cual necesito conocer el director
+                    if(!is_null($valor)){
+                        $condicion = "/".$valor;
+                    }//SINO TRAE TODO
+                break;     
             case 'categoriasdocentes': 
                 $url=getenv('SW_URL_DESIG');
                 $url.="/categoriasdocentes";
@@ -102,8 +119,7 @@ class consultas_designa
         }
        
         $url.=$condicion; 
-//        print_r($url);exit;
-//        print_r($condicion);
+        //print_r($condicion);
         # Inicializar una sesión cURL
         $curl = curl_init($url);
         
@@ -136,7 +152,7 @@ class consultas_designa
             $data = json_decode($response, true, JSON_UNESCAPED_SLASHES);
             
             if ($data !== null) {
-                if($recurso!='docentes'){//si le aplico la decodificacion no me inserta en tabla temporal
+                if($recurso!='docentes' && $recurso!='integrantes-pext'){//si le aplico la decodificacion no me inserta en tabla temporal
                     // Recorrer el arreglo y aplicar mb_convert_encoding a cada elemento
                     array_walk_recursive($data, function (&$elemento) {
                         $elemento = mb_convert_encoding($elemento, 'ISO-8859-1', 'UTF-8');
@@ -158,4 +174,3 @@ class consultas_designa
         curl_close($curl);
     }   
 }
-?>

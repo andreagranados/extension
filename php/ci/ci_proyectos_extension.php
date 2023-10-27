@@ -3918,11 +3918,11 @@ class ci_proyectos_extension extends extension_ci {
 
     function conf__cuadro_ii(toba_ei_cuadro $cuadro) {
         $pe = $this->dep('datos')->tabla('pextension')->get();
-        if (isset($this->s__where)) {
-            $this->s__datos_docente = $this->dep('datos')->tabla('integrante_interno_pe')->get_vigentes($this->s__where, $pe['id_pext']);
-        } else {
+        // if (isset($this->s__where)) {
+        //     $this->s__datos_docente = $this->dep('datos')->tabla('integrante_interno_pe')->get_vigentes($this->s__where, $pe['id_pext']);
+        // } else {
             $this->s__datos_docente = $this->dep('datos')->tabla('integrante_interno_pe')->get_listado($pe['id_pext']);
-        }
+        // }
         foreach ($this->s__datos_docente as $key => $value) {
             if($this->s__datos_docente[$key]['cv']<>null and $this->s__datos_docente[$key]['cv']<>''){//tiene valor
                     $nomb_ft="/extension/1.0/cv_interno/".$this->s__datos_docente[$key]['cv'];
@@ -4304,11 +4304,11 @@ class ci_proyectos_extension extends extension_ci {
         $pe = $this->dep('datos')->tabla('pextension')->get();
         $estado = $this->dep('datos')->tabla('pextension')->get()[id_estado];
 
-        if (isset($this->s__where)) {
-            $this->s__datos_otro = $this->dep('datos')->tabla('integrante_externo_pe')->get_vigentes($this->s__where, $pe['id_pext']);
-        } else {
+        // if (isset($this->s__where)) {
+            // // $this->s__datos_otro = $this->dep('datos')->tabla('integrante_externo_pe')->get_vigentes($this->s__where, $pe['id_pext']);
+        // } else {
             $this->s__datos_otro = $this->dep('datos')->tabla('integrante_externo_pe')->get_listado($pe['id_pext']);
-        }
+        // }
          foreach ($this->s__datos_otro as $key => $value) {
             if($this->s__datos_otro[$key]['cv']<>null and $this->s__datos_otro[$key]['cv']<>''){//tiene valor
                     $nomb_ft="/extension/1.0/cv_externo/".$this->s__datos_otro[$key]['cv'];

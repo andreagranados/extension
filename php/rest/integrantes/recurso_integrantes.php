@@ -13,7 +13,8 @@ class recurso_integrantes implements SIUToba\rest\lib\modelable
     static function _get_modelos()
     {
         $Integrantes_editar = array(
-            'id_designacion' => array('type' => 'integer')
+            'id_designacion' => array('type' => 'integer'),
+            'id_pext' => array('type' => 'integer')
         );
 
         $Integrante = array_merge(
@@ -82,7 +83,8 @@ class recurso_integrantes implements SIUToba\rest\lib\modelable
     {
         $filtro = new rest_filtro_sql();
         #$filtro->agregar_campo("nombre de filtro", "tabla.columna");
-        $filtro->agregar_campo("id", "id_designacion");
+        $filtro->agregar_campo("id_designacion", "id_designacion");
+        $filtro->agregar_campo("id_pext", "id_pext");
 
         $filtro->agregar_campo_ordenable("id_designacion", "id_designacion");
         return $filtro;

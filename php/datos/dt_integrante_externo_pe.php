@@ -179,15 +179,21 @@ class dt_integrante_externo_pe extends extension_datos_tabla {
             )"; # Consulta Final
         toba::db('extension')->consultar($query);
           
-        $res = dt_unidad::get_integrantes($id_p);
+
+
+        // $res = dt_unidad::get_integrantes($id_p);
+        $res = dt_unidad::get_integrantes(null);
+
+
+
         //$res = $this->get_SW();
         //$res = dt_get_sw::consumir($url);
         
        //print_r($res);
         foreach ($res as $datos) {
             $datos_json = json_encode($datos);
-            //$datos_json = pg_escape_string($datos_json);
-        
+            $datos_json = pg_escape_string($datos_json);
+       
             // Consulta SQL para insertar los datos en la tabla
             $query = "INSERT INTO pg_temp.tabla_temporal_integrante (integrante) VALUES ('$datos_json')"; # Consulta Final
             toba::db('extension')->consultar($query);
@@ -269,6 +275,11 @@ class dt_integrante_externo_pe extends extension_datos_tabla {
         } else {
             $sql .= " WHERE t_e.id_pext = " . $id_p . ")";// AND t_e.hasta >= '" . date('Y-m-d') . "')";
         }
+        // var_dump($sql);
+        // var_dump($query);
+        // var_dump($res);
+        // var_dump($datos);
+        // var_dump(toba::db('extension')->consultar($sql));
 
         return toba::db('extension')->consultar($sql);
     }

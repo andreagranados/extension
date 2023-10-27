@@ -50,11 +50,11 @@ class consultas_designa
                 
                 if(!is_null($cond)){
                     if(!is_null($valor)){
-                        //http://localhost/designa/1.0/rest/docentes/docentesdirectorespe/503
+                       // http://localhost/designa/1.0/rest/integrantes-pext/integrantespext	
                         $condicion = "/".$cond."/".$valor;
                     }else{//trae todos
-                        $condicion = "/".$cond;//http://localhost/designa/1.0/rest/docentes/docentesunco
-                        ////http://localhost/designa/1.0/rest/docentes/docentesdirectorespe
+                        $condicion = "/".$cond;
+                        //http://localhost/designa/1.0/rest/integrantes-pext/integrantespext	
                     }
                 }
                 break;    
@@ -102,8 +102,8 @@ class consultas_designa
         }
        
         $url.=$condicion; 
-//        print_r($url);exit;
-//        print_r($condicion);
+        //print_r($url);
+        //print_r($condicion);
         # Inicializar una sesión cURL
         $curl = curl_init($url);
         
@@ -136,7 +136,7 @@ class consultas_designa
             $data = json_decode($response, true, JSON_UNESCAPED_SLASHES);
             
             if ($data !== null) {
-                if($recurso!='docentes'){//si le aplico la decodificacion no me inserta en tabla temporal
+                if($recurso!='docentes' && $recurso!='integrantes-pext'){//si le aplico la decodificacion no me inserta en tabla temporal
                     // Recorrer el arreglo y aplicar mb_convert_encoding a cada elemento
                     array_walk_recursive($data, function (&$elemento) {
                         $elemento = mb_convert_encoding($elemento, 'ISO-8859-1', 'UTF-8');

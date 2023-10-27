@@ -79,7 +79,7 @@ class dt_unidad extends extension_datos_tabla
         $res = consultas_designa::get_datos($recurso,$condicion,$valor);
         return $res; 
     }
-     //
+     //trae todos los datos personales de los integrantes de proyectos de extension (integrante_interno_pe)
     function get_integrantes($valor)
     {
         $recurso='integrantes-pext';

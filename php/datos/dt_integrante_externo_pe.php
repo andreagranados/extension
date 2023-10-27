@@ -178,8 +178,8 @@ class dt_integrante_externo_pe extends extension_datos_tabla {
             integrante json
             )"; # Consulta Final
         toba::db('extension')->consultar($query);
-          
-        $res = dt_unidad::get_integrantes($id_p);
+        $res = dt_unidad::get_integrantes();  
+        //$res = dt_unidad::get_integrantes($id_p);
         //$res = $this->get_SW();
         //$res = dt_get_sw::consumir($url);
         

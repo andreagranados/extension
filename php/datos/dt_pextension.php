@@ -133,7 +133,7 @@ class dt_pextension extends extension_datos_tabla {
             toba::db('extension')->consultar($query);
 
         }
-        ///-------------recuperar director
+        ///-------------recuperar codirector
         
         $query = "CREATE TEMPORARY TABLE pg_temp.tabla_temporal_docentesc (
             id serial NOT NULL PRIMARY KEY,
@@ -229,7 +229,7 @@ class dt_pextension extends extension_datos_tabla {
                                 docente->>'uni_acad' AS uni_acad,
                                 docente->>'correo_institucional' AS correo_institucional,
                                 docente->>'telefono_celular' AS telefono_celular
-                                FROM pg_temp.tabla_temporal_docentesd ) AS co ON (co.id_designacion = i.id_designacion)".
+                                FROM pg_temp.tabla_temporal_docentesc ) AS co ON (co.id_designacion = i.id_designacion)".
                 " LEFT OUTER JOIN integrante_externo_pe as t_eco ON (t_p.id_pext = t_eco.id_pext AND t_eco.funcion_p='CD-Co' AND t_eco.hasta = t_p.fec_hasta) ". // date('Y-m-d') . "') 
                 " LEFT OUTER JOIN persona as p ON (p.tipo_docum = t_eco.tipo_docum AND p.nro_docum = t_eco.nro_docum ) 
 

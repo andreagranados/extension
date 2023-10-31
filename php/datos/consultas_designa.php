@@ -35,12 +35,14 @@ class consultas_designa
                 $url=getenv('SW_URL_DOCEN');
                 //$condicion = "/docentesunco";//retorna todos los docentes
                 //$condicion = "/docentesdirectorespe";//retorna los docentes directores de proy de ext
+               
                 if(!is_null($cond)){
                     if(!is_null($valor)){
                         //http://localhost/designa/1.0/rest/docentes/docentesdirectorespe/503
-                        $condicion = "/".$cond."/".$valor;
+                        $condicion = "/".$cond."?id-pext=es_igual_a;".$valor;
                     }else{//trae todos
-                        $condicion = "/".$cond;//http://localhost/designa/1.0/rest/docentes/docentesunco
+                        $condicion = "/".$cond;
+                        //http://localhost/designa/1.0/rest/docentes/docentesunco
                         ////http://localhost/designa/1.0/rest/docentes/docentesdirectorespe
                     }
                 }
@@ -50,8 +52,8 @@ class consultas_designa
                 
                 if(!is_null($cond)){
                     if(!is_null($valor)){
-                       // http://localhost/designa/1.0/rest/integrantes-pext/integrantespext	
-                        $condicion = "/".$cond."/".$valor;
+                       // http://localhost/designa/1.0/rest/integrantes-pext/integrantespext?id-pext=es_igual_a;501
+                        $condicion = "/".$cond."?id-pext=es_igual_a;".$valor;
                     }else{//trae todos
                         $condicion = "/".$cond;
                         //http://localhost/designa/1.0/rest/integrantes-pext/integrantespext	

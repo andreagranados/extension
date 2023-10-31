@@ -22,11 +22,11 @@ class modelo_directores
 
     static function get_cant_directores($where = "")
     {
-        $sql = "SELECT 
-					count(*) as cantidad
-				FROM 
+        $where .= " AND funcion_p = 'D' ";
+        $sql = "SELECT count(*) as cantidad
+		  FROM 
                     integrante_interno_pe
-				WHERE $where";
+				WHERE  $where";
         $datos = toba::db()->consultar_fila($sql);
         return $datos['cantidad'];
     }
@@ -43,7 +43,7 @@ class modelo_directores
                     id_designacion
 				FROM 
                     integrante_interno_pe
-                WHERE funcion_p = 'D' AND id_pext = " . quote($this->id);
+                WHERE funcion_p = 'D' AND id_designacion = " . quote($this->id);
 
 
         $fila = toba::db()->consultar_fila($sql);
@@ -74,7 +74,7 @@ class modelo_directores
                     id_designacion
 				FROM 
                     integrante_interno_pe
-                WHERE funcion_p = 'CD-Co' AND id_pext = " . quote($this->id);
+                WHERE funcion_p = 'CD-Co' AND id_designacion = " . quote($this->id);
 
 
         $fila = toba::db()->consultar_fila($sql);
@@ -83,6 +83,7 @@ class modelo_directores
     }
     static function get_cant_codirectores($where = "")
     {
+        $where .= " AND funcion_p = 'CD-Co' ";
         $sql = "SELECT 
 					count(*) as cantidad
 				FROM 

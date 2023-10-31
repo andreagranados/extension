@@ -13,6 +13,7 @@ class modelo_integrantes
                 FROM 
                     integrante_interno_pe
                 WHERE  $where $order_by $limit";
+        
         $datos = toba::db()->consultar($sql);
         return $datos;
     }
@@ -40,7 +41,7 @@ class modelo_integrantes
                     id_designacion
                 FROM 
                     integrante_interno_pe
-                WHERE id_designacion = " . quote($this->id);
+                WHERE id_designacion = " . $this->id;
 
         $fila = toba::db()->consultar_fila($sql);
 

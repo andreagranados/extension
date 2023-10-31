@@ -172,24 +172,28 @@ class dt_integrante_externo_pe extends extension_datos_tabla {
 //    }
     //Lucas
     function get_plantilla($id_p, $filtro = array()) {
+        
         # Crea la tabla temporal
         $query = "CREATE TEMPORARY TABLE pg_temp.tabla_temporal_integrante (
             id serial NOT NULL PRIMARY KEY,
             integrante json
             )"; # Consulta Final
         toba::db('extension')->consultar($query);
-        $res = dt_unidad::get_integrantes();  
-        //$res = dt_unidad::get_integrantes($id_p);
-        //$res = $this->get_SW();
-        //$res = dt_get_sw::consumir($url);
         
-       //print_r($res);
-        foreach ($res as $datos) {
+        if(isset($id_p)){//si tiene el id_p
+            $valor=$id_p;
+        }else{
+            $valor=null;
+        }
+        
+        $res = dt_unidad::get_integrantes($valor);  
+                
+       foreach ($res as $datos) {
             $datos_json = json_encode($datos);
             //$datos_json = pg_escape_string($datos_json);
         
             // Consulta SQL para insertar los datos en la tabla
-            $query = "INSERT INTO pg_temp.tabla_temporal_integrante (integrante) VALUES ('$datos_json')"; # Consulta Final
+            $query = "INSERT INTO pg_temp.tabla_temporal_integrante (integrante) VALUES (".quote($datos_json).")"; # Consulta Final
             toba::db('extension')->consultar($query);
         }
         

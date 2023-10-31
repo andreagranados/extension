@@ -37,10 +37,10 @@ class recurso_integrantes implements SIUToba\rest\lib\modelable
     }
 
 
-    function get($idIntegrante)
+    function get($id_designacion)
     {
         # Obtengo los datos del modelo
-        $modelo = new modelo_integrantes($idIntegrante);
+        $modelo = new modelo_integrantes($id_designacion);
         $fila = $modelo->get_datos();
         if ($fila) {
             # La fila contiene exactamente los campos de la especificación
@@ -81,8 +81,8 @@ class recurso_integrantes implements SIUToba\rest\lib\modelable
     protected function get_filtro_get_list()
     {
         $filtro = new rest_filtro_sql();
-        #$filtro->agregar_campo("nombre de filtro", "tabla.columna");
         $filtro->agregar_campo("id", "id_designacion");
+        $filtro->agregar_campo("id-pext", "id_pext");
 
         $filtro->agregar_campo_ordenable("id_designacion", "id_designacion");
         return $filtro;

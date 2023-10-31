@@ -84,7 +84,6 @@ class dt_unidad extends extension_datos_tabla
     {
         $recurso='integrantes-pext';
         $condicion='integrantespext';
-        //$valor=null;  
         $res = consultas_designa::get_datos($recurso,$condicion,$valor);
         return $res; 
     }

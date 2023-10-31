@@ -68,17 +68,17 @@ class recurso_codirectores implements SIUToba\rest\lib\modelable # Esta interfac
     protected function get_filtro_get_list()
     {
         $filtro = new rest_filtro_sql();
-        #$filtro->agregar_campo("nombre de filtro", "tabla.columna");
-        $filtro->agregar_campo("id", "id_designacion");
+        $filtro->agregar_campo("iddesignacion", "id_designacion");
+        $filtro->agregar_campo("id-pext", "id_pext");
 
         $filtro->agregar_campo_ordenable("id_designacion", "id_designacion");
         return $filtro;
     }
 
-    function get($idPext)
+    function get($iddesig)
     {
         # Obtengo los datos del modelo
-        $modelo = new modelo_directores($idPext);
+        $modelo = new modelo_directores($iddesig);
         $fila = $modelo->get_codirector();
         if ($fila) {
             # La fila contiene exactamente los campos de la especificación

@@ -103,7 +103,7 @@ class dt_pextension extends extension_datos_tabla {
             $where[] = "t_p.uni_acad = " . quote($filtro['uni_acad']);
             $where[] = "t_p.id_pext = " . quote($filtro['id_pext']);
         }
-        ///-------------recuperar director
+        ///-------------recuperar director/res
         
         $query = "CREATE TEMPORARY TABLE pg_temp.tabla_temporal_docentesd (
             id serial NOT NULL PRIMARY KEY,
@@ -120,11 +120,7 @@ class dt_pextension extends extension_datos_tabla {
         }
         
         $res = dt_unidad::get_directores($recurso,$condicion,$valor);
-        $band=$this->tieneClavesNumericas($res);
-                
-        if(!$band){//no es un arreglo
-            $res= [$res];
-        }
+        
         foreach ($res as $datos) {
             $datos_json = json_encode($datos);
            // $datos_json = pg_escape_string($datos_json);//lo saco porque no me agrega cosas a la tabla temporal
@@ -145,11 +141,7 @@ class dt_pextension extends extension_datos_tabla {
         $condicion='codocentesdirectorespe';
         
         $res = dt_unidad::get_codirectores($recurso,$condicion,$valor);
-        $band=$this->tieneClavesNumericas($res);
-                
-        if(!$band){//no es un arreglo
-            $res= [$res];
-        }
+        
         foreach ($res as $datos) {
             $datos_json = json_encode($datos);
            // $datos_json = pg_escape_string($datos_json);//lo saco porque no me agrega cosas a la tabla temporal
@@ -295,12 +287,13 @@ class dt_pextension extends extension_datos_tabla {
     //Lucas
      function get_listado($where = null) {
         
-        #Crea la tabla temporal para recuperar los datos personales de los directores de proyectos de extension
+        #Crea la tabla temporal para recuperar los datos personales de todos los directores de proyectos de extension
         $query = "CREATE TEMPORARY TABLE pg_temp.tabla_temporal_docentes (
             id serial NOT NULL PRIMARY KEY,
             docente json
             )"; # Consulta Final
         toba::db('extension')->consultar($query);
+        
         
         $recurso='docentes';
         $condicion='docentesdirectorespe';

@@ -28,7 +28,7 @@ class dt_destinatarios extends extension_datos_tabla {
                 )"; # Consulta Final
             toba::db('extension')->consultar($query);
         
-            $res = dt_unidad::get_localidades();
+            $res = dt_unidad::get_localidades(null);
 
             foreach ($res as $datos) {
                 $datos_json = json_encode($datos);

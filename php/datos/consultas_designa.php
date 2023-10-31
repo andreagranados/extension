@@ -109,10 +109,10 @@ class consultas_designa
                 }
                 break; 
             case 'localidades': 
-                $url=getenv('SW_URL_LOCAL');
-                if(!is_null($valor)){
-                    $condicion = "/".$valor;
-                }//SINO TRAE TODO
+                $url=getenv('SW_URL_PROV');
+                if(!is_null($valor)){                 
+                    $condicion = "/".$valor."/localidades" ;
+                }
                 break;     
             default:
                 break;

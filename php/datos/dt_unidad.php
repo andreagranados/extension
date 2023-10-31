@@ -182,24 +182,15 @@ class dt_unidad extends extension_datos_tabla
         $result = consultas_designa::get_datos($recurso,$condicion,$valor);
         return $result;
     }
-    // function get_localidades($pcia){
-    //     $recurso="localidades";
-    //     $condicion=null;
-    //     $valor=null;
-    //     if(isset($pcia)){
-    //         $condicion='es_igual_a';
-    //         $valor=$pcia;
-    //     }
-    //     $result = consultas_designa::get_datos($recurso,$condicion,$valor);
-    //     return $result;
-    // }
-        static function get_localidades(){
+    static function get_localidades($pcia){
         $recurso="localidades";
         $condicion=null;
         $valor=null;
-
+        if(isset($pcia)){
+            $condicion='es_igual_a';
+            $valor=$pcia;
+        }
         $result = consultas_designa::get_datos($recurso,$condicion,$valor);
         return $result;
     }
-
 }

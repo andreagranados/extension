@@ -25,8 +25,8 @@ class dt_organizaciones_participantes extends extension_datos_tabla {
             localidad json
             )";
         toba::db('extension')->consultar($query);
-        $res[2] = dt_unidad::get_localidades();
-        
+        $res[2] = dt_unidad::get_localidades(null);
+
         for ($i=0; $i < 3 ; $i++) { 
             foreach ($res[$i] as $datos) {
                 $datos_json = json_encode($datos);

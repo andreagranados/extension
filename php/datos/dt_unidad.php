@@ -50,7 +50,8 @@ class dt_unidad extends extension_datos_tabla
         }
         $res = consultas_designa::get_datos($recurso,$condicion,$valor);
         return $res;
-    }   
+    }
+       
     static function get_areas($id_nro_dpto=null)
     {
         $recurso='areas';
@@ -153,7 +154,7 @@ class dt_unidad extends extension_datos_tabla
         
         return $res;
     }
-    function get_pais() {//trae argentina
+    static function get_pais() {//trae argentina
         $condicion='es_igual_a';
         $valor="AR";
         $recurso="pais";
@@ -161,7 +162,15 @@ class dt_unidad extends extension_datos_tabla
         return $result;
         //ojo aqui, no se porque no muestra nada en el combo cuando llamo por paises/AR 
     }
-    function get_provincias($pais){
+    static function get_paises_todos() {//trae argentina
+        $condicion=null;
+        $valor=null;
+        $recurso="pais";
+        $result = consultas_designa::get_datos($recurso,$condicion,$valor);
+        return $result;
+        //ojo aqui, no se porque no muestra nada en el combo cuando llamo por paises/AR 
+    }
+    static function get_provincias($pais){
         $recurso="provincias";
         $condicion=null;
         $valor=null;
@@ -173,14 +182,22 @@ class dt_unidad extends extension_datos_tabla
         $result = consultas_designa::get_datos($recurso,$condicion,$valor);
         return $result;
     }
-    function get_localidades($pcia){
+    // function get_localidades($pcia){
+    //     $recurso="localidades";
+    //     $condicion=null;
+    //     $valor=null;
+    //     if(isset($pcia)){
+    //         $condicion='es_igual_a';
+    //         $valor=$pcia;
+    //     }
+    //     $result = consultas_designa::get_datos($recurso,$condicion,$valor);
+    //     return $result;
+    // }
+        static function get_localidades(){
         $recurso="localidades";
         $condicion=null;
         $valor=null;
-        if(isset($pcia)){
-            $condicion='es_igual_a';
-            $valor=$pcia;
-        }
+
         $result = consultas_designa::get_datos($recurso,$condicion,$valor);
         return $result;
     }

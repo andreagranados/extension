@@ -28,6 +28,29 @@ class dt_integrante_interno_pe extends extension_datos_tabla {
     }
 
     function get_listado($id_p = null) {
+        # Crea la tabla temporal
+        $query = "CREATE TEMPORARY TABLE pg_temp.tabla_temporal_integrante (
+            id serial NOT NULL PRIMARY KEY,
+            integrante json
+            )"; # Consulta Final
+        toba::db('extension')->consultar($query);
+        
+        if(isset($id_p)){//si tiene el id_p
+            $valor=$id_p;
+        }else{
+            $valor=null;
+        }
+        
+        $res = dt_unidad::get_integrantes($valor);  
+                
+       foreach ($res as $datos) {
+            $datos_json = json_encode($datos);
+            //$datos_json = pg_escape_string($datos_json);
+        
+            // Consulta SQL para insertar los datos en la tabla
+            $query = "INSERT INTO pg_temp.tabla_temporal_integrante (integrante) VALUES (".quote($datos_json).")"; # Consulta Final
+            toba::db('extension')->consultar($query);
+        }
         $sql = "select "
                 . "id_pext,"
                 . "trim(dc.apellido)||', '||trim(dc.nombre) as nombre,"
@@ -47,14 +70,24 @@ class dt_integrante_interno_pe extends extension_datos_tabla {
                 . "cv "
                 . "from integrante_interno_pe as t_i "
                 . "LEFT OUTER JOIN funcion_extension as f_e ON (t_i.funcion_p = f_e.id_extension) "
-                . "INNER JOIN  ( SELECT d.* FROM dblink('" . $this->dblink_designa() . "', 'SELECT d.id_designacion,d.id_docente FROM designacion as d ') as d ( id_designacion INTEGER,id_docente INTEGER)) as d ON (t_i.id_designacion = d.id_designacion) "
-                . "LEFT OUTER JOIN (SELECT dc.* FROM dblink('" . $this->dblink_designa() . "',
-                    'SELECT dc.id_docente,dc.nombre, dc.apellido, dc.tipo_docum,dc.nro_docum, dc.fec_nacim,dc.tipo_sexo,dc.pais_nacim 
-                    FROM docente as dc ') as dc 
-                    ( id_docente INTEGER,nombre CHARACTER VARYING,apellido CHARACTER VARYING,tipo_docum CHARACTER(4) ,nro_docum INTEGER,fec_nacim DATE,tipo_sexo CHARACTER(1),pais_nacim CHARACTER(2)) ) as dc ON (d.id_docente = dc.id_docente)  "
+                . "INNER JOIN (SELECT 
+                    (integrante->>'id_designacion')::int AS id_designacion,
+                    integrante->>'carac' AS carac,
+                    integrante->>'cat_estat' AS cat_estat,
+                    (integrante->>'dedic')::int AS dedic,
+                    (integrante->>'id_docente')::int AS id_docente,
+                    integrante->>'nombre' AS nombre,
+                    integrante->>'apellido' AS apellido,
+                    integrante->>'tipo_docum' AS tipo_docum,
+                    (integrante->>'nro_docum')::int AS nro_docum,
+                    integrante->>'fec_nacim' AS fec_nacim,
+                    integrante->>'tipo_sexo' AS tipo_sexo,
+                    integrante->>'pais_nacim' AS pais_nacim,
+                    integrante->>'correo_institucional' AS correo_institucional,
+                    integrante->>'telefono_celular' AS telefono_celular
+                    FROM pg_temp.tabla_temporal_integrante) AS dc ON (dc.id_designacion = t_i.id_designacion)"
                 . "where id_pext=" . $id_p
-                . "order by nombre,desde"
-        ;
+                . "order by nombre,desde";
         return toba::db('extension')->consultar($sql);
     }
     
@@ -81,49 +114,49 @@ class dt_integrante_interno_pe extends extension_datos_tabla {
         return toba::db('extension')->consultar($sql);
     }
 
-    function get_vigentes($filtro = null, $id_pext = null) {
-
-        $vigente = "hasta = 'Vigentes'";
-
-        if (str_word_count($filtro) == 2) {
-            $where = " WHERE t_i.hasta >= '" . date('Y-m-d') . "' AND  id_pext = $id_pext ";
-        } else {
-            $vigente = "hasta = 'No Vigentes'";
-            if (str_word_count($filtro) == 3) {
-                $where = " WHERE t_i.hasta < '" . date('Y-m-d') . "' AND  id_pext = $id_pext  ";
-            } else {
-                $where = "WHERE id_pext = $id_pext";
-            }
-        }
-
-        $sql = "select "
-                . "id_pext,"
-                . "trim(dc.apellido)||', '||trim(dc.nombre) as nombre,"
-                . "t_i.id_designacion,"
-                . "dc.tipo_docum,"
-                . "dc.nro_docum,"
-                . "dc.fec_nacim,"
-                . "dc.tipo_sexo,"
-                . "dc.pais_nacim,"
-                . "f_e.descripcion as funcion_p,"
-                . "carga_horaria,"
-                . "t_i.desde,"
-                . "t_i.hasta,"
-                . "rescd,"
-                . "tipo,"
-                . "ad_honorem,"
-                . "cv"
-                . "from integrante_interno_pe as t_i "
-                . "LEFT OUTER JOIN funcion_extension as f_e ON (t_i.funcion_p = f_e.id_extension) "
-                . "INNER JOIN  ( SELECT d.* FROM dblink('" . $this->dblink_designa() . "', 'SELECT d.id_designacion,d.id_docente FROM designacion as d ') as d ( id_designacion INTEGER,id_docente INTEGER)) as d ON (t_i.id_designacion = d.id_designacion) "
-                . "LEFT OUTER JOIN (SELECT dc.* FROM dblink('" . $this->dblink_designa() . "',
-                    'SELECT dc.id_docente,dc.nombre, dc.apellido, dc.tipo_docum,dc.nro_docum, dc.fec_nacim,dc.tipo_sexo,dc.pais_nacim 
-                    FROM docente as dc ') as dc 
-                    ( id_docente INTEGER,nombre CHARACTER VARYING,apellido CHARACTER VARYING,tipo_docum CHARACTER(4) ,nro_docum INTEGER,fec_nacim DATE,tipo_sexo CHARACTER(1),pais_nacim CHARACTER(2)) ) as dc ON (d.id_docente = dc.id_docente)  "
-                . $where
-                . "order by nombre,desde";
-        return toba::db('extension')->consultar($sql);
-    }
+//    function get_vigentes($filtro = null, $id_pext = null) {
+//
+//        $vigente = "hasta = 'Vigentes'";
+//
+//        if (str_word_count($filtro) == 2) {
+//            $where = " WHERE t_i.hasta >= '" . date('Y-m-d') . "' AND  id_pext = $id_pext ";
+//        } else {
+//            $vigente = "hasta = 'No Vigentes'";
+//            if (str_word_count($filtro) == 3) {
+//                $where = " WHERE t_i.hasta < '" . date('Y-m-d') . "' AND  id_pext = $id_pext  ";
+//            } else {
+//                $where = "WHERE id_pext = $id_pext";
+//            }
+//        }
+//
+//        $sql = "select "
+//                . "id_pext,"
+//                . "trim(dc.apellido)||', '||trim(dc.nombre) as nombre,"
+//                . "t_i.id_designacion,"
+//                . "dc.tipo_docum,"
+//                . "dc.nro_docum,"
+//                . "dc.fec_nacim,"
+//                . "dc.tipo_sexo,"
+//                . "dc.pais_nacim,"
+//                . "f_e.descripcion as funcion_p,"
+//                . "carga_horaria,"
+//                . "t_i.desde,"
+//                . "t_i.hasta,"
+//                . "rescd,"
+//                . "tipo,"
+//                . "ad_honorem,"
+//                . "cv"
+//                . "from integrante_interno_pe as t_i "
+//                . "LEFT OUTER JOIN funcion_extension as f_e ON (t_i.funcion_p = f_e.id_extension) "
+//                . "INNER JOIN  ( SELECT d.* FROM dblink('" . $this->dblink_designa() . "', 'SELECT d.id_designacion,d.id_docente FROM designacion as d ') as d ( id_designacion INTEGER,id_docente INTEGER)) as d ON (t_i.id_designacion = d.id_designacion) "
+//                . "LEFT OUTER JOIN (SELECT dc.* FROM dblink('" . $this->dblink_designa() . "',
+//                    'SELECT dc.id_docente,dc.nombre, dc.apellido, dc.tipo_docum,dc.nro_docum, dc.fec_nacim,dc.tipo_sexo,dc.pais_nacim 
+//                    FROM docente as dc ') as dc 
+//                    ( id_docente INTEGER,nombre CHARACTER VARYING,apellido CHARACTER VARYING,tipo_docum CHARACTER(4) ,nro_docum INTEGER,fec_nacim DATE,tipo_sexo CHARACTER(1),pais_nacim CHARACTER(2)) ) as dc ON (d.id_docente = dc.id_docente)  "
+//                . $where
+//                . "order by nombre,desde";
+//        return toba::db('extension')->consultar($sql);
+//    }
 
     function get_director($id_p = null) {
         $sql = "select "

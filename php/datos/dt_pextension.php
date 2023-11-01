@@ -321,13 +321,14 @@ class dt_pextension extends extension_datos_tabla {
             $where = "WHERE 1=1";
         }
         if ('formulador' == $perfil) {
-            $where .= " AND pext.responsable_carga= '" . $usr . "'";
+            $where .= " AND responsable_carga= '" . $usr . "'";
         } elseif ($perfil == 'sec_ext_ua') {
-            $where .= " AND pext.uni_acad='" . $perfil_datos . "'";
+            $where .= " AND uni_acad='" . $perfil_datos . "'";
         }
-        $where .= " AND pext.uni_acad IS NOT NULL";
-
-        $sql = "SELECT DISTINCT
+        $where .= " AND uni_acad IS NOT NULL";
+        
+        $sql = "SELECT * FROM(
+            SELECT DISTINCT
                     pext.id_pext,
                     tc.descripcion,
                     (temp_d.apellido || ' ' || temp_d.nombre || ' ' || temp_d.tipo_docum || ' ' || temp_d.nro_docum) as director,
@@ -364,7 +365,7 @@ class dt_pextension extends extension_datos_tabla {
                     LEFT OUTER JOIN tipo_convocatoria AS tc ON tc.id_conv = bc.tipo_convocatoria
                     LEFT OUTER JOIN seguimiento_central AS sc ON sc.id_pext = pext.id_pext
                     LEFT OUTER JOIN (SELECT * FROM alerta WHERE rol='".$perfil."' AND alerta.estado_alerta='Pendiente'"." ) AS a ON (a.id_pext=pext.id_pext)
-                    ". $where;
+                   )sub ". $where;
         $sql = toba::perfil_de_datos()->filtrar($sql);
         return toba::db('extension')->consultar($sql);
     }

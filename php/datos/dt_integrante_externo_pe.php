@@ -30,46 +30,46 @@ class dt_integrante_externo_pe extends extension_datos_tabla {
         return toba::db('extension')->consultar($sql);
     }
 
-    function get_vigentes($filtro = null, $id_pext = null) {
-
-        $vigente = "hasta = 'Vigentes'";
-        if (str_word_count($filtro) == 2) {
-            $where = " WHERE t_e.hasta >= '" . date('Y-m-d') . "' AND  id_pext = $id_pext  ";
-        } else {
-            $vigente = "hasta = 'No Vigentes'";
-            if (str_word_count($filtro) == 3) {
-                $where = " WHERE t_e.hasta < '" . date('Y-m-d') . "' AND  id_pext = $id_pext  ";
-            } else {
-                $where = "WHERE id_pext = $id_pext ";
-            }
-        }
-
-
-        $sql = "select "
-                . "id_pext,"
-                . "trim(apellido)||', '||trim(nombre) as nombre,"
-                . "t_p.tipo_docum,"
-                . "t_p.nro_docum,"
-                . "fec_nacim,"
-                . "tipo_sexo,"
-                . "pais_nacim,"
-                . "f_e.descripcion as funcion_p,"
-                . "carga_horaria,"
-                . "desde,hasta,"
-                . "rescd,"
-                . "t_fe.descripcion as tipo,"
-                . "t_p.telefono,"
-                . "t_p.mail,"
-                . "ad_honorem,"
-                . "cv "
-                . "FROM integrante_externo_pe as t_e "
-                . "LEFT OUTER JOIN funcion_extension as f_e ON (t_e.funcion_p = f_e.id_extension) "
-                . "LEFT OUTER JOIN funcion_extension as t_fe ON (t_e.tipo = t_fe.id_extension) "
-                . "LEFT OUTER JOIN persona t_p ON (t_e.tipo_docum=t_p.tipo_docum and t_e.nro_docum=t_p.nro_docum)"
-                . $where
-                . " order by nombre,desde";
-        return toba::db('extension')->consultar($sql);
-    }
+//    function get_vigentes($filtro = null, $id_pext = null) {
+//
+//        $vigente = "hasta = 'Vigentes'";
+//        if (str_word_count($filtro) == 2) {
+//            $where = " WHERE t_e.hasta >= '" . date('Y-m-d') . "' AND  id_pext = $id_pext  ";
+//        } else {
+//            $vigente = "hasta = 'No Vigentes'";
+//            if (str_word_count($filtro) == 3) {
+//                $where = " WHERE t_e.hasta < '" . date('Y-m-d') . "' AND  id_pext = $id_pext  ";
+//            } else {
+//                $where = "WHERE id_pext = $id_pext ";
+//            }
+//        }
+//
+//
+//        $sql = "select "
+//                . "id_pext,"
+//                . "trim(apellido)||', '||trim(nombre) as nombre,"
+//                . "t_p.tipo_docum,"
+//                . "t_p.nro_docum,"
+//                . "fec_nacim,"
+//                . "tipo_sexo,"
+//                . "pais_nacim,"
+//                . "f_e.descripcion as funcion_p,"
+//                . "carga_horaria,"
+//                . "desde,hasta,"
+//                . "rescd,"
+//                . "t_fe.descripcion as tipo,"
+//                . "t_p.telefono,"
+//                . "t_p.mail,"
+//                . "ad_honorem,"
+//                . "cv "
+//                . "FROM integrante_externo_pe as t_e "
+//                . "LEFT OUTER JOIN funcion_extension as f_e ON (t_e.funcion_p = f_e.id_extension) "
+//                . "LEFT OUTER JOIN funcion_extension as t_fe ON (t_e.tipo = t_fe.id_extension) "
+//                . "LEFT OUTER JOIN persona t_p ON (t_e.tipo_docum=t_p.tipo_docum and t_e.nro_docum=t_p.nro_docum)"
+//                . $where
+//                . " order by nombre,desde";
+//        return toba::db('extension')->consultar($sql);
+//    }
 
     function get_descripciones() {
         $sql = "select t_e.*,trim(apellido)||', '||trim(nombre) as nombre "

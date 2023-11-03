@@ -94,8 +94,9 @@ class consultas_designa
                 }
                 break; 
             case 'localidades': 
-                $url=getenv('SW_URL_PROV');
-                if(!is_null($valor)){                 
+                $url=getenv('SW_URL_LOC');
+                if(!is_null($valor)){     //localidades de una determinada provincia
+                    $url=getenv('SW_URL_PROV');
                     $condicion = "/".$valor."/localidades" ;
                 }
                 break;     
@@ -138,7 +139,7 @@ class consultas_designa
             $data = json_decode($response, true, JSON_UNESCAPED_SLASHES);
             
             if ($data !== null) {
-                if($recurso!='docentes' && $recurso!='integrantes-pext'){//si le aplico la decodificacion no me inserta en tabla temporal
+                if($recurso!='docentes' && $recurso!='integrantes-pext' && $recurso!='localidades' && $recurso!='pais' && $recurso!='provincias'){//si le aplico la decodificacion no me inserta en tabla temporal
                     // Recorrer el arreglo y aplicar mb_convert_encoding a cada elemento
                     array_walk_recursive($data, function (&$elemento) {
                         $elemento = mb_convert_encoding($elemento, 'ISO-8859-1', 'UTF-8');

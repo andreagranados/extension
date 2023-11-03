@@ -3,6 +3,13 @@ require 'consultas_designa.php';
 
 class dt_unidad extends extension_datos_tabla 
 {
+    //trae todas las dependencias 
+    function get_descripciones() {
+
+        $sql = "SELECT sigla,descripcion FROM unidad  "
+                . "ORDER BY descripcion";
+        return toba::db('extension')->consultar($sql);
+    }
     function get_unidades()
     {
         $sql="SELECT * "
@@ -167,6 +174,13 @@ class dt_unidad extends extension_datos_tabla
         $result = consultas_designa::get_datos($recurso,$condicion,$valor);
         return $result;
     }
+    static function get_paises_todos() {//trae argentina
+        $condicion=null;
+        $valor=null;
+        $recurso="pais";
+        $result = consultas_designa::get_datos($recurso,$condicion,$valor);
+        return $result;
+    }
     function get_localidades($pcia){
         $recurso="localidades";
         $condicion=null;
@@ -176,6 +190,14 @@ class dt_unidad extends extension_datos_tabla
             $valor=$pcia;
         }
         $result = consultas_designa::get_datos($recurso,$condicion,$valor);
+        //print_r($result);exit;
+//        $salida=array();
+//        foreach ($result as $key => $value) {
+//                $elem['id']=$value['id'];
+//                $elem['id_provincia']=$value['id_provincia'];
+//                $elem['localidad']=mb_convert_encoding($value['localidad'],'UTF-8');
+//                array_push($salida, $elem);
+//        }
         return $result;
     }
 

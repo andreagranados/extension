@@ -2,14 +2,14 @@
 
 class dt_unidad_acad extends extension_datos_tabla {
 
-    //trae todas las dependencias 
+//    //trae todas las dependencias 
 //    function get_descripciones() {
 //
 //        $sql = "SELECT ua.sigla,ua.descripcion FROM dblink('" . $this->dblink_designa() . "','SELECT sigla,descripcion FROM unidad_acad') as ua (sigla CHARACTER(5),descripcion CHARACTER(60) )"
 //                . "ORDER BY ua.descripcion";
 //        return toba::db('extension')->consultar($sql);
 //    }
-//
+
 //    function get_ua_restantes($sigla) {
 //
 //        $sql = "SELECT ua.sigla,ua.descripcion FROM dblink('" . $this->dblink_designa() . "','SELECT sigla,descripcion FROM unidad_acad') as ua (sigla CHARACTER(5),descripcion CHARACTER(60) )"
@@ -17,7 +17,7 @@ class dt_unidad_acad extends extension_datos_tabla {
 //                . " ORDER BY ua.descripcion";
 //        return toba::db('extension')->consultar($sql);
 //    }
-
+//
 //    function get_descripcion($sigla) {
 //
 //        $sql = "select descripcion from unidad_acad where sigla='" . $sigla . "'";
@@ -28,7 +28,7 @@ class dt_unidad_acad extends extension_datos_tabla {
 //            return '';
 //        }
 //    }
-
+//
 //    function get_ua_dependencia() {//trae todas menos la UA asociada al usuario logueado, para las ua dependencia de los proyectos 
 //        $perfil = toba::usuario()->get_perfil_datos();
 //        if (isset($perfil)) {       //es usuario de la UA
@@ -42,7 +42,7 @@ class dt_unidad_acad extends extension_datos_tabla {
 //        }
 //        return toba::db('extension')->consultar($sql);
 //    }
-
+//
 //    function get_descripciones_ua($id_des = null) {
 //
 //        if (!is_null($id_des)) {
@@ -53,8 +53,8 @@ class dt_unidad_acad extends extension_datos_tabla {
 //        $sql = "SELECT t_d.uni_acad as sigla FROM designacion t_d $where ORDER BY descripcion";
 //        return toba::db('extension')->consultar($sql);
 //    }
-
-    //filtra por dependencia
+//
+//    //filtra por dependencia
 //    function get_ua() {
 //
 //        //primero veo si esta asociado a un perfil de datos departamento y obtengo la ua del departamento
@@ -78,16 +78,16 @@ class dt_unidad_acad extends extension_datos_tabla {
 //
 //        return $resul;
 //    }
-
+//
 //    function get_ua_departamentos() {//es para el filtro de asignacion materias.El director de departamento no filtra por UA
 //        $sql = "SELECT ua.sigla,ua.descripcion FROM dblink('" . $this->dblink_designa() . "','SELECT sigla,descripcion FROM unidad_acad') as ua (sigla CHARACTER(5),descripcion CHARACTER(60) )";
 //        $sql = toba::perfil_de_datos()->filtrar($sql);
 //        $resul = toba::db('extension')->consultar($sql);
 //        return $resul;
 //    }
-
-    //credito docente del periodo actual para una UA alguien usa esta funcion?
-    //sino la usan sacar?
+//
+//    //credito docente del periodo actual para una UA alguien usa esta funcion?
+//    //sino la usan sacar?
 //    function credito($ua) {
 //        $sql = "select sum(b.credito) as cred "
 //                . " from mocovi_credito b, mocovi_periodo_presupuestario c"
@@ -106,9 +106,9 @@ class dt_unidad_acad extends extension_datos_tabla {
 //        }
 //        return $tengo;
 //    }
-
-    //credito docente x año y UA
-    //sino la usan sacar
+//
+//    //credito docente x año y UA
+//    //sino la usan sacar
 //    function credito_x_anio($ua, $anio) {
 //        $sql = "select sum(b.credito) as cred "
 //                . "from  mocovi_credito b, mocovi_periodo_presupuestario c"

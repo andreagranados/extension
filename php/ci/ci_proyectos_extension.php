@@ -908,7 +908,8 @@ class ci_proyectos_extension extends extension_ci {
         }
         $siglas = $multi_uni;
 
-        $unidades_todas = $this->dep('datos')->tabla('unidad_acad')->get_descripciones();
+        //$unidades_todas = $this->dep('datos')->tabla('unidad_acad')->get_descripciones();
+        $unidades_todas = $this->dep('datos')->tabla('unidad')->get_descripciones();
 
         $aux = 0;
         $boolean_uni_proyecto = true;
@@ -1671,7 +1672,8 @@ class ci_proyectos_extension extends extension_ci {
         $perfil = toba::usuario()->get_perfil_datos();
 
         if ($perfil != null) {
-            $ua = $this->dep('datos')->tabla('unidad_acad')->get_ua(); //trae la ua de acuerdo al perfil de datos  
+            //$ua = $this->dep('datos')->tabla('unidad_acad')->get_ua(); //trae la ua de acuerdo al perfil de datos  
+            $ua = $this->dep('datos')->tabla('unidad')->get_ua();
             $datos['uni_acad'] = $ua[0]['sigla'];
         }
 
@@ -3981,7 +3983,8 @@ class ci_proyectos_extension extends extension_ci {
                 if (strcasecmp(date('Y-m-d', strtotime($pe['fec_desde'])), date('Y-m-d', strtotime($datos['desde']))) <= 0) {
                     $boolean = true;
 
-                    $perfil_ua = $this->dep('datos')->tabla('unidad_acad')->get_ua()[0];
+                    //$perfil_ua = $this->dep('datos')->tabla('unidad_acad')->get_ua()[0];
+                    $perfil_ua = $this->dep('datos')->tabla('unidad')->get_ua()[0];
                     $director_ua = true;
 
                     if ($datos['funcion_p'] == 'D    ' && $perfil_ua[sigla] != 'RECT ') {
@@ -4117,7 +4120,8 @@ class ci_proyectos_extension extends extension_ci {
                     $director_ua = true;
                     //control de director o codirector no repetido 
                     if ($datos['funcion_p'] != $integrante_datos_almacenados['funcion_p']) {
-                        $perfil_ua = $this->dep('datos')->tabla('unidad_acad')->get_ua()[0];
+                        //$perfil_ua = $this->dep('datos')->tabla('unidad_acad')->get_ua()[0];
+                        $perfil_ua = $this->dep('datos')->tabla('unidad')->get_ua()[0];
 
                         // control Director unico
                         if ($datos['funcion_p'] == 'D    ' && $perfil_ua[sigla] != 'RECT ') {

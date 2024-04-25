@@ -195,9 +195,10 @@ class dt_unidad extends extension_datos_tabla
 //        foreach ($result as $key => $value) {
 //                $elem['id']=$value['id'];
 //                $elem['id_provincia']=$value['id_provincia'];
-//                $elem['localidad']=mb_convert_encoding($value['localidad'],'UTF-8');
+//                $elem['localidad']=mb_convert_encoding($value['localidad'],'ISO-8859-1', 'UTF-8');
 //                array_push($salida, $elem);
 //        }
+//        return $salida;
         return $result;
     }
 

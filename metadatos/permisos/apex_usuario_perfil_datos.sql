@@ -136,49 +136,49 @@ INSERT INTO apex_usuario_perfil_datos (proyecto, usuario_perfil_datos, nombre, d
 INSERT INTO apex_usuario_perfil_datos (proyecto, usuario_perfil_datos, nombre, descripcion, listar) VALUES (
 	'extension', --proyecto
 	'1001000001', --usuario_perfil_datos
-	'FAIF', --nombre
+	'faif', --nombre
 	NULL, --descripcion
 	NULL  --listar
 );
 INSERT INTO apex_usuario_perfil_datos (proyecto, usuario_perfil_datos, nombre, descripcion, listar) VALUES (
 	'extension', --proyecto
 	'1001000002', --usuario_perfil_datos
-	'FAIN', --nombre
+	'fain', --nombre
 	NULL, --descripcion
 	NULL  --listar
 );
 INSERT INTO apex_usuario_perfil_datos (proyecto, usuario_perfil_datos, nombre, descripcion, listar) VALUES (
 	'extension', --proyecto
 	'1001000003', --usuario_perfil_datos
-	'ASMA', --nombre
+	'asma', --nombre
 	NULL, --descripcion
 	NULL  --listar
 );
 INSERT INTO apex_usuario_perfil_datos (proyecto, usuario_perfil_datos, nombre, descripcion, listar) VALUES (
 	'extension', --proyecto
 	'1001000004', --usuario_perfil_datos
-	'AUZA', --nombre
+	'auza', --nombre
 	NULL, --descripcion
 	NULL  --listar
 );
 INSERT INTO apex_usuario_perfil_datos (proyecto, usuario_perfil_datos, nombre, descripcion, listar) VALUES (
 	'extension', --proyecto
 	'1001000005', --usuario_perfil_datos
-	'CRUB', --nombre
+	'crub', --nombre
 	NULL, --descripcion
 	NULL  --listar
 );
 INSERT INTO apex_usuario_perfil_datos (proyecto, usuario_perfil_datos, nombre, descripcion, listar) VALUES (
 	'extension', --proyecto
 	'1001000006', --usuario_perfil_datos
-	'FATA', --nombre
+	'fata', --nombre
 	NULL, --descripcion
 	NULL  --listar
 );
 INSERT INTO apex_usuario_perfil_datos (proyecto, usuario_perfil_datos, nombre, descripcion, listar) VALUES (
 	'extension', --proyecto
 	'1001000007', --usuario_perfil_datos
-	'CUZA', --nombre
+	'cuza', --nombre
 	NULL, --descripcion
 	NULL  --listar
 );
@@ -192,28 +192,28 @@ INSERT INTO apex_usuario_perfil_datos (proyecto, usuario_perfil_datos, nombre, d
 INSERT INTO apex_usuario_perfil_datos (proyecto, usuario_perfil_datos, nombre, descripcion, listar) VALUES (
 	'extension', --proyecto
 	'1001000009', --usuario_perfil_datos
-	'FAAS', --nombre
+	'faas', --nombre
 	NULL, --descripcion
 	NULL  --listar
 );
 INSERT INTO apex_usuario_perfil_datos (proyecto, usuario_perfil_datos, nombre, descripcion, listar) VALUES (
 	'extension', --proyecto
 	'1001000010', --usuario_perfil_datos
-	'FACA', --nombre
+	'faca', --nombre
 	NULL, --descripcion
 	NULL  --listar
 );
 INSERT INTO apex_usuario_perfil_datos (proyecto, usuario_perfil_datos, nombre, descripcion, listar) VALUES (
 	'extension', --proyecto
 	'1001000011', --usuario_perfil_datos
-	'FACE', --nombre
+	'face', --nombre
 	NULL, --descripcion
 	NULL  --listar
 );
 INSERT INTO apex_usuario_perfil_datos (proyecto, usuario_perfil_datos, nombre, descripcion, listar) VALUES (
 	'extension', --proyecto
 	'1001000012', --usuario_perfil_datos
-	'FADE', --nombre
+	'fade', --nombre
 	NULL, --descripcion
 	NULL  --listar
 );
@@ -227,35 +227,35 @@ INSERT INTO apex_usuario_perfil_datos (proyecto, usuario_perfil_datos, nombre, d
 INSERT INTO apex_usuario_perfil_datos (proyecto, usuario_perfil_datos, nombre, descripcion, listar) VALUES (
 	'extension', --proyecto
 	'1001000014', --usuario_perfil_datos
-	'FAHU', --nombre
+	'fahu', --nombre
 	NULL, --descripcion
 	NULL  --listar
 );
 INSERT INTO apex_usuario_perfil_datos (proyecto, usuario_perfil_datos, nombre, descripcion, listar) VALUES (
 	'extension', --proyecto
 	'1001000015', --usuario_perfil_datos
-	'FATU', --nombre
+	'fatu', --nombre
 	NULL, --descripcion
 	NULL  --listar
 );
 INSERT INTO apex_usuario_perfil_datos (proyecto, usuario_perfil_datos, nombre, descripcion, listar) VALUES (
 	'extension', --proyecto
 	'1001000016', --usuario_perfil_datos
-	'FAME', --nombre
+	'fame', --nombre
 	NULL, --descripcion
 	NULL  --listar
 );
 INSERT INTO apex_usuario_perfil_datos (proyecto, usuario_perfil_datos, nombre, descripcion, listar) VALUES (
 	'extension', --proyecto
 	'1001000017', --usuario_perfil_datos
-	'FALE', --nombre
+	'fale', --nombre
 	NULL, --descripcion
 	NULL  --listar
 );
 INSERT INTO apex_usuario_perfil_datos (proyecto, usuario_perfil_datos, nombre, descripcion, listar) VALUES (
 	'extension', --proyecto
 	'1001000018', --usuario_perfil_datos
-	'RECT', --nombre
+	'rect', --nombre
 	NULL, --descripcion
 	NULL  --listar
 );

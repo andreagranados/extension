@@ -1,6 +1,6 @@
 <?php   
 require 'consultas_designa.php';
-
+//comentario de prueba
 class dt_unidad extends extension_datos_tabla 
 {
     //trae todas las dependencias 

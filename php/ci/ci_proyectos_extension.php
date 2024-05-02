@@ -3970,7 +3970,8 @@ class ci_proyectos_extension extends extension_ci {
     function evt__form_integrantes__alta($datos) {
 
         $this->valido = false;
-        $datos[ua] = $this->dep('datos')->tabla('designacion')->get_ua($datos['id_designacion']);
+        //$datos[ua] = $this->dep('datos')->tabla('designacion')->get_ua($datos['id_designacion']);
+        $datos[ua] = $this->dep('datos')->tabla('unidad')->get_ua_designacion($datos['id_designacion']);
         //proyecto de extension datos
         $pe = $this->dep('datos')->tabla('pextension')->get();
 

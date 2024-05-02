@@ -137,6 +137,7 @@ class dt_unidad extends extension_datos_tabla
         return $datos;
     }
     //trae las designaciones de un docentes
+    //debe excluir las designaciones que estan anuladas
     function get_categorias_doc($id_doc = null) {
         $condicion=null;
         $valor=null;
@@ -151,7 +152,6 @@ class dt_unidad extends extension_datos_tabla
         else{
             $res = array();
         }
-        
         return $res;
     }
     function get_pais() {//trae argentina
@@ -201,5 +201,15 @@ class dt_unidad extends extension_datos_tabla
 //        return $salida;
         return $result;
     }
-
+     //retorna la UA de una designacion docente
+     function get_ua_designacion($id_des) {
+        $recurso="designaciones";
+        $condicion="designacionestodas";
+        $valor=null;
+        if(isset($id_des)){
+            $valor=$id_des;
+        }
+        $result = consultas_designa::get_datos($recurso,$condicion,$valor);
+        return $result[0]['uni_acad'];
+    }
 }

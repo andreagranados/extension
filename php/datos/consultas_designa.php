@@ -69,17 +69,10 @@ class consultas_designa
                 break;
             case 'designaciones': 
                 $url=getenv('SW_URL_DESIG');
-                
-                if(!is_null($cond)){//http://localhost/designa/1.0/rest/designaciones/categoriasdocentes?id_doc=es_igual_a;1537
-                    $condicion = "/".$cond."?=es_igual_a;".$valor;
+                if(!is_null($valor)){//http://localhost/designa/1.0/rest/designaciones/designacionestodas?id=es_igual_a;3
+                    $condicion = "/".$cond."?id=es_igual_a;".$valor;
                 }
                 break;
-//            case 'pais': //asi no funciona para mostrar en el combo cuando viene con AR 
-//                $url=getenv('SW_URL_PAIS');
-//                if(!is_null($valor)){
-//                    $condicion = "/".$valor;
-//                }
-//                break; 
             case 'pais': 
                 $url=getenv('SW_URL_PAIS');
                 if(!is_null($valor)){
@@ -105,8 +98,6 @@ class consultas_designa
         }
        
         $url.=$condicion; 
-        //print_r($url);
-        //print_r($condicion);
         # Inicializar una sesión cURL
         $curl = curl_init($url);
         

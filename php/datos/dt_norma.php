@@ -1,16 +1,16 @@
 <?php
 class dt_norma extends toba_datos_tabla
 {
-        function tiene_pdf($id_norma){
-           $sql="SELECT case when pdf is null then 0 else 1 end as tiene FROM norma where id_norma=$id_norma"; 
-           $res= toba::db('designa')->consultar($sql);
-           return $res[0]['tiene'];
-        }
-        function get_descripciones()
-        {
-            $sql = "SELECT id_norma, tipo_norma FROM norma ORDER BY tipo_norma";
-            return toba::db('designa')->consultar($sql);
-        }
+//        function tiene_pdf($id_norma){
+//           $sql="SELECT case when pdf is null then 0 else 1 end as tiene FROM norma where id_norma=$id_norma"; 
+//           $res= toba::db('designa')->consultar($sql);
+//           return $res[0]['tiene'];
+//        }
+//        function get_descripciones()
+//        {
+//            $sql = "SELECT id_norma, tipo_norma FROM norma ORDER BY tipo_norma";
+//            return toba::db('designa')->consultar($sql);
+//        }
         
         function get_norma($id_norma)
         {

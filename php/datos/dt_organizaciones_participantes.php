@@ -174,4 +174,64 @@ class dt_organizaciones_participantes extends extension_datos_tabla {
         return $res[0]['tiene'];
     }
 
+    #Con Servicios WEB SIN DBLINK
+    // function get_listado_filtro($id, $filtro = array())
+    // {
+
+    //     # Crea la tabla temporal
+    //     $query = "CREATE TEMPORARY TABLE pg_temp.tabla_temporal_localidades (
+    //     id serial NOT NULL PRIMARY KEY,
+    //     localidades json
+    //     )";
+    //     # Consulta Final
+    //     toba::db('extension')->consultar($query);
+
+    //     $res = dt_unidad::get_localidades(null);
+
+    //     foreach ($res as $datos) {
+    //         $datos_json = json_encode($datos);
+    //         //$datos_json = pg_escape_string($datos_json);
+
+    //         // Consulta SQL para insertar los datos en la tabla
+    //         $query = "INSERT INTO pg_temp.tabla_temporal_localidades (localidades) VALUES (" . quote($datos_json) . ")"; # Consulta Final
+    //         toba::db('extension')->consultar($query);
+    //     }
+
+
+
+    //     $where = array();
+    //     if (isset($filtro)) {
+    //         $where[] = $filtro;
+    //     }
+    //     $sql = "SELECT
+    //                 o_p.id_organizacion ,
+    //                 o_p.id_tipo_organizacion ,
+    //                 o_p.id_pext ,
+    //                 o_p.nombre ,
+    //                 o_p.id_localidad ,
+    //                 o_p.telefono ,
+    //                 o_p.email ,
+    //                 o_p.referencia_vinculacion_inst,
+    //                 o_p.id_pais,
+    //                 o_p.id_provincia,
+    //                 o_p.domicilio,
+    //                 o_p.aval
+    //             FROM
+    //                organizaciones_participantes as o_p INNER JOIN pextension as p_e ON (o_p.id_pext = p_e.id_pext)
+
+    //             LEFT OUTER JOIN (SELECT 
+    //                 (localidades->>'id')::int AS id_designacion,
+    //                 localidades->>'localidad' AS id_docente
+    //                 FROM pg_temp.tabla_temporal_localidades) AS temp_l ON (o_p.id_localidad = temp_l.id AND o_p.localidad = temp_l.localidad)
+    //             LEFT OUTER JOIN tipo_organizacion as t_o ON (o_p.id_tipo_organizacion = t_o.id_tipo_organizacion)
+    //             WHERE o_p.localidad = l.localidad";
+
+    //     if (count($where) > 0) {
+    //         $sql = sql_concatenar_where($sql, $where)
+    //             . "AND o_p.id_pext=" . $id;
+    //     }
+
+    //     $resultado = toba::db('extension')->consultar($sql);
+    //     return $resultado;
+    // }
 }

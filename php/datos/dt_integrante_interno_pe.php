@@ -316,38 +316,106 @@ class dt_integrante_interno_pe extends extension_datos_tabla {
         return toba::db('extension')->consultar($sql);
     }
     
-    function getCodirectorVigente($id_p = null) {
-        $sql = "select "
-                . "id_pext,"
-                . "trim(dc.apellido)||', '||trim(dc.nombre) as nombre,"
-                . "t_i.id_designacion,"
-                . "dc.tipo_docum,"
-                . "dc.nro_docum,"
-                . "dc.fec_nacim,"
-                . "dc.tipo_sexo,"
-                . "dc.pais_nacim,"
-                . "f_e.descripcion as funcion_p,"
-                . "carga_horaria,"
-                . "t_i.desde,"
-                . "t_i.hasta,"
-                . "rescd,"
-                . "tipo,"
-                . "t_i.ua,"
-                . "ad_honorem, "
-                . "dc.correo_institucional "
-                . "from integrante_interno_pe as t_i "
-                . "LEFT OUTER JOIN funcion_extension as f_e ON (t_i.funcion_p = f_e.id_extension) "
-                . "INNER JOIN  ( SELECT d.* FROM dblink('" . $this->dblink_designa() . "', 'SELECT d.id_designacion,d.id_docente FROM designacion as d ') as d ( id_designacion INTEGER,id_docente INTEGER)) as d ON (t_i.id_designacion = d.id_designacion) "
-                . "LEFT OUTER JOIN (SELECT dc.* FROM dblink('" . $this->dblink_designa() . "',
-                    'SELECT dc.correo_institucional,dc.id_docente,dc.nombre, dc.apellido, dc.tipo_docum,dc.nro_docum, dc.fec_nacim,dc.tipo_sexo,dc.pais_nacim 
-                    FROM docente as dc ') as dc 
-                    ( correo_institucional CHARACTER(60),id_docente INTEGER,nombre CHARACTER VARYING,apellido CHARACTER VARYING,tipo_docum CHARACTER(4) ,nro_docum INTEGER,fec_nacim DATE,tipo_sexo CHARACTER(1),pais_nacim CHARACTER(2)) ) as dc ON (d.id_docente = dc.id_docente)  "
-                . "WHERE id_pext=" . $id_p ." AND t_i.hasta >= '" . date('Y-m-d') . "' AND funcion_p='CD-Co' "
-                . "order by nombre,desde"
-        ;
-        return toba::db('extension')->consultar($sql);
-    }
+//    function getCodirectorVigente($id_p = null) {
+//        $sql = "select "
+//                . "id_pext,"
+//                . "trim(dc.apellido)||', '||trim(dc.nombre) as nombre,"
+//                . "t_i.id_designacion,"
+//                . "dc.tipo_docum,"
+//                . "dc.nro_docum,"
+//                . "dc.fec_nacim,"
+//                . "dc.tipo_sexo,"
+//                . "dc.pais_nacim,"
+//                . "f_e.descripcion as funcion_p,"
+//                . "carga_horaria,"
+//                . "t_i.desde,"
+//                . "t_i.hasta,"
+//                . "rescd,"
+//                . "tipo,"
+//                . "t_i.ua,"
+//                . "ad_honorem, "
+//                . "dc.correo_institucional "
+//                . "from integrante_interno_pe as t_i "
+//                . "LEFT OUTER JOIN funcion_extension as f_e ON (t_i.funcion_p = f_e.id_extension) "
+//                . "INNER JOIN  ( SELECT d.* FROM dblink('" . $this->dblink_designa() . "', 'SELECT d.id_designacion,d.id_docente FROM designacion as d ') as d ( id_designacion INTEGER,id_docente INTEGER)) as d ON (t_i.id_designacion = d.id_designacion) "
+//                . "LEFT OUTER JOIN (SELECT dc.* FROM dblink('" . $this->dblink_designa() . "',
+//                    'SELECT dc.correo_institucional,dc.id_docente,dc.nombre, dc.apellido, dc.tipo_docum,dc.nro_docum, dc.fec_nacim,dc.tipo_sexo,dc.pais_nacim 
+//                    FROM docente as dc ') as dc 
+//                    ( correo_institucional CHARACTER(60),id_docente INTEGER,nombre CHARACTER VARYING,apellido CHARACTER VARYING,tipo_docum CHARACTER(4) ,nro_docum INTEGER,fec_nacim DATE,tipo_sexo CHARACTER(1),pais_nacim CHARACTER(2)) ) as dc ON (d.id_docente = dc.id_docente)  "
+//                . "WHERE id_pext=" . $id_p ." AND t_i.hasta >= '" . date('Y-m-d') . "' AND funcion_p='CD-Co' "
+//                . "order by nombre,desde"
+//        ;
+//        return toba::db('extension')->consultar($sql);
+//    }
+//lucas
+function getCodirectorVigente($id_p = null)
+    {
 
+        # Crea la tabla temporal
+        $query = "CREATE TEMPORARY TABLE pg_temp.tabla_temporal_codirector (
+        id serial NOT NULL PRIMARY KEY,
+        codirector json
+        )"; 
+        # Consulta Final
+        toba::db('extension')->consultar($query);
+
+        if (isset($id_p)) { //si tiene el id_p
+            $valor = $id_p;
+        } else {
+            $valor = null;
+        }
+
+        $res = dt_unidad::get_integrantes($valor);
+
+        foreach ($res as $datos) {
+            $datos_json = json_encode($datos);
+            //$datos_json = pg_escape_string($datos_json);
+
+            // Consulta SQL para insertar los datos en la tabla
+            $query = "INSERT INTO pg_temp.tabla_temporal_codirector (codirector) VALUES (" . quote($datos_json) . ")"; # Consulta Final
+            toba::db('extension')->consultar($query);
+        }
+
+        $fecha = date('Y-m-d');
+
+        $sql = "SELECT
+              id_pext,
+              trim(temp_co.apellido)||', '||trim(temp_co.nombre) AS nombre,
+              t_i.id_designacion,
+              temp_co.tipo_docum,
+              temp_co.nro_docum,
+              temp_co.fec_nacim,
+              temp_co.tipo_sexo,
+              temp_co.pais_nacim,
+              f_e.descripcion AS funcion_p,
+              carga_horaria,
+              t_i.desde,
+              t_i.hasta,
+              rescd,
+              tipo,
+              t_i.ua,
+              ad_honorem, 
+              temp_co.correo_institucional 
+              FROM integrante_interno_pe AS t_i 
+              LEFT OUTER JOIN funcion_extension AS f_e ON (t_i.funcion_p = f_e.id_extension)
+              LEFT OUTER JOIN (SELECT 
+                    (codirector->>'id_designacion')::int AS id_designacion,
+                    (codirector->>'id_docente')::int AS id_docente,
+                    codirector->>'nombre' AS nombre,
+                    codirector->>'apellido' AS apellido,
+                    codirector->>'tipo_docum' AS tipo_docum,
+                    (codirector->>'nro_docum')::int AS nro_docum,
+                    codirector->>'fec_nacim' AS fec_nacim,
+                    codirector->>'tipo_sexo' AS tipo_sexo,
+                    codirector->>'pais_nacim' AS pais_nacim,
+                    codirector->>'correo_institucional' AS correo_institucional
+                    FROM pg_temp.tabla_temporal_codirector) AS temp_co ON (temp_co.id_designacion = t_i.id_designacion)
+               WHERE id_pext=$id_p AND t_i.hasta >= ".quote($fecha)." AND funcion_p='CD-Co'
+               ORDER BY nombre, desde";
+
+        $resultado = toba::db('extension')->consultar($sql);
+        return $resultado;
+    }
     //recibe el id_docente
     function sus_proyectos_ext($id_doc) {
 

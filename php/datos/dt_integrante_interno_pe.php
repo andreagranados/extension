@@ -222,7 +222,7 @@ class dt_integrante_interno_pe extends extension_datos_tabla {
 //    }
     function getDirectorVigente($id_p = null) {
         # Crea la tabla temporal
-        $query = "CREATE TEMPORARY TABLE pg_temp.tabla_temporal_integrante (
+        $query = "CREATE TEMPORARY TABLE pg_temp.tabla_temporal_director (
             id serial NOT NULL PRIMARY KEY,
             integrante json
             )"; # Consulta Final
@@ -241,7 +241,7 @@ class dt_integrante_interno_pe extends extension_datos_tabla {
             //$datos_json = pg_escape_string($datos_json);
         
             // Consulta SQL para insertar los datos en la tabla
-            $query = "INSERT INTO pg_temp.tabla_temporal_integrante (integrante) VALUES (".quote($datos_json).")"; # Consulta Final
+            $query = "INSERT INTO pg_temp.tabla_temporal_director (integrante) VALUES (".quote($datos_json).")"; # Consulta Final
             toba::db('extension')->consultar($query);
         }
         $sql = "select "
@@ -279,7 +279,7 @@ class dt_integrante_interno_pe extends extension_datos_tabla {
                     integrante->>'pais_nacim' AS pais_nacim,
                     integrante->>'correo_institucional' AS correo_institucional,
                     integrante->>'telefono_celular' AS telefono_celular
-                    FROM pg_temp.tabla_temporal_integrante) AS dc ON (dc.id_designacion = t_i.id_designacion)"
+                    FROM pg_temp.tabla_temporal_director) AS dc ON (dc.id_designacion = t_i.id_designacion)"
                 . "where id_pext=" . $id_p. " AND t_i.hasta >= '" . date('Y-m-d') . "' AND funcion_p='D' "
                 . "order by nombre,desde";
         return toba::db('extension')->consultar($sql);

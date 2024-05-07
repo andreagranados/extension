@@ -77,47 +77,95 @@ class dt_persona extends extension_datos_tabla {
         return toba::db('extension')->consultar($sql);
     }
 
-    //metodo utilizado para mostrar las personas
-    //ordenado por apellido y nombre
-	function get_listado($filtro = null)
-	{
+    
+//    function get_listado($filtro = null){
+//            if(!is_null($filtro)){
+//                $where = "WHERE $filtro";
+//            }else{
+//                $where = "";
+//            }
+//		$sql = "SELECT
+//			t_p.apellido,
+//			t_p.nombre,
+//			t_p.nro_tabla,
+//			t_p.tipo_docum,
+//			t_p.nro_docum,
+//			t_p.tipo_sexo,
+//			t_p1.nombre as pais_nacim_nombre,
+//			t_p2.descripcion_pcia as pcia_nacim_nombre,
+//			t_p.fec_nacim,
+//			t_p.docum_extran,
+//                        t_p.telefono,
+//                        t_p.mail
+//		FROM
+//			persona as t_p	
+//                        LEFT OUTER JOIN (SELECT t_p1.nombre, t_p1.codigo_pais FROM dblink('".$this->dblink_designa()."','SELECT nombre,codigo_pais FROM pais') as t_p1 (nombre CHARACTER VARYING(40), codigo_pais CHARACTER(2))) as t_p1"
+//                        . " ON (t_p.pais_nacim = t_p1.codigo_pais)"
+//                        . " LEFT OUTER JOIN (SELECT t_p2.codigo_pcia,t_p2.descripcion_pcia FROM dblink('".$this->dblink_designa()."', 'SELECT codigo_pcia, descripcion_pcia FROM provincia') as t_p2 (codigo_pcia INTEGER,descripcion_pcia CHARACTER(40))) as t_p2"
+//                        . " ON (t_p.pcia_nacim = t_p2.codigo_pcia) "
+//                 .$where
+//                        
+//		." ORDER BY nombre";
+//                /*
+//		if (count($where)>0) {
+//			$sql = sql_concatenar_where($sql, $where);
+//		}*/
+//		return toba::db('extension')->consultar($sql);
+//	}
+
+    function get_listado($filtro = null){
             if(!is_null($filtro)){
                 $where = "WHERE $filtro";
             }else{
                 $where = "";
             }
-		$sql = "SELECT
+            
+	    $sql = "SELECT
 			t_p.apellido,
 			t_p.nombre,
 			t_p.nro_tabla,
 			t_p.tipo_docum,
 			t_p.nro_docum,
 			t_p.tipo_sexo,
-			t_p1.nombre as pais_nacim_nombre,
-			t_p2.descripcion_pcia as pcia_nacim_nombre,
 			t_p.fec_nacim,
 			t_p.docum_extran,
                         t_p.telefono,
                         t_p.mail
 		FROM
-			persona as t_p	
-                        LEFT OUTER JOIN (SELECT t_p1.nombre, t_p1.codigo_pais FROM dblink('".$this->dblink_designa()."','SELECT nombre,codigo_pais FROM pais') as t_p1 (nombre CHARACTER VARYING(40), codigo_pais CHARACTER(2))) as t_p1"
-                        . " ON (t_p.pais_nacim = t_p1.codigo_pais)"
-                        . " LEFT OUTER JOIN (SELECT t_p2.codigo_pcia,t_p2.descripcion_pcia FROM dblink('".$this->dblink_designa()."', 'SELECT codigo_pcia, descripcion_pcia FROM provincia') as t_p2 (codigo_pcia INTEGER,descripcion_pcia CHARACTER(40))) as t_p2"
-                        . " ON (t_p.pcia_nacim = t_p2.codigo_pcia) "
+			persona as t_p	"
+                        
                  .$where
                         
 		." ORDER BY nombre";
-                /*
-		if (count($where)>0) {
-			$sql = sql_concatenar_where($sql, $where);
-		}*/
-		return toba::db('extension')->consultar($sql);
+               
+	    return toba::db('extension')->consultar($sql);
 	}
 
 
-
-    //solo trae las personas cuyo apellido comienza con a
+    
+//    function get_listado_comienzan_a() {
+//        $sql = "SELECT
+//                                        t_p.apellido,
+//                                        t_p.nombre,
+//                                        t_p.nro_tabla,
+//                                        t_p.tipo_docum,
+//                                        t_p.nro_docum,
+//                                        case when t_p.tipo_docum='EXTR' then t_p.docum_extran else cast (t_p.nro_docum as text) end as nro_documento,
+//                                        t_p.tipo_sexo,
+//                                        t_p1.nombre as pais_nacim_nombre,
+//                                        t_p2.descripcion_pcia as pcia_nacim_nombre,
+//                                        t_p.fec_nacim
+//                                    
+//                                    FROM persona as t_p"
+//                                        ." LEFT OUTER JOIN (SELECT t_p1.nombre, t_p1.codigo_pais FROM dblink('".$this->dblink_designa()."','SELECT nombre,codigo_pais FROM pais') as t_p1 (nombre CHARACTER VARYING(40), codigo_pais CHARACTER(2))) as t_p1"
+//                                        . " ON (t_p.pais_nacim = t_p1.codigo_pais)"
+//                                        . "LEFT OUTER JOIN (SELECT t_p2.codigo_pcia,t_p2.descripcion_pcia FROM dblink('".$this->dblink_designa()."', 'SELECT codigo_pcia, descripcion_pcia FROM provincia') as t_p2 (codigo_pcia INTEGER,descripcion_pcia CHARACTER(40))) as t_p2"
+//                                        . " ON (t_p.pcia_nacim = t_p2.codigo_pcia)"
+//                                        . "where t_p.apellido like 'A%' "
+//                                    . "ORDER BY apellido,nombre;";
+//        return toba::db('extension')->consultar($sql);
+//    }
+    //solo trae las personas cuyo apellido comienza con A
     function get_listado_comienzan_a() {
         $sql = "SELECT
                                         t_p.apellido,
@@ -127,15 +175,9 @@ class dt_persona extends extension_datos_tabla {
                                         t_p.nro_docum,
                                         case when t_p.tipo_docum='EXTR' then t_p.docum_extran else cast (t_p.nro_docum as text) end as nro_documento,
                                         t_p.tipo_sexo,
-                                        t_p1.nombre as pais_nacim_nombre,
-                                        t_p2.descripcion_pcia as pcia_nacim_nombre,
                                         t_p.fec_nacim
                                     
                                     FROM persona as t_p"
-                                        ." LEFT OUTER JOIN (SELECT t_p1.nombre, t_p1.codigo_pais FROM dblink('".$this->dblink_designa()."','SELECT nombre,codigo_pais FROM pais') as t_p1 (nombre CHARACTER VARYING(40), codigo_pais CHARACTER(2))) as t_p1"
-                                        . " ON (t_p.pais_nacim = t_p1.codigo_pais)"
-                                        . "LEFT OUTER JOIN (SELECT t_p2.codigo_pcia,t_p2.descripcion_pcia FROM dblink('".$this->dblink_designa()."', 'SELECT codigo_pcia, descripcion_pcia FROM provincia') as t_p2 (codigo_pcia INTEGER,descripcion_pcia CHARACTER(40))) as t_p2"
-                                        . " ON (t_p.pcia_nacim = t_p2.codigo_pcia)"
                                         . "where t_p.apellido like 'A%' "
                                     . "ORDER BY apellido,nombre;";
         return toba::db('extension')->consultar($sql);

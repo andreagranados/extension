@@ -4068,7 +4068,7 @@ class ci_proyectos_extension extends extension_ci {
                             }
                         } else {
                             $this->s__datos_docente_aux = $datos;
-                            toba::notificacion()->agregar(utf8_decode('El director del proyecto debe permanecer a la misma unidad que la del formulador.'), 'info');
+                            toba::notificacion()->agregar(utf8_decode('El director del proyecto debe pertenecer a la misma unidad que la del formulador.'), 'info');
                         }
                     } else {
                         $this->s__datos_docente_aux = $datos;
@@ -4190,7 +4190,7 @@ class ci_proyectos_extension extends extension_ci {
                             }
                         } else {
                             $this->s__datos_docente_aux = $datos;
-                            toba::notificacion()->agregar(utf8_decode('El director del proyecto debe permanecer a la misma unidad que la del formulador.'), 'info');
+                            toba::notificacion()->agregar(utf8_decode('El director del proyecto debe pertenecer a la misma unidad que la del formulador.'), 'info');
                         }
                     } else {
                         $this->s__datos_docente_aux = $datos;

@@ -31,10 +31,8 @@ class ci_docentes extends extension_ci {
         if (isset($this->s__where)) {
             //$cuadro->set_datos($this->dep('datos')->tabla('docente')->get_listado($this->s__where));
             $cuadro->set_datos($this->dep('datos')->tabla('unidad')->get_docentes($this->s__where));
-        } else {
-//            $cuadro->set_datos($this->dep('datos')->tabla('docente')->get_listado());
-            $cuadro->set_datos($this->dep('datos')->tabla('unidad')->get_docentes());
-        }
+        } 
+     
     }
 
     function evt__cuadro__seleccion($datos) {

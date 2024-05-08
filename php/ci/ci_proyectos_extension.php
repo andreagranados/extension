@@ -78,7 +78,7 @@ class ci_proyectos_extension extends extension_ci {
                 $where['id_pext'] = $pextension[id_pext];
 
                 // datos generales del proyecto
-                $datos = $this->dep('datos')->tabla('pextension')->get_datos($where);
+                $datos = $this->dep('datos')->tabla('pextension')->get_datos($where,1);
                 $datos = $datos[0];
 
                 //obtengo las bases correspondientes al proyecto
@@ -1234,7 +1234,8 @@ class ci_proyectos_extension extends extension_ci {
 
                 $this->alerta_finalizada($claves);
 
-                $pextension = $this->dep('datos')->tabla('pextension')->get_datos($where);
+                //$pextension = $this->dep('datos')->tabla('pextension')->get_datos($where);//lo saco porque hace llamada a sw q no necesito aqui
+                $pextension = $this->dep('datos')->tabla('pextension')->get_datos_pe($where);
                 if (($pextension[0][id_estado] == 'EUA ') == 1) {//Obtengo de la BD y verifico que hizo cambios en la BD
                     //Se enviaron correctamente los datos
                     toba::notificacion()->agregar(utf8_decode("Los datos fueron enviados con éxito"), "info");
@@ -3381,7 +3382,7 @@ class ci_proyectos_extension extends extension_ci {
             $where['uni_acad'] = $pext[uni_acad];
             $where['id_pext'] = $pext[id_pext];
 
-            $datos = $this->dep('datos')->tabla('pextension')->get_datos($where)[0];
+            $datos = $this->dep('datos')->tabla('pextension')->get_datos($where,2)[0];
 
             if (count($datos['co_director']) < 1) {//sino tiene codirector docente entonces coloca el externo
                 $datos['co_director'] = $datos['co_director_e'];

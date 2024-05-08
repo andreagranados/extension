@@ -97,15 +97,28 @@ class dt_pextension extends extension_datos_tabla {
         // Comparar el tamaño del array original con el tamaño del array de claves numéricas
         return count($array) === count($clavesNumericas);
     }
-    function get_datos($filtro = array()) {
+    function get_datos_pe($filtro = array()) {
+        $where = array();
+        if (isset($filtro['uni_acad'])) {
+            $where[] = "t_p.uni_acad = " . quote($filtro['uni_acad']);
+            $where[] = "t_p.id_pext = " . quote($filtro['id_pext']);
+        }
+        $sql="select * from pextension as t_p ";
+        if (count($where) > 0) {
+            $sql = sql_concatenar_where($sql, $where);
+        }
+        return toba::db('extension')->consultar($sql);
+    }
+
+    function get_datos($filtro = array(),$num) {
         $where = array();
         if (isset($filtro['uni_acad'])) {
             $where[] = "t_p.uni_acad = " . quote($filtro['uni_acad']);
             $where[] = "t_p.id_pext = " . quote($filtro['id_pext']);
         }
         ///-------------recuperar director/res
-        
-        $query = "CREATE TEMPORARY TABLE pg_temp.tabla_temporal_docentesd (
+        $nombreta="pg_temp.tabla_temporal_docentesd".$num;
+        $query = "CREATE TEMPORARY TABLE ".$nombreta." (
             id serial NOT NULL PRIMARY KEY,
             docente json
             )"; # Consulta Final
@@ -125,13 +138,13 @@ class dt_pextension extends extension_datos_tabla {
             $datos_json = json_encode($datos);
            // $datos_json = pg_escape_string($datos_json);//lo saco porque no me agrega cosas a la tabla temporal
             // Consulta SQL para insertar los datos en la tabla
-            $query = "INSERT INTO pg_temp.tabla_temporal_docentesd (docente) VALUES (".quote($datos_json).")"; # Consulta Final
+            $query = "INSERT INTO ".$nombreta."(docente) VALUES (".quote($datos_json).")"; # Consulta Final
             toba::db('extension')->consultar($query);
 
         }
         ///-------------recuperar codirector
-        
-        $query = "CREATE TEMPORARY TABLE pg_temp.tabla_temporal_docentesc (
+        $nombretb="pg_temp.tabla_temporal_docentesc".$num;
+        $query = "CREATE TEMPORARY TABLE ".$nombretb." (
             id serial NOT NULL PRIMARY KEY,
             docente json
             )"; # Consulta Final
@@ -146,7 +159,7 @@ class dt_pextension extends extension_datos_tabla {
             $datos_json = json_encode($datos);
            // $datos_json = pg_escape_string($datos_json);//lo saco porque no me agrega cosas a la tabla temporal
             // Consulta SQL para insertar los datos en la tabla
-            $query = "INSERT INTO pg_temp.tabla_temporal_docentesc (docente) VALUES (".quote($datos_json).")"; # Consulta Final
+            $query = "INSERT INTO ".$nombretb." (docente) VALUES (".quote($datos_json).")"; # Consulta Final
             toba::db('extension')->consultar($query);
 
         }
@@ -209,7 +222,7 @@ class dt_pextension extends extension_datos_tabla {
                                 docente->>'uni_acad' AS uni_acad,
                                 docente->>'correo_institucional' AS correo_institucional,
                                 docente->>'telefono_celular' AS telefono_celular
-                                FROM pg_temp.tabla_temporal_docentesd ) AS d ON (d.id_designacion = i.id_designacion)".
+                                FROM ".$nombreta." ) AS d ON (d.id_designacion = i.id_designacion)".
                 " LEFT OUTER JOIN (SELECT 
                                 (docente->>'id_designacion')::int AS id_designacion,
                                 (docente->>'id_docente')::int  AS id_docente,
@@ -221,7 +234,7 @@ class dt_pextension extends extension_datos_tabla {
                                 docente->>'uni_acad' AS uni_acad,
                                 docente->>'correo_institucional' AS correo_institucional,
                                 docente->>'telefono_celular' AS telefono_celular
-                                FROM pg_temp.tabla_temporal_docentesc ) AS co ON (co.id_designacion = i.id_designacion)".
+                                FROM ".$nombretb." ) AS co ON (co.id_designacion = i.id_designacion)".
                 " LEFT OUTER JOIN integrante_externo_pe as t_eco ON (t_p.id_pext = t_eco.id_pext AND t_eco.funcion_p='CD-Co' AND t_eco.hasta = t_p.fec_hasta) ". // date('Y-m-d') . "') 
                 " LEFT OUTER JOIN persona as p ON (p.tipo_docum = t_eco.tipo_docum AND p.nro_docum = t_eco.nro_docum ) 
 

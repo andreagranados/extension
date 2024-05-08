@@ -38,8 +38,6 @@ class dt_eje_tematico_conv extends extension_datos_tabla {
 			eje_tematico_conv as t_etc
                 WHERE   t_etc.id_bases = $id_bases AND t_etc.id_eje = $id_eje
 		ORDER BY descripcion";
-        print_r($sql);
-        exit();
         return toba::db('extension')->consultar($sql);
     }
 

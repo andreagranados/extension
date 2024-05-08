@@ -178,7 +178,7 @@ class dt_persona extends extension_datos_tabla {
                                         t_p.fec_nacim
                                     
                                     FROM persona as t_p"
-                                        . "where t_p.apellido like 'A%' "
+                                        . " where t_p.apellido like 'A%' "
                                     . "ORDER BY apellido,nombre;";
         return toba::db('extension')->consultar($sql);
     }

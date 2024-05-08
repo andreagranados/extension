@@ -971,41 +971,6 @@ class ci_proyectos_extension extends extension_ci {
         }
         
     }
-//    function convocatorias() {
-//        $where = "WHERE 1=1 ";
-//
-//        if ($this->dep('datos')->tabla('pextension')->esta_cargada()) {
-//            $pext = $this->dep('datos')->tabla('pextension')->get();
-//            $id_estado = $pext['id_estado'];
-//            /*
-//              $reponsable[responsable_carga] = toba::manejador_sesiones()->get_id_usuario_instancia();
-//              $proyectos = $this->dep('datos')->tabla('pextension')->get_proyectos_vigentes();
-//
-//              if (!is_null($proyectos)) {
-//              foreach ($proyectos as $proyecto) {
-//              if ($pext[id_bases] != $proyecto[id_bases]) {
-//              $where .= " AND id_bases !=" . $proyecto[id_bases];
-//              }
-//              }
-//              }
-//             * 
-//             */
-//        } else {
-//            /*
-//              $reponsable[responsable_carga] = toba::manejador_sesiones()->get_id_usuario_instancia();
-//              $pext = $this->dep('datos')->tabla('pextension')->get_proyectos_vigentes();
-//
-//              if (!is_null($pext)) {
-//              foreach ($pext as $proyecto) {
-//              $where .= " AND id_bases !=" . $proyecto[id_bases];
-//              }
-//              }
-//             */
-//
-//            $id_estado = 'FORM';
-//        }
-//        return $this->dep('datos')->tabla('bases_convocatoria')->get_convocatorias_vigentes($id_estado, $where);
-//    }
 
     // Genera las alertas de cambios que necesitan ser atendidas 
 

@@ -1459,13 +1459,13 @@ class ci_proyectos_extension extends extension_ci {
 
             if ($pextension['uni_acad'] != null) {
 
-                $dep = $this->dep('datos')->tabla('departamento')->get_departamentos($pextension['uni_acad']);
+                $dep = $this->dep('datos')->tabla('unidad')->get_departamentos($pextension['uni_acad']);
 
                 if ($dep != null) {
                     if ($pextension['departamento'] == null) {
                         toba::notificacion()->agregar("Falta completar el campo Departamento");
                     } else {
-                        $areas = $this->dep('datos')->tabla('area')->get_descripciones($pextension['departamento']);
+                        $areas = $this->dep('datos')->tabla('unidad')->get_areas($pextension['departamento']);
                         if ($areas != null && $pextension['area'] == null) {
                             toba::notificacion()->agregar("Falta completar el campo Area");
                         } else {

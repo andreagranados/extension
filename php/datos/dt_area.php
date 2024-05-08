@@ -15,7 +15,7 @@ class dt_area extends extension_datos_tabla
 //            return toba::db('extension')->consultar($sql);
 //           
 //	}
-//   
+   
 //	function get_listado()
 //	{
 //		$sql = "SELECT

@@ -35,15 +35,21 @@ class consultas_designa
                 $url=getenv('SW_URL_DOCEN');
                 //$condicion = "/docentesunco";//retorna todos los docentes
                 //$condicion = "/docentesdirectorespe";//retorna los docentes directores de proy de ext
-               
+                //$condicion = "/docentescondicion?iddesig=es_igual_a;3"
+//                if(!is_null($cond)){
+//                    if(!is_null($valor)){
+//                        //http://localhost/designa/1.0/rest/docentes/docentesdirectorespe/503
+//                        $condicion = "/".$cond."?id-pext=es_igual_a;".$valor;
+//                    }else{//trae todos
+//                        $condicion = "/".$cond;
+//                        //http://localhost/designa/1.0/rest/docentes/docentesunco
+//                        ////http://localhost/designa/1.0/rest/docentes/docentesdirectorespe
+//                    }
+//                }
                 if(!is_null($cond)){
+                    $condicion = "/".$cond;
                     if(!is_null($valor)){
-                        //http://localhost/designa/1.0/rest/docentes/docentesdirectorespe/503
-                        $condicion = "/".$cond."?id-pext=es_igual_a;".$valor;
-                    }else{//trae todos
-                        $condicion = "/".$cond;
-                        //http://localhost/designa/1.0/rest/docentes/docentesunco
-                        ////http://localhost/designa/1.0/rest/docentes/docentesdirectorespe
+                        $condicion.="es_igual_a;".$valor;
                     }
                 }
                 break;
@@ -100,7 +106,6 @@ class consultas_designa
         $url.=$condicion; 
         # Inicializar una sesión cURL
         $curl = curl_init($url);
-        
 
         # Configurar opciones de la solicitud
         curl_setopt_array($curl, [

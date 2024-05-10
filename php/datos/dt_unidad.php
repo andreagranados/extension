@@ -136,6 +136,16 @@ class dt_unidad extends extension_datos_tabla
         }
         return $datos;
     }
+    function get_id_docente($id_desig) {//trae los datos del docente cuya id_designacion es
+        $condicion='docentescondicion?iddesig=';
+        $valor=$id_desig;
+        $recurso="docentes";
+        $result = consultas_designa::get_datos($recurso,$condicion,$valor);
+        //aqui armar un arreglo como Array ( [nombre] => GABRIELA NOEMI, ARANDA [id_docente] => 7 ) 
+        $salida['id_docente']=$result[0]['id_docente'];
+        $salida['nombre']=$result[0]['apellido'].", ".$result[0]['nombre'];
+        return $salida;
+    }
     //trae las designaciones de un docentes
     //debe excluir las designaciones que estan anuladas
     function get_categorias_doc($id_doc = null) {

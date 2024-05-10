@@ -127,6 +127,7 @@ class dt_pextension extends extension_datos_tabla {
         $recurso='docentes';
         $condicion='docentesdirectorespe';
         if(isset($filtro['id_pext'])){//si tiene el id_pext
+            $condicion.='?id-pext=';
             $valor=$filtro['id_pext'];
         }else{
             $valor=null;
@@ -152,7 +153,9 @@ class dt_pextension extends extension_datos_tabla {
         toba::db('extension')->consultar($query);
         $recurso='docentes';
         $condicion='codocentesdirectorespe';
-        
+        if(isset($filtro['id_pext'])){//si tiene el id_pext
+            $condicion.='"?id-pext=';
+        }
         $res = dt_unidad::get_codirectores($recurso,$condicion,$valor);
         
         foreach ($res as $datos) {

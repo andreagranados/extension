@@ -3921,7 +3921,9 @@ class ci_proyectos_extension extends extension_ci {
 //                $form->ef('id_docente')->set_solo_lectura();
 //                $form->ef('funcion_p')->set_solo_lectura();
 //            }
-            $docente = $this->dep('datos')->tabla('docente')->get_id_docente($datos['id_designacion']);
+            
+            //$docente = $this->dep('datos')->tabla('docente')->get_id_docente($datos['id_designacion']);
+            $docente = $this->dep('datos')->tabla('unidad')->get_id_docente($datos['id_designacion']);
             if (count($docente) > 0) {
                 $datos['id_docente'] = $docente['id_docente'];
             }
@@ -4129,7 +4131,8 @@ class ci_proyectos_extension extends extension_ci {
                             $iguales = false;
 
                             if (!is_null($integrante_datos_almacenados)) {
-                                $id_docente = $this->dep('datos')->tabla('docente')->get_id_docente($integrante_datos_almacenados[id_designacion]);
+                                //$id_docente = $this->dep('datos')->tabla('docente')->get_id_docente($integrante_datos_almacenados[id_designacion]);
+                                $id_docente = $this->dep('datos')->tabla('unidad')->get_id_docente($integrante_datos_almacenados[id_designacion]);
                                 if (!is_null($int_interno) && $id_docente[id_docente] == $int_interno[id_docente]) {
                                     $iguales = true;
                                 }

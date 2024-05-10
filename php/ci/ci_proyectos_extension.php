@@ -2756,7 +2756,6 @@ class ci_proyectos_extension extends extension_ci {
         $pe = $this->dep('datos')->tabla('pextension')->get();
         $datos['id_pext'] = $pe['id_pext'];
 
-
         $datos['fecha_solicitud'] = date('Y-m-d');
         $datos['estado_solicitud'] = 'Formulacion';
 
@@ -2766,14 +2765,8 @@ class ci_proyectos_extension extends extension_ci {
 
         foreach ($solicitudes as $solicitud) {
             if (($solicitud[estado_solicitud] != 'Aceptada' && $solicitud[estado_solicitud] != 'Rechazada' ) && $solicitud[tipo_solicitud] == $datos[tipo_solicitud]) {
-                if (is_null($datos[cambio_integrante])) {
-                    $carga = false;
-                } else {
-                    if ($datos[cambio_integrante] == $solicitud[cambio_integrante]) {
-
-                        $carga = false;
-                    }
-                }
+                $carga=false;
+                toba::notificacion()->agregar('Ya existe una solicitud del tipo seleccionado que aun no ha sido aceptado o rechazada.', 'info');
             } else {
                 if (($solicitud[estado_solicitud] == 'Aceptada' || $solicitud[estado_solicitud] == 'Rechazada' ) && date('Y-m-d') == $solicitud[fecha_solicitud]) {
                     $carga = false;
@@ -2808,8 +2801,6 @@ class ci_proyectos_extension extends extension_ci {
             } else {
                 toba::notificacion()->agregar('Falta agregar el tipo de cambio', 'info');
             }
-        } else {
-            toba::notificacion()->agregar('Ya existe una solicitud del tipo seleccionado', 'info');
         }
     }
 

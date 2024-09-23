@@ -33,7 +33,7 @@ class dt_bases_convocatoria extends extension_datos_tabla {
 				$where";
         }
         $sql .= "
-		ORDER BY convocatoria";
+		ORDER BY fecha_desde desc";
 
         return toba::db('extension')->consultar($sql);
     }

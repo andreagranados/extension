@@ -118,13 +118,13 @@ INSERT INTO apex_objeto_eventos (proyecto, evento_id, objeto, identificador, eti
 	'1001000190', --objeto
 	'baja', --identificador
 	'&Eliminar', --etiqueta
-	'0', --maneja_datos
+	'1', --maneja_datos
 	NULL, --sobre_fila
 	'¿Desea ELIMINAR el registro?', --confirmacion
 	'ei-boton-baja', --estilo
 	'apex', --imagen_recurso_origen
 	'borrar.gif', --imagen
-	'0', --en_botonera
+	'1', --en_botonera
 	NULL, --ayuda
 	'3', --orden
 	NULL, --ci_predep

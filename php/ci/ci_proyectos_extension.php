@@ -963,12 +963,15 @@ class ci_proyectos_extension extends extension_ci {
     
     function convocatorias() {
         $pe = $this->dep('datos')->tabla('pextension')->get();
+        $salida=array();
         if($pe['id_estado']=='MODF'){
-            return $this->dep('datos')->tabla('bases_convocatoria')->get_convocatorias_vigentes_para_modf();
+            $salida = $this->dep('datos')->tabla('bases_convocatoria')->get_convocatorias_vigentes_para_modf();
         }else{
-            return $this->dep('datos')->tabla('bases_convocatoria')->get_convocatorias_vigentes();
+            if($pe['id_estado']=='FORM'){
+                $salida = $this->dep('datos')->tabla('bases_convocatoria')->get_convocatorias_vigentes();
+            }
         }
-        
+        return $salida;
     }
 //    function convocatorias() {
 //        $where = "WHERE 1=1 ";
@@ -1039,7 +1042,7 @@ class ci_proyectos_extension extends extension_ci {
     //--------------------------------------------------------------------------------
 
     function evt__nuevo_proyecto() {
-
+        $this->dep('datos')->tabla('pextension')->resetear();//le agrego esto extra 
         $this->set_pantalla('pant_alta_proyecto');
 
         $this->pantalla()->tab("pant_integrantesi")->ocultar();
@@ -1158,6 +1161,10 @@ class ci_proyectos_extension extends extension_ci {
             case 'pant_avance':
                 $this->set_pantalla('pant_formulario');
                 $this->dep('datos')->tabla('avance')->resetear();
+                break;
+            case 'pant_formulario'://le agrego esto extra
+                $this->set_pantalla('pant_edicion');
+                $this->dep('datos')->tabla('pextension')->resetear();
                 break;
             default :
                 $this->set_pantalla('pant_edicion');
@@ -3638,10 +3645,24 @@ class ci_proyectos_extension extends extension_ci {
 
     // ACTUALMENTE INHABILITADO -> HABILIDARLO PARA ADMIN
     function evt__formulario__baja() {
-        $this->valido = false;
-        $this->dep('datos')->tabla('pextension')->eliminar_todo();
-        $this->dep('datos')->tabla('pextension')->resetear();
-        $this->set_pantalla('pant_edicion');
+        $datos_pe = $this->dep('datos')->tabla('pextension')->get();
+        if($datos_pe['id_estado']=='FORM' or $datos_pe['id_estado']=='MODF'){//solo en estos estados puede eliminar y siempre que la convocatoria este vigente
+           if($pe['id_estado']=='MODF'){
+                $bases = $this->dep('datos')->tabla('bases_convocatoria')->get_convocatorias_vigentes_para_modf();
+            }else{//estado FORM
+                $bases = $this->dep('datos')->tabla('bases_convocatoria')->get_convocatorias_vigentes();
+            }
+            if(count($bases)>0){//puede eliminar
+                $this->valido = false;
+                $this->dep('datos')->tabla('pextension')->eliminar_todo();
+                $this->dep('datos')->tabla('pextension')->resetear();
+                $this->set_pantalla('pant_edicion');
+            }else{
+                toba::notificacion()->agregar('No es posible eliminar el proyecto. No hay convocatorias vigentes', 'error');
+            }
+        }else{
+            toba::notificacion()->agregar('No es posible eliminar el proyecto', 'error');
+        }
     }
 
     function evt__formulario__cancelar() {

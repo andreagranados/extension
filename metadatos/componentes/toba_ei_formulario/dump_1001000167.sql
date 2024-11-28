@@ -22,7 +22,7 @@ INSERT INTO apex_objeto (proyecto, objeto, anterior, identificador, reflexivo, c
 	NULL, --objeto_categoria
 	'Proyecto Extensión - Form', --nombre
 	NULL, --titulo
-	NULL, --colapsable
+	'0', --colapsable
 	NULL, --descripcion
 	'extension', --fuente_datos_proyecto
 	'extension', --fuente_datos
@@ -37,7 +37,7 @@ INSERT INTO apex_objeto (proyecto, objeto, anterior, identificador, reflexivo, c
 	NULL, --parametro_f
 	NULL, --usuario
 	'2019-09-03 10:36:02', --creacion
-	NULL  --posicion_botonera
+	'abajo'  --posicion_botonera
 );
 --- FIN Grupo de desarrollo 1001
 
@@ -201,8 +201,8 @@ INSERT INTO apex_objeto_ut_formulario (objeto_ut_formulario_proyecto, objeto_ut_
 	NULL, --clase
 	NULL, --auto_reset
 	NULL, --ancho
-	NULL, --ancho_etiqueta
-	NULL, --expandir_descripcion
+	'150px', --ancho_etiqueta
+	'0', --expandir_descripcion
 	NULL, --campo_bl
 	NULL, --scroll
 	NULL, --filas
@@ -219,8 +219,8 @@ INSERT INTO apex_objeto_ut_formulario (objeto_ut_formulario_proyecto, objeto_ut_
 	NULL, --ev_seleccion
 	NULL, --alto
 	NULL, --analisis_cambios
-	NULL, --no_imprimir_efs_sin_estado
-	NULL, --resaltar_efs_con_estado
+	'0', --no_imprimir_efs_sin_estado
+	'0', --resaltar_efs_con_estado
 	NULL, --template
 	NULL  --template_impresion
 );
@@ -238,8 +238,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable', --elemento_formulario
 	'codigo', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'0', --orden
+	'0', --oculto_relaja_obligatorio
+	'1', --orden
 	'Codigo', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -318,8 +318,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable', --elemento_formulario
 	'denominacion', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'1', --orden
+	'0', --oculto_relaja_obligatorio
+	'2', --orden
 	'Denominacion', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -398,8 +398,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable', --elemento_formulario
 	'nro_resol', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'2', --orden
+	'0', --oculto_relaja_obligatorio
+	'3', --orden
 	'Nro Resol', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -478,8 +478,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable_fecha', --elemento_formulario
 	'fecha_resol', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'3', --orden
+	'0', --oculto_relaja_obligatorio
+	'4', --orden
 	'Fecha Resol', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -558,37 +558,37 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_combo', --elemento_formulario
 	'uni_acad', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'4', --orden
+	'0', --oculto_relaja_obligatorio
+	'5', --orden
 	'Uni Acad', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
-	NULL, --colapsado
-	NULL, --desactivado
+	'0', --colapsado
+	'0', --desactivado
 	NULL, --estilo
 	NULL, --total
 	NULL, --inicializacion
-	NULL, --permitir_html
-	NULL, --deshabilitar_rest_func
+	'0', --permitir_html
+	'0', --deshabilitar_rest_func
 	NULL, --estado_defecto
-	NULL, --solo_lectura
+	'0', --solo_lectura
 	'0', --solo_lectura_modificacion
-	'get_descripciones', --carga_metodo
+	'get_ua', --carga_metodo
 	NULL, --carga_clase
 	NULL, --carga_include
-	'1001000161', --carga_dt
+	'4556', --carga_dt
 	NULL, --carga_consulta_php
 	NULL, --carga_sql
-	NULL, --carga_fuente
+	'designa', --carga_fuente
 	NULL, --carga_lista
 	'sigla', --carga_col_clave
 	'descripcion', --carga_col_desc
 	NULL, --carga_maestros
-	NULL, --carga_cascada_relaj
+	'0', --carga_cascada_relaj
 	'0', --cascada_mantiene_estado
 	'0', --carga_permite_no_seteado
 	'-- Seleccione --', --carga_no_seteado
-	NULL, --carga_no_seteado_ocultar
+	'0', --carga_no_seteado_ocultar
 	NULL, --edit_tamano
 	NULL, --edit_maximo
 	NULL, --edit_mascara
@@ -627,7 +627,7 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	NULL, --selec_serializar
 	NULL, --selec_cant_columnas
 	NULL, --upload_extensiones
-	NULL, --punto_montaje
+	'1001000004', --punto_montaje
 	NULL  --placeholder
 );
 INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_formulario, objeto_ei_formulario_proyecto, identificador, elemento_formulario, columnas, obligatorio, oculto_relaja_obligatorio, orden, etiqueta, etiqueta_estilo, descripcion, colapsado, desactivado, estilo, total, inicializacion, permitir_html, deshabilitar_rest_func, estado_defecto, solo_lectura, solo_lectura_modificacion, carga_metodo, carga_clase, carga_include, carga_dt, carga_consulta_php, carga_sql, carga_fuente, carga_lista, carga_col_clave, carga_col_desc, carga_maestros, carga_cascada_relaj, cascada_mantiene_estado, carga_permite_no_seteado, carga_no_seteado, carga_no_seteado_ocultar, edit_tamano, edit_maximo, edit_mascara, edit_unidad, edit_rango, edit_filas, edit_columnas, edit_wrap, edit_resaltar, edit_ajustable, edit_confirmar_clave, edit_expreg, popup_item, popup_proyecto, popup_editable, popup_ventana, popup_carga_desc_metodo, popup_carga_desc_clase, popup_carga_desc_include, popup_puede_borrar_estado, fieldset_fin, check_valor_si, check_valor_no, check_desc_si, check_desc_no, check_ml_toggle, fijo_sin_estado, editor_ancho, editor_alto, editor_botonera, selec_cant_minima, selec_cant_maxima, selec_utilidades, selec_tamano, selec_ancho, selec_serializar, selec_cant_columnas, upload_extensiones, punto_montaje, placeholder) VALUES (
@@ -638,8 +638,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable_fecha', --elemento_formulario
 	'fec_desde', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'5', --orden
+	'0', --oculto_relaja_obligatorio
+	'6', --orden
 	'Fec Desde', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -718,8 +718,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable_fecha', --elemento_formulario
 	'fec_hasta', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'6', --orden
+	'0', --oculto_relaja_obligatorio
+	'7', --orden
 	'Fec Hasta', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -798,8 +798,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable', --elemento_formulario
 	'nro_ord_cs', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'7', --orden
+	'0', --oculto_relaja_obligatorio
+	'8', --orden
 	'Nro Ord Cs', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -878,8 +878,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable', --elemento_formulario
 	'res_rect', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'8', --orden
+	'0', --oculto_relaja_obligatorio
+	'9', --orden
 	'Res Rect', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -958,8 +958,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable', --elemento_formulario
 	'expediente', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'9', --orden
+	'0', --oculto_relaja_obligatorio
+	'10', --orden
 	'Expediente', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -1038,8 +1038,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable_numero', --elemento_formulario
 	'duracion', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'10', --orden
+	'0', --oculto_relaja_obligatorio
+	'11', --orden
 	'Duracion', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -1118,8 +1118,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable', --elemento_formulario
 	'palabras_clave', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'11', --orden
+	'0', --oculto_relaja_obligatorio
+	'12', --orden
 	'Palabras Clave', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -1198,8 +1198,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable', --elemento_formulario
 	'objetivo', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'12', --orden
+	'0', --oculto_relaja_obligatorio
+	'13', --orden
 	'Objetivo', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -1278,8 +1278,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable', --elemento_formulario
 	'estado', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'13', --orden
+	'0', --oculto_relaja_obligatorio
+	'14', --orden
 	'Estado', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -1358,8 +1358,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_checkbox', --elemento_formulario
 	'financiacion', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'14', --orden
+	'0', --oculto_relaja_obligatorio
+	'15', --orden
 	'Financiacion', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -1438,8 +1438,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable_numero', --elemento_formulario
 	'monto', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'15', --orden
+	'0', --oculto_relaja_obligatorio
+	'16', --orden
 	'Monto', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -1518,8 +1518,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable_fecha', --elemento_formulario
 	'fecha_rendicion', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'16', --orden
+	'0', --oculto_relaja_obligatorio
+	'17', --orden
 	'Fecha Rendicion', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -1598,8 +1598,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable_numero', --elemento_formulario
 	'rendicion_monto', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'17', --orden
+	'0', --oculto_relaja_obligatorio
+	'18', --orden
 	'Rendicion Monto', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -1678,8 +1678,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable_fecha', --elemento_formulario
 	'fecha_prorroga1', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'18', --orden
+	'0', --oculto_relaja_obligatorio
+	'19', --orden
 	'Fecha Prorroga1', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -1758,8 +1758,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable_fecha', --elemento_formulario
 	'fecha_prorroga2', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'19', --orden
+	'0', --oculto_relaja_obligatorio
+	'20', --orden
 	'Fecha Prorroga2', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -1838,8 +1838,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable', --elemento_formulario
 	'observacion', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'20', --orden
+	'0', --oculto_relaja_obligatorio
+	'21', --orden
 	'Observacion', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -1918,8 +1918,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable', --elemento_formulario
 	'estado_informe_a', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'21', --orden
+	'0', --oculto_relaja_obligatorio
+	'22', --orden
 	'Estado Informe A', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion
@@ -1998,8 +1998,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'ef_editable', --elemento_formulario
 	'estado_informe_f', --columnas
 	'0', --obligatorio
-	NULL, --oculto_relaja_obligatorio
-	'22', --orden
+	'0', --oculto_relaja_obligatorio
+	'23', --orden
 	'Estado Informe F', --etiqueta
 	NULL, --etiqueta_estilo
 	NULL, --descripcion

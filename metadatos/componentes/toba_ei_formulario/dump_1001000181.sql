@@ -650,7 +650,7 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'get_ua', --carga_metodo
 	NULL, --carga_clase
 	NULL, --carga_include
-	'1001000161', --carga_dt
+	'4556', --carga_dt
 	NULL, --carga_consulta_php
 	NULL, --carga_sql
 	'extension', --carga_fuente

@@ -1,5 +1,4 @@
 <?php
-
 class dt_unidad_acad extends extension_datos_tabla {
 
     //trae todas las dependencias 

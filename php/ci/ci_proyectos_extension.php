@@ -1633,15 +1633,6 @@ class ci_proyectos_extension extends extension_ci {
 //                    unset($this->s__datos[$aux]);
 //                }
             }
-//            if(strcasecmp(date('Y-m-d'), date('Y-m-d', strtotime($proyecto['fec_hasta']))) > 0 && $proyecto['id_estado'] == 'APRB') {
-//                $personal = $this->dep('datos')->tabla('integrante_externo_pe')->get_plantilla($proyecto['id_pext'],$this->s__datos);
-//                foreach($personal as $per){
-//                    if($per['funcion_p'] == "Director"){
-//                        $proyecto[director]=$per['nombre']." ".$per['nro_docum'];
-//                        $this->s__datos[$aux][director] = $proyecto[director];
-//                    }
-//                }
-//            }
             $aux = $aux + 1;
         }
         $cuadro->set_datos($this->s__datos);

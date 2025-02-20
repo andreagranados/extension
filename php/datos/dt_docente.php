@@ -42,7 +42,7 @@ class dt_docente extends extension_datos_tabla {
                 . "'SELECT t_d.id_docente,t_d.nombre, t_d.apellido, t_d.tipo_docum,t_d.nro_docum, t_d.legajo "
                 . "FROM docente as t_d ') as t_d ( id_docente INTEGER,nombre CHARACTER VARYING,apellido CHARACTER VARYING,tipo_docum CHARACTER(4) ,nro_docum INTEGER, legajo INTEGER) ) as t_d "
                 . "$where "
-                . "ORDER BY nombre";
+                . " ORDER BY nombre";
 
         return toba::db('extension')->consultar($sql);
     }

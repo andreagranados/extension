@@ -112,7 +112,7 @@ class dt_departamento extends extension_datos_tabla {
                 . " group by d.iddepto,d.idunidad_academica,d.descripcion)sub "
                 . " LEFT OUTER JOIN director_dpto dr ON (dr.iddepto=sub.iddepto and sub.desde=dr.desde )"
                 . " LEFT OUTER JOIN docente doc ON (doc.id_docente=dr.id_docente)"
-                . "order by sub.descripcion";
+                . " order by sub.descripcion";
 
         return toba::db('extension')->consultar($sql);
     }

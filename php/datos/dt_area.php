@@ -10,7 +10,7 @@ class dt_area extends extension_datos_tabla
             $sql= "SELECT a.idarea,a.descripcion "
                     . "FROM dblink('". $this->dblink_designa() ."',"
                     . "'SELECT idarea, descripcion FROM area $where') as a (idarea INTEGER, descripcion CHARACTER VARYING)"
-                    . "ORDER BY descripcion";
+                    . " ORDER BY descripcion";
 
             return toba::db('extension')->consultar($sql);
            

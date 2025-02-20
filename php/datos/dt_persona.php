@@ -137,7 +137,7 @@ class dt_persona extends extension_datos_tabla {
                                         . "LEFT OUTER JOIN (SELECT t_p2.codigo_pcia,t_p2.descripcion_pcia FROM dblink('".$this->dblink_designa()."', 'SELECT codigo_pcia, descripcion_pcia FROM provincia') as t_p2 (codigo_pcia INTEGER,descripcion_pcia CHARACTER(40))) as t_p2"
                                         . " ON (t_p.pcia_nacim = t_p2.codigo_pcia)"
                                         . "where t_p.apellido like 'A%' "
-                                    . "ORDER BY apellido,nombre;";
+                                    . " ORDER BY apellido,nombre;";
         return toba::db('extension')->consultar($sql);
     }
 

@@ -6,7 +6,7 @@ class dt_avance extends extension_datos_tabla {
         $sql = "SELECT *"
                 . "FROM avance "
                 . "WHERE id_avance= $claves[id_avance] AND id_obj_esp =' ". $claves[id_obj_esp]." ' "
-                . "ORDER BY fecha";
+                . " ORDER BY fecha";
         return toba::db('extension')->consultar($sql);
     }
 
@@ -26,7 +26,7 @@ class dt_avance extends extension_datos_tabla {
             $sql .= "AND $where ";
         }
 
-        $sql .= "ORDER BY fecha";
+        $sql .= " ORDER BY fecha";
         return toba::db('extension')->consultar($sql);
     }
     
@@ -34,7 +34,7 @@ class dt_avance extends extension_datos_tabla {
         $sql = "SELECT id_obj_esp, id_avance,fecha,descripcion ,link,ponderacion,titulo_actividad "
                 . "FROM avance "
                 . "WHERE id_obj_esp = $id_obj "
-                . "ORDER BY fecha";
+                . " ORDER BY fecha";
         return toba::db('extension')->consultar($sql);
     }
 

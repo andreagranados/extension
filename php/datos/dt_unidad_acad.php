@@ -5,7 +5,7 @@ class dt_unidad_acad extends extension_datos_tabla {
     function get_descripciones() {
 
         $sql = "SELECT ua.sigla,ua.descripcion FROM dblink('" . $this->dblink_designa() . "','SELECT sigla,descripcion FROM unidad_acad') as ua (sigla CHARACTER(5),descripcion CHARACTER(60) )"
-                . "ORDER BY ua.descripcion";
+                . " ORDER BY ua.descripcion";
         return toba::db('extension')->consultar($sql);
     }
 
@@ -71,7 +71,7 @@ class dt_unidad_acad extends extension_datos_tabla {
         }
 
         $sql = "SELECT ua.sigla,ua.descripcion FROM (SELECT ua.sigla,ua.descripcion FROM dblink('" . $this->dblink_designa() . "','SELECT sigla,descripcion FROM unidad_acad ') as ua (sigla CHARACTER(5),descripcion CHARACTER(60) )) as ua $condicion"
-                . "ORDER BY ua.descripcion";
+                . " ORDER BY ua.descripcion";
         $sql = toba::perfil_de_datos()->filtrar($sql);
         $resul = toba::db('extension')->consultar($sql);
 

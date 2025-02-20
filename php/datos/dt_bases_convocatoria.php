@@ -41,7 +41,7 @@ class dt_bases_convocatoria extends extension_datos_tabla {
     function get_titulo() {
         $sql = "SELECT id_bases, bases_titulo "
                 . "FROM bases_convocatoria as b_c "
-                . "ORDER BY convocatoria";
+                . " ORDER BY convocatoria";
         return toba::db('extension')->consultar($sql);
     }
     
@@ -61,14 +61,14 @@ class dt_bases_convocatoria extends extension_datos_tabla {
         $sql = "SELECT id_bases, bases_titulo "
                 . " FROM bases_convocatoria as b_c "
                 . " WHERE fecha_desde <= current_date AND fecha_hasta >= current_date "
-                . "ORDER BY convocatoria";
+                . " ORDER BY convocatoria";
         return toba::db('extension')->consultar($sql);
     }
      function get_convocatorias_vigentes_para_modf() {
             $sql = "SELECT id_bases, bases_titulo "
                     . " FROM bases_convocatoria as b_c "
                     . " WHERE fecha_desde <= current_date AND fecha_lim_modif >= current_date "
-                    . "ORDER BY convocatoria";
+                    . " ORDER BY convocatoria";
             return toba::db('extension')->consultar($sql);
         }
     function get_duracion($id_bases = null) {

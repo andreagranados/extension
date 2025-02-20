@@ -19,7 +19,7 @@ class dt_presupuesto_extension extends extension_datos_tabla {
                 . " INNER JOIN rubro_presup_extension as r ON ( p_e.id_rubro_extension = r.id_rubro_extension )  "
                 . " LEFT OUTER JOIN subrubro_presup_extension t_s ON (t_s.id_subrubro_extension=p_e.id_subrubro)"
                 . " where id_pext=" . $id_p
-                . "order by uni_acad,concepto";
+                . " order by uni_acad,concepto";
         return toba::db('extension')->consultar($sql);
     }
     function get_montos($id_p = null) {
@@ -32,7 +32,7 @@ class dt_presupuesto_extension extends extension_datos_tabla {
                 . "from presupuesto_extension as p_e "
                 . "INNER JOIN rubro_presup_extension as r ON ( p_e.id_rubro_extension = r.id_rubro_extension )  "
                 . "where id_pext=" . $id_p
-                . "order by uni_acad";
+                . " order by uni_acad";
         return toba::db('extension')->consultar($sql);
     }
 
@@ -64,7 +64,7 @@ class dt_presupuesto_extension extends extension_datos_tabla {
                 . "from presupuesto_extension as p_e "
                 . "INNER JOIN rubro_presup_extension as r ON ( p_e.id_rubro_extension = r.id_rubro_extension )  "
                 . "where p_e.id_rubro_extension=" . $id_rubro_extension
-                . "order by concepto,monto";
+                . " order by concepto,monto";
         return toba::db('extension')->consultar($sql);
     }
      //monto total del presupuestos del proyecto de un rubro

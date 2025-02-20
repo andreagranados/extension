@@ -76,7 +76,7 @@ class dt_integrante_externo_pe extends extension_datos_tabla {
                 . "FROM integrante_externo_pe as t_e "
                 . "LEFT OUTER JOIN persona t_p ON (t_e.tipo_docum=t_p.tipo_docum and t_e.nro_docum=t_p.nro_docum) "
                 . "WHERE t_e.funcion_p = 'I' OR t_e.funcion_p = 'B' "
-                . "ORDER BY nombre";
+                . " ORDER BY nombre";
         return toba::db('extension')->consultar($sql);
     }
 

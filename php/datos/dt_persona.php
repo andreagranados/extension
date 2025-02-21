@@ -179,7 +179,7 @@ class dt_persona extends extension_datos_tabla {
                                     
                                     FROM persona as t_p"
                                         . " where t_p.apellido like 'A%' "
-                                    . "ORDER BY apellido,nombre;";
+                                    . " ORDER BY apellido,nombre;";
         return toba::db('extension')->consultar($sql);
     }
 

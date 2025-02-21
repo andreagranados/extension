@@ -14,7 +14,7 @@ class dt_objetivo_especifico extends extension_datos_tabla
                 
                 FROM objetivo_especifico as o_e INNER JOIN pextension as p_e ON (o_e.id_pext = p_e.id_pext)
                 WHERE o_e.id_pext = ".$id .
-                "ORDER BY id_objetivo";
+                " ORDER BY id_objetivo";
         
         return toba::db('extension')->consultar($sql);
     }
@@ -25,7 +25,7 @@ class dt_objetivo_especifico extends extension_datos_tabla
                 . "descripcion "
                 . "FROM objetivo_especifico "
                 . "WHERE id_pext = $id_pext "
-                . "ORDER BY id_objetivo";
+                . " ORDER BY id_objetivo";
         
         return toba::db('extension')->consultar($sql);
     }

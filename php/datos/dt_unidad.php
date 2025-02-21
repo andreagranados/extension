@@ -7,7 +7,7 @@ class dt_unidad extends extension_datos_tabla
     function get_descripciones() {
 
         $sql = "SELECT sigla,descripcion FROM unidad  "
-                . "ORDER BY descripcion";
+                . " ORDER BY descripcion";
         return toba::db('extension')->consultar($sql);
     }
     function get_unidades()

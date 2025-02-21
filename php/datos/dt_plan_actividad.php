@@ -19,7 +19,7 @@ class dt_plan_actividad extends extension_datos_tabla {
                 
                 FROM plan_actividades as p_a INNER JOIN objetivo_especifico as o_e ON (p_a.id_obj_especifico = o_e.id_objetivo)
                 WHERE p_a.id_obj_especifico = " . $id_obj .
-                "ORDER BY id_plan";
+                " ORDER BY id_plan";
 
         return toba::db('extension')->consultar($sql);
     }

@@ -130,8 +130,8 @@ class dt_integrante_interno_pe extends extension_datos_tabla {
                     integrante->>'correo_institucional' AS correo_institucional,
                     integrante->>'telefono_celular' AS telefono_celular
                     FROM pg_temp.tabla_temporal_integrante) AS dc ON (dc.id_designacion = t_i.id_designacion)"
-                . "where id_pext=" . $id_p
-                . "order by nombre,desde";
+                . " where id_pext=" . $id_p
+                . " order by nombre,desde";
         return toba::db('extension')->consultar($sql);
     }
     //no se llama desde ningun lado
@@ -294,7 +294,7 @@ class dt_integrante_interno_pe extends extension_datos_tabla {
                     integrante->>'telefono_celular' AS telefono_celular
                     FROM pg_temp.tabla_temporal_dir) AS dc ON (dc.id_designacion = t_i.id_designacion)"   
                 . "where id_pext=" . $id_p . " AND funcion_p='D' "
-                . "order by nombre,desde"
+                . " order by nombre,desde"
         ;
         return toba::db('extension')->consultar($sql);
     }
@@ -389,8 +389,8 @@ class dt_integrante_interno_pe extends extension_datos_tabla {
                     integrante->>'correo_institucional' AS correo_institucional,
                     integrante->>'telefono_celular' AS telefono_celular
                     FROM pg_temp.tabla_temporal_director) AS dc ON (dc.id_designacion = t_i.id_designacion)"
-                . "where id_pext=" . $id_p. " AND t_i.hasta >= '" . date('Y-m-d') . "' AND funcion_p='D' "
-                . "order by nombre,desde";
+                . " where id_pext=" . $id_p. " AND t_i.hasta >= '" . date('Y-m-d') . "' AND funcion_p='D' "
+                . " order by nombre,desde";
         return toba::db('extension')->consultar($sql);
     }
     //no se llama desde ningun lado
